@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Route, Switch } from 'react-router-dom';
 import ContentWrapper from "./components/ContentWrapper";
 import Home from "./components/Home";
 import useMediaQuery from '@material-ui/core/useMediaQuery';

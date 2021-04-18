@@ -24,7 +24,7 @@ const MealDetailViewExtern = (props) => {
       }
       console.log('get meal', meal);
     });
-  }, [mealId]);
+  }, [mealId, user]);
 
   console.log(meal, own);
 

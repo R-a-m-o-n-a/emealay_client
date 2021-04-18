@@ -11,8 +11,6 @@ import EditButton from "../Buttons/EditButton";
 import FullScreenDialog from "../util/FullScreenDialog";
 import { fetchAndUpdateMeal } from "./meals.util";
 
-const serverURL = process.env.REACT_APP_SERVER_URL;
-
 const useStyles = makeStyles((theme) => ({
   content: {
     padding: '1em',
