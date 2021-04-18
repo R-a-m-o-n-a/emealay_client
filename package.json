@@ -1,9 +1,6 @@
 {
   "name": "emealay-client",
   "version": "0.1.0",
-  "engines": {
-    "node": "14.x"
-  },
   "private": true,
   "author": {
     "name": "Ramona Plogmann",
