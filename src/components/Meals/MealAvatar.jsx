@@ -1,7 +1,7 @@
 import { Avatar } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUtensils } from "@fortawesome/free-solid-svg-icons";
-import { arrayOf, object, shape, string } from "prop-types";
+import { arrayOf, shape, string } from "prop-types";
 import React from "react";
 import { makeStyles } from "@material-ui/styles";
 
