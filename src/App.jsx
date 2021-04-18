@@ -44,6 +44,7 @@ const App = () => {
         background:{
           default: prefersDarkMode ? '#202020' : '#ffffff',
           paper: prefersDarkMode ? '#252525' : '#fafafa',
+          // paper: prefersDarkMode ? '#202020' : '#ffffff',
         },
       },/*
       typography: {

@@ -7,6 +7,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { LoadingBody } from "../Loading";
 import { getSettingsOfUser, updateUserSettingsForCategory } from "../Settings/settings.util";
+import { reactSelectTheme } from "./meals.util";
 
 const SelectMealTags = (props) => {
   const { t } = useTranslation();
@@ -49,12 +50,6 @@ const SelectMealTags = (props) => {
     }
   };
 
-  const theme = (givenTheme) => {
-    givenTheme.colors.primary = muiTheme.palette.secondary.main;
-    givenTheme.colors.danger = muiTheme.palette.error.main;
-    return givenTheme;
-  }
-
   const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -67,7 +62,7 @@ const SelectMealTags = (props) => {
     isClearable: true,
     isMulti: true,
     styles: customStyles,
-    theme: givenTheme => theme(givenTheme),
+    theme: givenTheme => reactSelectTheme(givenTheme, muiTheme, true),
     placeholder: <ListItemText primary={placeholderText || t('Select Tags') + '...'} />,
     options: allTags,
     value: currentTags,

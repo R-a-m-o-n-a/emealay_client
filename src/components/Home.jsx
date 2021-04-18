@@ -31,11 +31,6 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '1.8rem',
     marginTop: '1rem',
   },
-  languageButton: {
-    position: "fixed",
-    bottom: '2rem',
-    transform: 'translateX(-50%)',
-  },
   select: {
     color: theme.palette.secondary.main,
     paddingLeft: '0.5rem',
@@ -83,11 +78,8 @@ const Home = () => {
             <br />
             <br />
             <br />
-            <br />
-            <br />
-            <br />
 
-            <Button variant="outlined" color="secondary" size="medium" className={classes.languageButton} startIcon={<Translate />}>
+            <Button variant="outlined" color="secondary" size="medium" startIcon={<Translate />}>
               <Select input={<InputBase />}
                       className={classes.select}
                       labelId="language-select-label"

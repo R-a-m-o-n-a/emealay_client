@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   headline: {
-    fontSize: '30px',
+    fontSize: '25px',
     lineHeight: '35px',
     whiteSpace: 'nowrap',
     overflow: "hidden",

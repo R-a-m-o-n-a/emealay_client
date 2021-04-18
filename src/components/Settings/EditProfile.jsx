@@ -27,6 +27,7 @@ import { SlidingTransitionLeft } from "../util/SlidingTransition";
 import Navbar from "../Navbar";
 import BackButton from "../Buttons/BackButton";
 import { muiTableBorder } from "../util";
+import FullScreenDialog from "../util/FullScreenDialog";
 
 const serverURL = process.env.REACT_APP_SERVER_URL;
 
@@ -137,7 +138,7 @@ const EditProfile = (props) => {
   }
 
   return (
-    <Dialog open={open} fullScreen onClose={closeDialog} TransitionComponent={SlidingTransitionLeft}>
+    <FullScreenDialog open={open} onClose={closeDialog}>
       <Navbar pageTitle={t('Edit Profile')} leftSideComponent={<BackButton onClick={closeDialog} />} secondary={isSecondary} />
       <Box className={classes.userProfile}>
         <ImageUpload uploadedImages={[profileImage]}
@@ -197,7 +198,7 @@ const EditProfile = (props) => {
           </Button>
         </form>
       </Box>
-    </Dialog>
+    </FullScreenDialog>
   );
 };
 

@@ -60,5 +60,18 @@
   "Use dark mode?": "mode sombre",
   "Missing Ingredients": "Ingrédients manquants",
   "List is currently empty": "La liste est actuellement vide",
-  "Without Date": "Sans date"
+  "Without Date": "Sans date",
+  "Choose Icon for {{categoryName}}": "Sélectionnez l'icône pour {{categoryName}}",
+  "Categories": "Catégories",
+  "Category": "Catégorie",
+  "Select Category": "Sélectionnez la catégorie",
+  "Tags": "Tags",
+  "Tag": "Tag",
+  "Select Tags": "Sélectionner les tags",
+  "Create tag \"{{input}}\"": "Créer le tag \"{{input}}\"",
+  "Meals without category": "Repas sans catégorie",
+  "Filter by Tags": "Filtrer par Tags",
+  "No meals found for filter selection": "Aucun repas trouvé pour la sélection de filtres",
+  "expand all": "développer tout",
+  "collapse all": "réduire tout"
 }

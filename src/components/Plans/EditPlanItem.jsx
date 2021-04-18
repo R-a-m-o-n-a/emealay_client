@@ -13,11 +13,12 @@ import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import Loading from "../Loading";
 import useSnackbars from "../util/useSnackbars";
 import DoneButton from "../Buttons/DoneButton";
+import FullScreenDialog from "../util/FullScreenDialog";
 
 /** Dialog page that allows user to edit plan */
 const useStyles = makeStyles((theme) => ({
   form: {
-    padding: '1em 2.5em',
+    padding: '1em 1.5em',
     backgroundColor: theme.palette.background.default,
     height: `calc(100% - ${process.env.REACT_APP_NAV_BOTTOM_HEIGHT}px)`,
   },
@@ -127,7 +128,7 @@ const EditPlanItem = (props) => {
 
   return (
     <>{planItem ?
-      <Dialog open={open} fullScreen onClose={closeDialog} TransitionComponent={SlidingTransitionLeft}>
+      <FullScreenDialog open={open} onClose={closeDialog}>
         <Navbar pageTitle={t('Edit Plan')}
                 leftSideComponent={<BackButton onClick={closeDialog} />}
                 rightSideComponent={planItem.title ? <DoneButton onClick={editAndClose} /> : null}
@@ -147,7 +148,7 @@ const EditPlanItem = (props) => {
             </Grid>
           </Grid>
         </form>
-      </Dialog>
+      </FullScreenDialog>
       : ''}
       {Snackbars}
     </>

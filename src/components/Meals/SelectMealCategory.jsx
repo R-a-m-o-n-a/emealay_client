@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ListItem, ListItemIcon, ListItemText, useTheme } from '@material-ui/core';
 import CreatableSelect from 'react-select/creatable';
-// import MuiAlert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 import { func, string } from "prop-types";
 import { useTranslation } from "react-i18next";
@@ -11,7 +10,7 @@ import { getSettingsOfUser } from "../Settings/settings.util";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChooseIconDialog, updateMealCategories } from "../Settings/EditMealCategories";
-import { useCategoryIcons } from "./meals.util";
+import { reactSelectTheme, useCategoryIcons } from "./meals.util";
 
 const useStyles = makeStyles((theme) => ({
   textField: {
@@ -107,13 +106,6 @@ const SelectMealCategory = (props) => {
     }
   }
 
-  const theme = (givenTheme) => {
-    givenTheme.colors.primary = muiTheme.palette.primary.main;
-    givenTheme.colors.danger = muiTheme.palette.error.main;
-    givenTheme.spacing.baseUnit = 4;
-    return givenTheme;
-  }
-
   console.log(categoryIcons);
   console.log(categoryName, currentCategory, allCategories);
   return (
@@ -124,7 +116,7 @@ const SelectMealCategory = (props) => {
                        components={{ Option: SelectOption, SingleValue: ChosenOption }}
                        getOptionLabel={option => option.name}
                        onChange={handleCategoryChange}
-                       theme={givenTheme => theme(givenTheme)}
+                       theme={givenTheme => reactSelectTheme(givenTheme, muiTheme, true)}
                        getNewOptionData={(value) => {
                          return {
                            name: value,
