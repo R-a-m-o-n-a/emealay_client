@@ -6,8 +6,8 @@ import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   topNav: props => ({
-    height: props.height,
-    minHeight: props.height,
+    height: process.env.REACT_APP_NAVBAR_TOP_HEIGHT,
+    minHeight: process.env.REACT_APP_NAVBAR_TOP_HEIGHT,
     justifyContent: 'space-between',
     backgroundColor: props.secondary ? theme.palette.secondary.main : theme.palette.primary.main,
   }),
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
   headline: {
     fontSize: '25px',
-    lineHeight: '35px',
+    lineHeight: '32px',
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -41,13 +41,13 @@ const Navbar = (props) => {
   return (
     <>
       <AppBar position="sticky" style={{ maxWidth: '100%' }}>
-        <Toolbar className={classes.topNav}>
+        <Toolbar className={classes.topNav} variant="dense">
           {leftSideComponent ||
           <img src={palette.type === 'dark' ? '/Emealay_logo_dark.png' : '/Emealay_logo_white.png'}
                className={classes.logo}
                alt="Emealay Logo"
-               height="35px"
-               onClick={() => {history.push('/home');}} />
+               height="32px"
+               onClick={() => {history.push('/');}} />
           }
           <Typography onClick={titleOnClick} variant='h4' className={classes.headline}>{pageTitle}</Typography>
           {rightSideComponent &&
@@ -69,8 +69,6 @@ Navbar.propTypes = {
   rightSideComponent: any,
   /** component to be displayed on the left side (for example Back Button) */
   leftSideComponent: any,
-  /** custom height, may not be of use anymore, but is still working */
-  height: string,
   /** optional onClick function for the title */
   titleOnClick: func,
   /** use secondary color for background? */
@@ -80,7 +78,6 @@ Navbar.propTypes = {
 Navbar.defaultProps = {
   rightSideComponent: null,
   leftSideComponent: null,
-  height: process.env.REACT_APP_NAVBAR_TOP_HEIGHT,
   secondary: false,
 };
 

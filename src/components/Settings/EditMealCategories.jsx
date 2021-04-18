@@ -182,9 +182,4 @@ EditMealCategories.propTypes = {
   onUpdateCategories: func,
 }
 
-EditMealCategories.propTypes = {
-  onUpdateSettings: null,
-  onUpdateCategories: null,
-}
-
 export default EditMealCategories;

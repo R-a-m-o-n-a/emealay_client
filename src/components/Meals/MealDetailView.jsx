@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Dialog, Link, Typography } from '@material-ui/core';
+import { Box, Link, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import axios from 'axios';
 import { arrayOf, bool, func, shape, string } from "prop-types";
 import EditMeal from "./EditMeal";
 import Navbar from "../Navbar";
 import BackButton from "../Buttons/BackButton";
 import ImageGrid from "../Images/ImageGrid";
 import { useTranslation } from "react-i18next";
-import { SlidingTransitionLeft } from "../util/SlidingTransition";
 import EditButton from "../Buttons/EditButton";
+import FullScreenDialog from "../util/FullScreenDialog";
+import { fetchAndUpdateMeal } from "./meals.util";
 
 const serverURL = process.env.REACT_APP_SERVER_URL;
 
@@ -27,7 +27,7 @@ const MealDetailView = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
 
-  const { meal: initialMeal, open, closeDialog, onDoneEditing, allowEditing } = props;
+  const { meal: initialMeal, open, closeDialog, onDoneEditing, allowEditing, extern } = props;
 
   const [meal, setMeal] = useState(initialMeal);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
@@ -39,14 +39,7 @@ const MealDetailView = (props) => {
 
   const fetchMeal = () => {
     if (meal && meal._id) {
-      axios.get(serverURL + '/meals/' + meal._id)
-           .then(res => {
-             setMeal(res.data);
-             console.log('get meal', meal);
-           })
-           .catch(err => {
-             console.log(err.message);
-           });
+      fetchAndUpdateMeal(meal._id, setMeal);
     }
   }
 
@@ -64,32 +57,32 @@ const MealDetailView = (props) => {
   return (
     <>
       {meal ?
-        <Dialog open={open} fullScreen onClose={closeDialog} TransitionComponent={SlidingTransitionLeft}>
+        <FullScreenDialog open={open} onClose={closeDialog}>
           <Navbar pageTitle={t('Meal')}
                   rightSideComponent={allowEditing && <EditButton onClick={() => {openEditItemDialog(meal)}} />}
-                  leftSideComponent={<BackButton onClick={closeDialog} />} />
+                  leftSideComponent={extern ? null : <BackButton onClick={closeDialog} />} />
           <Box className={classes.content}>
-                <Typography variant="h4">{meal.title}</Typography>
-                {meal.recipeLink ?
-                  <>
-                    <Typography><Link href={meal.recipeLink}>{meal.recipeLink}</Link></Typography>
-                  </> : ''}
-                {meal.comment ?
-                  <>
-                    <Typography>{meal.comment}</Typography>
-                  </> : ''}
-                {meal.images && meal.images.length > 0 ? <ImageGrid images={meal.images} allowChoosingMain={false} /> : ''}
+            <Typography variant="h4">{meal.title}</Typography>
+            {meal.recipeLink ?
+              <>
+                <Typography><Link href={meal.recipeLink}>{meal.recipeLink}</Link></Typography>
+              </> : ''}
+            {meal.comment ?
+              <>
+                <Typography>{meal.comment}</Typography>
+              </> : ''}
+            {meal.images && meal.images.length > 0 ? <ImageGrid images={meal.images} allowChoosingMain={false} /> : ''}
           </Box>
-        </Dialog>
+        </FullScreenDialog>
         : ''}
 
-      <EditMeal open={allowEditing && editDialogOpen} meal={mealBeingEdited} closeDialog={() => {
+      {!extern && <EditMeal open={allowEditing && editDialogOpen} meal={mealBeingEdited} closeDialog={() => {
         setMealBeingEdited(null);
         setEditDialogOpen(false);
       }} onDoneEditing={afterEditing} onDoneDelete={() => {
         afterEditing();
         closeDialog();
-      }} />
+      }} />}
     </>
   );
 }
@@ -116,12 +109,15 @@ MealDetailView.propTypes = {
   onDoneEditing: func,
   /** allow opening edit page? (To be false if not one's own meal) */
   allowEditing: bool,
+  /** extern is coming from a link might not be logged in */
+  extern: bool,
 }
 
 MealDetailView.defaultProps = {
   meal: null,
   open: true,
   allowEditing: false,
+  extern: false,
 }
 
 export default MealDetailView;

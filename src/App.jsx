@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import ContentWrapper from "./components/ContentWrapper";
 import Home from "./components/Home";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -7,6 +7,7 @@ import CssBaseline from '@material-ui/core/CssBaseline'; // deals with changing 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { useAuth0 } from "@auth0/auth0-react";
 import { getSettingsOfUser } from "./components/Settings/settings.util";
+import MealDetailViewExtern from "./components/Meals/MealDetailViewExtern";
 
 /**
  * This is the main App component. It sets the MUI theme as well as the dark mode (if desired). It also deals with Frontend-Routing with the help of React Router.
@@ -63,6 +64,7 @@ const App = () => {
           <Route exact path="/">
             <Home />
           </Route>
+          <Route exact path="/meals/view/:mealId"><MealDetailViewExtern /></Route>
 
           <Route exact path="/meals"><ContentWrapper activeTab="meals" /></Route>
           <Route exact path="/meals/add"><ContentWrapper activeTab="meals/add" /></Route>

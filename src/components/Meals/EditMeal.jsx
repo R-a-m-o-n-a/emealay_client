@@ -14,11 +14,10 @@ import { withAuthenticationRequired } from "@auth0/auth0-react";
 import Loading from "../Loading";
 import useSnackbars from "../util/useSnackbars";
 import DoneButton from "../Buttons/DoneButton";
-import FullScreenDialog from "../util/FullScreenDialog";
 
 const useStyles = makeStyles((theme) => ({
   form: {
-    padding: '1em 1.5em',
+    padding: '1em 2.5em',
     backgroundColor: theme.palette.background.default,
   },
   cancelButton: {
@@ -119,7 +118,7 @@ const EditMeal = (props) => {
     <>
 
       {meal ?
-        <FullScreenDialog open={open} onClose={closeDialog}>
+        <Dialog open={open} fullScreen onClose={closeDialog} TransitionComponent={SlidingTransitionLeft}>
           <Navbar pageTitle={t('Edit Meal')}
                   leftSideComponent={<BackButton onClick={closeDialog} />}
                   rightSideComponent={meal.title ? <DoneButton onClick={editAndClose} /> : null}
@@ -138,7 +137,7 @@ const EditMeal = (props) => {
               </Grid>
             </Grid>
           </form>
-        </FullScreenDialog>
+        </Dialog>
         : ''}
 
       {Snackbars}

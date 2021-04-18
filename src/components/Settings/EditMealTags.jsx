@@ -73,9 +73,4 @@ EditMealTags.propTypes = {
   onUpdateTags: func,
 }
 
-EditMealTags.propTypes = {
-  onUpdateSettings: null,
-  onUpdateTags: null,
-}
-
 export default EditMealTags;

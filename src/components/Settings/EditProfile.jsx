@@ -1,29 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  CardHeader,
-  Collapse,
-  Dialog,
-  IconButton,
-  InputBase,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  Typography
-} from "@material-ui/core";
+import { Box, Button, Card, CardContent, CardHeader, Collapse, IconButton, InputBase, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@material-ui/core";
 import { ExpandLess, ExpandMore, InfoTwoTone } from "@material-ui/icons";
 import ImageUpload from "../Images/ImageUpload";
 import { updateUser, updateUserMetadata } from "./settings.util";
 import { bool, func, shape } from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { useTranslation } from "react-i18next";
-import { SlidingTransitionLeft } from "../util/SlidingTransition";
 import Navbar from "../Navbar";
 import BackButton from "../Buttons/BackButton";
 import { muiTableBorder } from "../util";

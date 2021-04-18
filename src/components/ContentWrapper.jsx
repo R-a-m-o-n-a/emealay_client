@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from "react-router-dom";
+import { useHistory, useRouteMatch } from "react-router-dom";
 import NavTabs from "./NavTabs";
 import Social from "./Social/Social";
 import Settings from "./Settings/Settings";
@@ -10,6 +10,7 @@ import AddMeal from "./Meals/AddMeal";
 import Home from "./Home";
 import OwnMeals from "./Meals/OwnMeals";
 import OwnPlans from "./Plans/OwnPlans";
+import MealDetailViewExtern from "./Meals/MealDetailViewExtern";
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -29,6 +30,9 @@ const ContentWrapper = (props) => {
   const { activeTab } = props;
   let history = useHistory();
 
+
+  let { path, url } = useRouteMatch();
+  console.log(path, url);
   const goToPlans = () => {history.push('/plans');};
   const goToMeals = () => {history.push('/meals');};
 
@@ -48,6 +52,9 @@ const ContentWrapper = (props) => {
       break;
     case "meals/add":
       contentPage = <AddMeal onDoneAdding={goToMeals} />;
+      break;
+    case "meals/view":
+      contentPage = <MealDetailViewExtern />;
       break;
     case "plans":
       contentPage = <OwnPlans />;

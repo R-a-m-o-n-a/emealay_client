@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Dialog, Grid } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import axios from 'axios';
 import DeleteButton from "../Buttons/DeleteButton";
@@ -8,7 +8,6 @@ import { any, arrayOf, bool, func, shape, string } from "prop-types";
 import Navbar from "../Navbar";
 import EditPlanItemCore from "./EditPlanItemCore";
 import BackButton from "../Buttons/BackButton";
-import { SlidingTransitionLeft } from "../util/SlidingTransition";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import Loading from "../Loading";
 import useSnackbars from "../util/useSnackbars";
