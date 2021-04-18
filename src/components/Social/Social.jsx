@@ -64,7 +64,7 @@ const Social = () => {
         <Box key={userId}>
           <ListItem button onClick={() => {history.push(`${url}/contact/${userId}`);}}>
             <ListItemAvatar>
-              <Avatar src={getContactPicture(contact)} alt={'profile picture of ' + getContactName(contact)} />
+              <Avatar src={getContactPicture(contact)} alt={getContactName(contact)} />
             </ListItemAvatar>
             <ListItemText primary={getContactName(contact)} primaryTypographyProps={{ className: classes.listItemText }} />
           </ListItem>
