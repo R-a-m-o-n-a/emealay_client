@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Grid, IconButton, Link, Typography } from '@material-ui/core';
-import { Share } from '@material-ui/icons';
+import { Box, Grid, Link, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { arrayOf, bool, func, shape, string } from "prop-types";
 import EditMeal from "./EditMeal";
@@ -11,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import EditButton from "../Buttons/EditButton";
 import FullScreenDialog from "../util/FullScreenDialog";
 import { fetchAndUpdateMeal } from "./meals.util";
-import { useAuth0 } from "@auth0/auth0-react";
+import ShareButton from "../util/ShareButton";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -32,7 +31,6 @@ const useStyles = makeStyles((theme) => ({
 const MealDetailView = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const { user } = useAuth0();
 
   const { meal: initialMeal, open, closeDialog, onDoneEditing, allowEditing, extern } = props;
 
@@ -61,22 +59,6 @@ const MealDetailView = (props) => {
     fetchMeal();
   }
 
-  const shareMeal = () => {
-    const linkToMeal = window.location.origin + '/meals/view/' + meal._id;
-    console.log('share meal', linkToMeal);
-    if (navigator.share) {
-      navigator.share({
-        title: meal.title + ' von ' + user.name,
-        url: linkToMeal,
-      }).then(() => {
-        alert('Web Share API vorhanden!!! Danke, dass Sie uns heute besucht haben ;)');
-        console.log('Thanks for sharing!');
-      }).catch(console.error);
-    } else {
-      alert('Web Share API nicht vorhanden.');
-    }
-  }
-
   const rightSideComponent = <>
     {allowEditing && <EditButton onClick={() => {openEditItemDialog(meal)}} />}
   </>;
@@ -92,10 +74,7 @@ const MealDetailView = (props) => {
                 <Typography variant="h4">{meal.title}</Typography>
               </Grid>
               <Grid item xs className={classes.shareButton}>
-                <IconButton variant="outlined" onClick={shareMeal}>
-                  <Share />
-                  {/*<FontAwesomeIcon icon={faShareSquare} />*/}
-                </IconButton>
+                <ShareButton link={window.location.origin + '/meals/view/' + meal._id} title={meal.title} />
               </Grid>
             </Grid>
             {meal.recipeLink ? <Typography><Link href={meal.recipeLink} target="_blank">{meal.recipeLink}</Link></Typography> : ''}
