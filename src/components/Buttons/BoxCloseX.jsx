@@ -14,28 +14,16 @@ const useStyles = makeStyles((theme) => ({
     border: 'none',
     padding: 0,
     background: 'transparent',
-
-    '&:hover': {
-      color: theme.palette.error.main,
-      textDecoration: 'underline',
-      cursor: 'pointer',
-    },
-
-    '&::last-child': {
-      marginRight: '1.4rem',
-    },
-
-    'svg:hover': {
-      borderRadius: '100%',
-      boxShadow: '0 0 0.5rem ' + theme.palette.background.default,
-    },
   },
   closeXIcon: {
     fontSize: '1.5rem',
     lineHeight: '1.5rem',
   },
   white: {
-    color: theme.palette.background.default,
+    color: theme.myColors.white,
+  },
+  black: {
+    color: theme.myColors.black,
   }
 }));
 
@@ -49,7 +37,7 @@ function BoxCloseX(props) {
     <button type="button" className={classes.boxCloseX} onClick={onClick}>
       <span className={`${classes.closeXIcon} fa-layers`}>
         <FontAwesomeIcon icon={faCircle} className={classes.white} />
-        <FontAwesomeIcon icon={faTimesCircle} transform="shrink--2" />
+        <FontAwesomeIcon icon={faTimesCircle} className={classes.black} transform="shrink--2" />
       </span>
     </button>
   );

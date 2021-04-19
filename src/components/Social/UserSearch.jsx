@@ -115,12 +115,11 @@ const UserSearch = (props) => {
   const getListItems = () => {
     return userList.map(u => {
       const userId = u.user_id;
-
       return (
         <Box key={userId}>
           <ListItem button onClick={() => {if (openContact) openContact(userId)}}>
             <ListItemAvatar>
-              <Avatar alt={'profile picture of ' + getContactName(u)} src={getContactPicture(u)} />
+              <Avatar alt={getContactName(u)} src={getContactPicture(u)} />
             </ListItemAvatar>
             <ListItemText primary={getContactName(u)} primaryTypographyProps={{ className: classes.listItemText }} />
             <ListItemSecondaryAction>
@@ -135,9 +134,9 @@ const UserSearch = (props) => {
 
   return (
     <Box className={classes.userSearchBox}>
-      <Toolbar className={classes.topNav}>
+      <Toolbar className={classes.topNav} variant="dense">
         <Box className={classes.flexdiv}>
-          <InputBase value={query} name="query" className={classes.searchInput} onChange={e => setQuery(e.target.value)} label="Query" autoFocus />
+          <InputBase placeholder={t('Search for users')} value={query} name="query" className={classes.searchInput} onChange={e => setQuery(e.target.value)} label="Query" autoFocus />
         </Box>
         <Box className={classes.rightSide}>
           <SimpleCloseX onClick={closeSearch} />

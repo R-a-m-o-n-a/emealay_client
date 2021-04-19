@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Link, Typography } from '@material-ui/core';
+import { Box, Grid, IconButton, Link, Typography } from '@material-ui/core';
+import { Share } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 import { arrayOf, bool, func, shape, string } from "prop-types";
 import EditMeal from "./EditMeal";
@@ -17,6 +18,12 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: `calc(100% - ${process.env.REACT_APP_NAV_TOP_HEIGHT}px)`,
     overflowY: 'auto',
     backgroundColor: theme.palette.background.default,
+  },
+  mealTitle: {
+    flexGrow: 10,
+  },
+  shareButton: {
+    textAlign: "right",
   },
 }));
 
@@ -52,23 +59,38 @@ const MealDetailView = (props) => {
     fetchMeal();
   }
 
+  const shareMeal = () => {
+    console.log('share meal', navigator.share);
+    if (navigator.share) {
+      alert('Web Share API vorhanden!!!');
+    } else {
+      alert('Web Share API nicht vorhanden.');
+    }
+  }
+
+  const rightSideComponent = <>
+    {allowEditing && <EditButton onClick={() => {openEditItemDialog(meal)}} />}
+  </>;
+
   return (
     <>
       {meal ?
         <FullScreenDialog open={open} onClose={closeDialog}>
-          <Navbar pageTitle={t('Meal')}
-                  rightSideComponent={allowEditing && <EditButton onClick={() => {openEditItemDialog(meal)}} />}
-                  leftSideComponent={extern ? null : <BackButton onClick={closeDialog} />} />
+          <Navbar pageTitle={t('Meal')} rightSideComponent={rightSideComponent} leftSideComponent={extern ? null : <BackButton onClick={closeDialog} />} />
           <Box className={classes.content}>
-            <Typography variant="h4">{meal.title}</Typography>
-            {meal.recipeLink ?
-              <>
-                <Typography><Link href={meal.recipeLink}>{meal.recipeLink}</Link></Typography>
-              </> : ''}
-            {meal.comment ?
-              <>
-                <Typography>{meal.comment}</Typography>
-              </> : ''}
+            <Grid container spacing={0} justify="space-between" alignItems="flex-start" wrap="nowrap">
+              <Grid item xs className={classes.mealTitle}>
+                <Typography variant="h4">{meal.title}</Typography>
+              </Grid>
+              <Grid item xs className={classes.shareButton}>
+                <IconButton variant="outlined" onClick={shareMeal}>
+                  <Share />
+                  {/*<FontAwesomeIcon icon={faShareSquare} />*/}
+                </IconButton>
+              </Grid>
+            </Grid>
+            {meal.recipeLink ? <Typography><Link href={meal.recipeLink} target="_blank">{meal.recipeLink}</Link></Typography> : ''}
+            {meal.comment ? <Typography>{meal.comment}</Typography> : ''}
             {meal.images && meal.images.length > 0 ? <ImageGrid images={meal.images} allowChoosingMain={false} /> : ''}
           </Box>
         </FullScreenDialog>

@@ -17,17 +17,19 @@ import DoneButton from "../Buttons/DoneButton";
 
 const useStyles = makeStyles((theme) => ({
   form: {
-    padding: '1em 2.5em',
+    padding: '1em 1.5em',
     backgroundColor: theme.palette.background.default,
   },
   cancelButton: {
-    textAlign: 'left',
+    textAlign: 'center',
+    flexGrow: 4,
   },
   deleteButton: {
     textAlign: 'center',
   },
   saveButton: {
-    textAlign: 'right',
+    textAlign: 'center',
+    flexGrow: 4,
   },
   actionButtonWrapper: {
     margin: '1.5em 0 0',
@@ -125,7 +127,7 @@ const EditMeal = (props) => {
                   secondary={inverseColors} />
           <form noValidate onSubmit={editAndClose} className={classes.form}>
             <EditMealCore updateMeal={updateMeal} meal={meal} isSecondary={inverseColors} />
-            <Grid container spacing={0} justify="space-between" alignItems="center" className={classes.actionButtonWrapper}>
+            <Grid container spacing={0} justify="space-between" alignItems="center" wrap="nowrap" className={classes.actionButtonWrapper}>
               <Grid item xs className={classes.cancelButton}>
                 <Button type="button" color={inverseColors ? "secondary" : "primary"} variant="outlined" onClick={closeDialog}>{t('Cancel')}</Button>
               </Grid>

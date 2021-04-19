@@ -3,10 +3,9 @@ import { arrayOf, func, number, shape, string, } from 'prop-types';
 import BoxCloseX from '../Buttons/BoxCloseX';
 import Carousel from 'react-material-ui-carousel';
 import { makeStyles } from '@material-ui/styles';
-import Box from "@material-ui/core/Box";
+import { Box, Link } from "@material-ui/core";
 
 const serverURL = process.env.REACT_APP_SERVER_URL;
-
 
 const useStyles = makeStyles({
   carouselBackdrop: {
@@ -41,7 +40,9 @@ const ImageCarousel = (props) => {
 
   const slides = images.map((image, index) => (
     <Box key={index}>
-      <img src={serverURL + image.path} alt={image.name} className={classes.carouselItemImage} />
+      <Link href={serverURL + image.path}>
+        <img src={serverURL + image.path} alt={image.name} className={classes.carouselItemImage} />
+      </Link>
     </Box>
   ));
 

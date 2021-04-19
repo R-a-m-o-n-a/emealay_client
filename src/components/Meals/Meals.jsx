@@ -71,7 +71,7 @@ const Meals = (props) => {
   const sortMealsIntoCategories = () => {
     mealsByCategory.clear();
     const mealsWithoutCategory = [];
-    const categoriesInitiallyExpanded = own;
+    const categoriesInitiallyExpanded = true;
     filteredMeals.sort(function (a, b) {
       if (!b.category) return 1;
       if (!a.category) return -1;

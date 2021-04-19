@@ -9,7 +9,7 @@ import { fetchContactsOfUser } from "./social.util";
 import { updateUserSettingsForCategory } from "../Settings/settings.util";
 
 const useStyles = makeStyles(theme => ({
-  iconButtonInNavbar: {
+  iconButtonInCircle: {
     padding: '8px',
     marginRight: '-8px',
     borderRadius: '100%',
@@ -39,9 +39,10 @@ const FriendOrUnfriendButton = (props) => {
 
   const updateContacts = (newContacts) => {
     if (user) {
-      updateUserSettingsForCategory(user.sub, 'contacts', newContacts, false, () => {
-        if (afterUpdateContacts) afterUpdateContacts();
-        fetchContacts();
+      updateUserSettingsForCategory(user.sub, 'contacts', newContacts, (settings) => {
+        const sortedContacts = settings.contacts.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1)
+        if (afterUpdateContacts) afterUpdateContacts(sortedContacts);
+        setContacts(sortedContacts);
       });
     }
   }
@@ -58,9 +59,11 @@ const FriendOrUnfriendButton = (props) => {
   }, [user]); // eslint-disable-line
 
   useEffect(() => {
+    setCheckedIsContact(false);
+    console.log('rechecking', otherUser.name, contacts.map(m => m.name));
     if (contacts && user) {
       setIsContact(contacts.some(c => c.user_id === otherUser.user_id));
-      if (!checkedIsContact) setCheckedIsContact(true);
+      setCheckedIsContact(true);
     }
   }, [user, contacts]); // eslint-disable-line
 
@@ -78,7 +81,7 @@ const FriendOrUnfriendButton = (props) => {
   if (!checkedIsContact) return null;
 
   return (
-    <IconButton edge="end" className={(props.inNavbar) ? classes.iconButtonInNavbar : ''} onClick={() => isContact ? removeFriend() : addFriend()}>
+    <IconButton edge="end" className={(props.inCircle) ? classes.iconButtonInCircle : ''} onClick={() => isContact ? removeFriend() : addFriend()}>
       {isContact
         ? <PersonAddDisabled className={classes.removeFriend} />
         : <PersonAdd className={classes.addFriend} />}
@@ -94,13 +97,13 @@ FriendOrUnfriendButton.propTypes = {
   /** current user's contacts that the otherUser will be added to or removed from. If not provided, will fetch contacts from the database, but this will result in longer loading */
   contacts: array,
   /** optional styling that displays button in a white circle */
-  inNavbar: bool,
+  inCircle: bool,
 }
 
 FriendOrUnfriendButton.defaultProps = {
   afterUpdateContacts: null,
   contacts: null,
-  inNavbar: false,
+  inCircle: false,
 }
 
 export default withAuthenticationRequired(FriendOrUnfriendButton, {

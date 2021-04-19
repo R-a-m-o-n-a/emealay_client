@@ -21,9 +21,9 @@ const App = () => {
   const { user } = useAuth0();
 
   useEffect(() => {
-    if(user) {
-      getSettingsOfUser(user.sub,(settings) => {
-        if(settings.prefersDarkMode) setPrefersDarkMode(settings.prefersDarkMode);
+    if (user) {
+      getSettingsOfUser(user.sub, (settings) => {
+        if (settings.prefersDarkMode) setPrefersDarkMode(settings.prefersDarkMode);
       })
     }
   }, [user]);
@@ -42,7 +42,7 @@ const App = () => {
         error: {
           main: prefersDarkMode ? '#f56b6f' : '#ac0013',
         },
-        background:{
+        background: {
           default: prefersDarkMode ? '#202020' : '#ffffff',
           paper: prefersDarkMode ? '#252525' : '#fafafa',
           // paper: prefersDarkMode ? '#202020' : '#ffffff',
@@ -53,6 +53,10 @@ const App = () => {
           fontSize: '1.2rem',
         }
       },*/
+      myColors: {
+        white: '#ffffff',
+        black: '#000000',
+      },
     }), [prefersDarkMode]
   );
 

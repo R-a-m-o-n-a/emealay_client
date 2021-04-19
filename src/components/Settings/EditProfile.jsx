@@ -99,6 +99,7 @@ const EditProfile = (props) => {
 
   const updateProfileImage = (image) => {
     const imageSrc = serverURL + image.path;
+    console.log('set uploaded source', imageSrc);
     setProfileImage(imageSrc);
     updateProfileImageInMetadata(imageSrc);
   }

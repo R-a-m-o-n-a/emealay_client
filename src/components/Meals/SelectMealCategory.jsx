@@ -48,7 +48,7 @@ const SelectMealCategory = (props) => {
   const categoryIcons = useCategoryIcons();
   const { currentCategory: categoryName, updateMeal } = props;
 
-  const [currentCategory, setCurrentCategory] = useState(categoryName ? {name: categoryName, icon: null} : undefined);
+  const [currentCategory, setCurrentCategory] = useState(categoryName ? { name: categoryName, icon: null } : undefined);
   const [allCategories, setAllCategories] = useState([]);
   const [newCategory, setNewCategory] = useState(null);
   const [isIconSelectOpen, setIsIconSelectOpen] = useState(false);
@@ -63,8 +63,11 @@ const SelectMealCategory = (props) => {
   }, [user]);
 
   useEffect(() => {
-    if(categoryName)
-    setCurrentCategory({name: categoryName, icon: categoryIcons[categoryName]})
+    if (categoryName) {
+      setCurrentCategory({ name: categoryName, icon: categoryIcons[categoryName] });
+    } else {
+      setCurrentCategory(undefined);
+    }
   }, [categoryName, categoryIcons]);
 
   const SelectOption = props => {
@@ -91,7 +94,8 @@ const SelectMealCategory = (props) => {
   };
 
   const handleCategoryChange = (newCategory, actionMeta) => {
-    updateMeal('category', newCategory ? newCategory.name : null);
+    console.log(newCategory, actionMeta);
+    updateMeal('category', newCategory ? newCategory.name : newCategory);
     if (actionMeta.action === 'create-option') {
       setIsIconSelectOpen(true);
       setNewCategory(newCategory);

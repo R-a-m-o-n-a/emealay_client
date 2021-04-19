@@ -5,7 +5,7 @@ import { makeStyles } from "@material-ui/styles";
 import { useTranslation } from "react-i18next";
 import CircleImage from "../Images/CircleImage";
 import { muiTableBorder } from "../util";
-import { Box, Dialog, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@material-ui/core";
+import { Box, Dialog, Link, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   imageWrapper: {
@@ -49,7 +49,7 @@ const Profile = (props) => {
       </Box>
 
       <Dialog open={isImageZoomed} onClose={() => setIsImageZoomed(false)}>
-        <img src={metadata.picture || userData.picture} alt={name} />
+          <img src={metadata.picture || userData.picture} alt={name} />
       </Dialog>
 
       <TableContainer className={classes.table}>

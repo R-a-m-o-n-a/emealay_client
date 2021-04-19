@@ -204,7 +204,7 @@ const Plans = (props) => {
         setEditDialogOpen(false);
       }} onDoneEditing={fetchAndUpdatePlans} />
 
-      <MealDetailView open={detailViewOpen} meal={mealBeingViewed} closeDialog={() => {
+      <MealDetailView open={detailViewOpen} meal={mealBeingViewed} allowEditing={own} closeDialog={() => {
         setMealBeingViewed(null);
         setDetailViewOpen(false);
       }} />
