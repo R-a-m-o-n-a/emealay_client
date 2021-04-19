@@ -6,7 +6,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { makeStyles } from '@material-ui/styles';
 import UserSearch from "./UserSearch";
 import { useTranslation } from "react-i18next";
-import { fetchContactsOfUser, getContactName, getContactPicture } from "./social.util";
+import { fetchContactsOfUser, getContactName, getContactPicture, updateContactsFromAuth0 } from "./social.util";
 import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
 import ContactsContent from "./ContactsContent";
 import { withLoginRequired } from "../util";
@@ -34,18 +34,20 @@ const Social = () => {
   const [contacts, setContacts] = useState([]);
   const [noContactsFound, setNoContactsFound] = useState(false);
 
-  const fetchContacts = () => {
+  const fetchContacts = (updateContactsData = false) => {
     if (user) {
       const userId = user.sub;
       fetchContactsOfUser(userId, (contactsFound) => {
         setContacts(contactsFound);
-        if (contactsFound.length === 0) setNoContactsFound(true);
+        if (contactsFound.length === 0) {
+          setNoContactsFound(true);
+        } else if (updateContactsData) updateContactsFromAuth0(userId, contactsFound.map(c => c.user_id), setContacts);
       });
     }
   }
 
   useEffect(() => {
-    fetchContacts();
+    fetchContacts(true);
     // eslint-disable-next-line
   }, [])
 

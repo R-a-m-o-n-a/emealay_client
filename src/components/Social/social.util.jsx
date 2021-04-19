@@ -1,6 +1,6 @@
 /** File includes all helper methods for social */
 import axios from "axios";
-import { createNewSettingsForUser } from "../Settings/settings.util";
+import { createNewSettingsForUser, updateUserSettingsForCategory } from "../Settings/settings.util";
 
 const serverURL = process.env.REACT_APP_SERVER_URL;
 
@@ -20,6 +20,41 @@ export const fetchContactsOfUser = (userId, updateContacts) => {
            updateContacts(sortedContacts);
          }
        }).catch(err => {console.log(err)});
+}
+
+/**
+ * Updates all user contacts to represent the current data of the Auth0 database in case someone has changed their nickname or picture
+ * @param {String} userId
+ * @param {[String]} contactIDs
+ * @param {function} updateContacts
+ */
+export const updateContactsFromAuth0 = (userId, contactIDs, updateContacts) => {
+  if (userId && contactIDs && contactIDs.length > 0) {
+    axios.get(serverURL + '/users/all')
+         .then(res => {
+           const usersFound = res.data;
+           console.log('usersFound', usersFound);
+           const contactsOfUser = usersFound.filter(u => contactIDs.includes(u.user_id));
+           console.log('usersFiltered', contactsOfUser);
+           updateContacts(contactsOfUser);
+           updateUserContacts(userId, contactsOfUser, updateContacts);
+         }).catch(err => {console.log(err)});
+  }
+}
+
+/**
+ * Update user contacts in settings collection
+ * @param {String} userId userId of user whose contacts are to be updated
+ * @param {*} newContacts contacts to put into the database
+ * @param {function} updateContacts callback that gets new updated contacts as parameter
+ */
+export const updateUserContacts = (userId, newContacts, updateContacts) => {
+  if (userId) {
+    updateUserSettingsForCategory(userId, 'contacts', newContacts, (settings) => {
+      const sortedContacts = settings.contacts.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1)
+      updateContacts(sortedContacts);
+    });
+  }
 }
 
 export const getContactName = (contact) => (contact.user_metadata && contact.user_metadata.nickname) ? contact.user_metadata.nickname : contact.name;

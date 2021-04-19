@@ -5,8 +5,7 @@ import { IconButton } from "@material-ui/core";
 import { PersonAdd, PersonAddDisabled } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/styles";
 import { array, bool, func, object } from "prop-types";
-import { fetchContactsOfUser } from "./social.util";
-import { updateUserSettingsForCategory } from "../Settings/settings.util";
+import { fetchContactsOfUser, updateUserContacts } from "./social.util";
 
 const useStyles = makeStyles(theme => ({
   iconButtonInCircle: {
@@ -39,10 +38,9 @@ const FriendOrUnfriendButton = (props) => {
 
   const updateContacts = (newContacts) => {
     if (user) {
-      updateUserSettingsForCategory(user.sub, 'contacts', newContacts, (settings) => {
-        const sortedContacts = settings.contacts.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1)
-        if (afterUpdateContacts) afterUpdateContacts(sortedContacts);
-        setContacts(sortedContacts);
+      updateUserContacts(user.sub, newContacts, (updatedContacts) => {
+        if (afterUpdateContacts) afterUpdateContacts(updatedContacts);
+        setContacts(updatedContacts);
       });
     }
   }

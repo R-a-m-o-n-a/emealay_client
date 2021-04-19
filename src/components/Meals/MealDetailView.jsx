@@ -11,6 +11,7 @@ import { useTranslation } from "react-i18next";
 import EditButton from "../Buttons/EditButton";
 import FullScreenDialog from "../util/FullScreenDialog";
 import { fetchAndUpdateMeal } from "./meals.util";
+import { useAuth0 } from "@auth0/auth0-react";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -31,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
 const MealDetailView = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const { user } = useAuth0();
 
   const { meal: initialMeal, open, closeDialog, onDoneEditing, allowEditing, extern } = props;
 
@@ -60,9 +62,16 @@ const MealDetailView = (props) => {
   }
 
   const shareMeal = () => {
-    console.log('share meal', navigator.share);
+    const linkToMeal = window.location.origin + '/meals/view/' + meal._id;
+    console.log('share meal', linkToMeal);
     if (navigator.share) {
-      alert('Web Share API vorhanden!!!');
+      navigator.share({
+        title: meal.title + ' von ' + user.name,
+        url: linkToMeal,
+      }).then(() => {
+        alert('Web Share API vorhanden!!! Danke, dass Sie uns heute besucht haben ;)');
+        console.log('Thanks for sharing!');
+      }).catch(console.error);
     } else {
       alert('Web Share API nicht vorhanden.');
     }
