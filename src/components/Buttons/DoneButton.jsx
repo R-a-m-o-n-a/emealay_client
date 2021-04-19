@@ -2,14 +2,13 @@ import React from 'react';
 import { func } from "prop-types";
 import { Check } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
+import { IconButton } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   doneButton: {
-    border: 'none',
-    background: 'transparent',
-    cursor: 'pointer',
     fontSize: '2rem',
     color: theme.palette.background.default,
+    padding: 0,
   }
 }));
 
@@ -19,7 +18,7 @@ const DoneButton = (props) => {
   const { onClick } = props;
 
   return (
-      <Check fontSize="large" className={classes.doneButton} onClick={onClick} />
+    <IconButton onClick={onClick}><Check className={classes.doneButton} /></IconButton>
   );
 }
 

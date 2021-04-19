@@ -73,5 +73,9 @@
   "Filter by Tags": "Filtrar por tags",
   "No meals found for filter selection": "No se ha encontrado ninguna comida para la selección de filtros",
   "expand all": "expandir todo",
-  "collapse all": "colapsar todo"
+  "collapse all": "colapsar todo",
+  "Search for users": "Buscar usuarios",
+  "Copy": "Copiar",
+  "Copied": "Copiado",
+  "Check out the following meal: {{mealTitle}}": "Consulte la comida {{mealTitle}}:"
 }

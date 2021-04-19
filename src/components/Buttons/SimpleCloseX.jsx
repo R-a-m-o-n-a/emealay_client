@@ -2,25 +2,12 @@ import React from 'react';
 import { func } from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { Close } from "@material-ui/icons";
+import { IconButton } from "@material-ui/core";
 
-const useStyles = makeStyles((theme) => ({
-  boxCloseX: {
-    position: 'absolute',
-    right: '0',
-    top: '0',
-    transform: 'translate(-25%, 25%)',
-    padding: 0,
-    background: 'transparent',
-    // opacity: '80%',
-
-    '&:hover': {
-      cursor: 'pointer',
-    },
-  },
+const useStyles = makeStyles(theme => ({
   navButton: {
-    border: 'none',
-    background: 'transparent',
-    cursor: 'pointer',
+    color: theme.palette.background.default,
+    padding: 0,
   }
 }));
 
@@ -31,7 +18,7 @@ function SimpleCloseX(props) {
   const { onClick } = props;
 
   return (
-    <Close fontSize="large" className={classes.navButton} onClick={onClick} />
+    <IconButton className={classes.navButton} onClick={onClick}><Close fontSize="large" /></IconButton>
   );
 }
 

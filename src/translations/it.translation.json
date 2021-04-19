@@ -73,5 +73,9 @@
   "Filter by Tags": "Filtrare per tag",
   "No meals found for filter selection": "Nessun pasto trovato per la selezione dei filtri",
   "expand all": "espandi tutti",
-  "collapse all": "crolla tutti"
+  "collapse all": "crolla tutti",
+  "Search for users": "Cerca gli utenti",
+  "Copy": "Copia",
+  "Copied": "Copiato",
+  "Check out the following meal: {{mealTitle}}": "Guarda il pasto {{mealTitle}}:"
 }

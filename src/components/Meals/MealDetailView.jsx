@@ -74,7 +74,7 @@ const MealDetailView = (props) => {
                 <Typography variant="h4">{meal.title}</Typography>
               </Grid>
               <Grid item xs className={classes.shareButton}>
-                <ShareButton link={window.location.origin + '/meals/view/' + meal._id} title={meal.title} />
+                <ShareButton link={window.location.origin + '/meals/view/' + meal._id} title={meal.title} text={t('Check out the following meal: {{mealTitle}}', meal.title)} />
               </Grid>
             </Grid>
             {meal.recipeLink ? <Typography><Link href={meal.recipeLink} target="_blank">{meal.recipeLink}</Link></Typography> : ''}

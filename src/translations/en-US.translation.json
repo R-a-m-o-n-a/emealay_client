@@ -73,5 +73,9 @@
   "Filter by Tags": "Filter by Tags",
   "No meals found for filter selection": "No meals found for filter selection",
   "expand all": "expand all",
-  "collapse all": "collapse all"
+  "collapse all": "collapse all",
+  "Search for users": "Search for users",
+  "Copy": "Copy",
+  "Copied": "Copied",
+  "Check out the following meal: {{mealTitle}}": "Check out the following meal: {{mealTitle}}"
 }

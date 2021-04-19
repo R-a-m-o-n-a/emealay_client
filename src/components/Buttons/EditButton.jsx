@@ -1,5 +1,6 @@
 import React from 'react';
 import { func } from "prop-types";
+import { IconButton } from '@material-ui/core';
 import { Edit } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 
@@ -10,6 +11,7 @@ const useStyles = makeStyles(theme => ({
     cursor: 'pointer',
     fontSize: '1.5rem',
     color: theme.palette.background.default,
+    padding: 0,
   }
 }));
 
@@ -19,7 +21,7 @@ const EditButton = (props) => {
   const { onClick } = props;
 
   return (
-      <Edit fontSize="large" className={classes.editButton} onClick={onClick} />
+    <IconButton className={classes.editButton} onClick={onClick}><Edit /></IconButton>
   );
 }
 

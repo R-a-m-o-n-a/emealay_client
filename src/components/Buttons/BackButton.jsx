@@ -8,8 +8,8 @@ const useStyles = makeStyles(theme => ({
     border: 'none',
     background: 'transparent',
     cursor: 'pointer',
-    fontSize: '29px',
-    margin: '3px calc(0.5rem + 1px)', // align placement with Logo
+    fontSize: '28px',
+    margin: '2px 0.5rem', // align placement with Logo
     color: theme.palette.background.default,
   }
 }));

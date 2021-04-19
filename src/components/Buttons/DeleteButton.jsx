@@ -2,6 +2,7 @@ import React from 'react';
 import { func } from "prop-types";
 import { Delete } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
+import { IconButton } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   deleteButton: {
@@ -9,6 +10,7 @@ const useStyles = makeStyles(theme => ({
     background: 'transparent',
     cursor: 'pointer',
     color: theme.palette.error.main,
+    padding: 0,
   }
 }));
 
@@ -18,7 +20,7 @@ const DeleteButton = (props) => {
   const { onClick } = props;
 
   return (
-      <Delete className={classes.deleteButton} onClick={onClick} />
+    <IconButton className={classes.deleteButton} onClick={onClick}><Delete /></IconButton>
   );
 }
 

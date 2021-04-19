@@ -2,18 +2,20 @@ import React, { useState } from 'react';
 import { IconButton, Button, DialogTitle, Dialog, TextField, InputAdornment, Grid } from '@material-ui/core';
 import { Share, Link, FileCopy, AssignmentTurnedInRounded } from '@material-ui/icons';
 import { string } from "prop-types";
+import { useTranslation } from "react-i18next";
 
 /** Button that opens native share API on the devices or provides the link if API is not supported */
 const ShareButton = (props) => {
-  const { title, link } = props;
+  const { title, link, text } = props;
+  const { t } = useTranslation();
   const [isCopyLinkOpen, setIsCopyLinkOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
   const share = () => {
-    console.log('share ', link);
     if (navigator.share) {
       navigator.share({
         title,
+        text,
         url: link,
       }).then(() => {
         console.log('Thanks for sharing!');
@@ -44,11 +46,11 @@ const ShareButton = (props) => {
         <Share />
         {/*<FontAwesomeIcon icon={faShareSquare} />*/}
       </IconButton>
-      <Dialog open={isCopyLinkOpen} onClose={() => {setIsCopyLinkOpen(false)}} PaperProps={{style: {padding: '2em'}}}>
+      <Dialog open={isCopyLinkOpen} onClose={() => {setIsCopyLinkOpen(false); setIsCopied(false);}} PaperProps={{style: {padding: '2em'}}}>
         <DialogTitle style={{padding: '0 0 0.5em'}}>{title}</DialogTitle>
         <Grid container spacing={2} justify="space-between" alignItems="center" wrap="wrap">
           <Grid item xs style={{flexGrow: 5}}>
-          <TextField id="link-input" variant="standard" value={link} color="secondary" InputProps={{
+          <TextField id="link-input" variant="standard" value={link} color="secondary" style={{minWidth: '160px'}} InputProps={{
             startAdornment: (
               <InputAdornment position="start">
                 <Link />
@@ -57,8 +59,8 @@ const ShareButton = (props) => {
           }} />
           </Grid>
           <Grid item xs>
-          <Button startIcon={isCopied ? <AssignmentTurnedInRounded /> : <FileCopy />} variant="contained" color={"secondary"} onClick={copyToClipboard}>
-            {isCopied ? 'Copied' : 'Copy'}
+          <Button style={{textAlign: 'right'}} startIcon={isCopied ? <AssignmentTurnedInRounded /> : <FileCopy />} variant="contained" color={"secondary"} onClick={copyToClipboard}>
+            {isCopied ? t('Copied') : t('Copy')}
           </Button>
         </Grid>
         </Grid>
@@ -70,6 +72,7 @@ const ShareButton = (props) => {
 ShareButton.propTypes = {
   link: string.isRequired,
   title: string.isRequired,
+  text: string.isRequired,
 }
 
 export default ShareButton;

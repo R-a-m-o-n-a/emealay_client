@@ -75,5 +75,8 @@
   "No meals found for filter selection": "Für die derzeitige Filterkombination wurden keine Gerichte gefunden",
   "expand all": "Alle ausklappen",
   "collapse all": "Alle einklappen",
-  "Search for users": "Nutzer suchen"
+  "Search for users": "Nutzer suchen",
+  "Copy": "Kopieren",
+  "Copied": "Kopiert",
+  "Check out the following meal: {{mealTitle}}": "Schau dir das Gericht \"{{mealTitle}}\" unter folgendem Link an:"
 }
