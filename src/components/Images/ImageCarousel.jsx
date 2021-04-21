@@ -40,8 +40,8 @@ const ImageCarousel = (props) => {
 
   const slides = images.map((image, index) => (
     <Box key={index}>
-      <Link href={serverURL + image.path}>
-        <img src={serverURL + image.path} alt={image.name} className={classes.carouselItemImage} />
+      <Link href={image.url}>
+        <img src={image.url} alt={image.name} className={classes.carouselItemImage} />
       </Link>
     </Box>
   ));

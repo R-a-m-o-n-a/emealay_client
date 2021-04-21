@@ -59,6 +59,7 @@
   "You can, however, set a custom profile picture and nickname.": "Vous pouvez toutefois définir une photo de profil et un surnom personnalisés.",
   "Use dark mode?": "mode sombre",
   "Missing Ingredients": "Ingrédients manquants",
+  "Missing Ingredients for {{plan}}": "Ingrédients manquants pour {{plan}}",
   "List is currently empty": "La liste est actuellement vide",
   "Without Date": "Sans date",
   "Choose Icon for {{categoryName}}": "Sélectionnez l'icône pour {{categoryName}}",
@@ -77,5 +78,6 @@
   "Search for users": "Chercher des utilisateurs",
   "Copy": "Copier",
   "Copied": "Copié",
-  "Check out the following meal: {{mealTitle}}": "Consultez le repas {{mealTitle}}:"
+  "Check out the following meal: {{mealTitle}}": "Consultez le repas {{mealTitle}}:",
+  "Import into my meals": "Importer dans mes repas"
 }

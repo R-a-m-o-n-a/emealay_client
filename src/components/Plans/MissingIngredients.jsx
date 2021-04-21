@@ -23,7 +23,7 @@ const MissingIngredients = (props) => {
   return (
     <Dialog open={open} onClose={closeDialog} >
       <FormControl style={{minWidth: '200px', padding: '1.5rem 2rem'}}>
-        <FormLabel style={{marginBottom: '1rem'}}>{t('Missing Ingredients for {{plan}}', planItem.title)}</FormLabel>
+        <FormLabel style={{marginBottom: '1rem'}}>{t('Missing Ingredients for {{plan}}', {plan: planItem.title})}</FormLabel>
         <FormGroup>
           {planItem.missingIngredients.map((ingredient) => (
             <FormControlLabel key={ingredient.name} control={<Checkbox checked={ingredient.checked} onChange={(event) => {checkIngredient(ingredient, event.target.checked);}} />} label={ingredient.name} />))}

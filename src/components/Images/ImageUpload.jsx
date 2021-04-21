@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import PhotoDropzone from './PhotoDropzone';
 import ImageGrid from './ImageGrid.jsx';
 import axios from "axios";
-import { arrayOf, bool, func, oneOfType, shape, string } from "prop-types";
+import { array, arrayOf, bool, func, oneOfType, shape, string } from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { Box, GridList, GridListTile, Snackbar } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faCircle } from "@fortawesome/free-solid-svg-icons";
 import CircleImage from "./CircleImage";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const serverURL = process.env.REACT_APP_SERVER_URL;
 
@@ -47,31 +48,6 @@ const useStyles = makeStyles((theme) => ({
     },
     borderRadius: '100%',
   },
-  photoRow: {
-    marginTop: '-0.5rem',
-    paddingTop: '0.5rem',
-    marginBottom: '0.25rem',
-    width: '100%',
-    borderRadius: '0.25rem',
-    overflowX: 'auto',
-    overflowY: 'hidden',
-    display: 'flex',
-    flexWrap: 'nowrap',
-    flex: 1,
-    color: theme.palette.secondary.main,
-  },
-  photoBoxPlaceholder: {
-    display: 'inlineBlock',
-    height: '7rem',
-    maxHeight: '7rem',
-    width: '4.5rem',
-    flex: '0 0 auto',
-    border: '1px solid ' + theme.palette.secondary.main,
-    borderRadius: '0.25rem',
-    margin: '0.5rem',
-    position: 'relative',
-    wordWrap: 'anywhere',
-  },
   gridList: {
     width: '100%',
     marginTop: '0.5rem !important',
@@ -81,6 +57,16 @@ const useStyles = makeStyles((theme) => ({
     width: '33.3333%',
     padding: '2px',
     height: process.env.REACT_APP_GRID_LIST_ROW_HEIGHT + 4 + 'px',
+  },
+  placeholderTile: {
+    height: 'calc(100% - 4px)',
+    width: 'calc(100% - 4px)',
+    border: '2px double ' + theme.myColors.white,
+    color: theme.myColors.white,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    opacity: 0.7,
   },
   cameraOverlay: {
     position: "absolute",
@@ -112,7 +98,8 @@ const useStyles = makeStyles((theme) => ({
 const ImageUpload = (props) => {
   const classes = useStyles();
 
-  const { uploadedImages, category, categoryId, onChangeUploadedImages, multiple, imageName, useSingleUploadOverlay } = props;
+  const { uploadedImages, category, categoryId, onChangeUploadedImages, multiple, imageName, useSingleUploadOverlay, tags } = props;
+  const altText = imageName || category;
 
   const [photosToUpload, setPhotosToUpload] = useState([]);
   const [rejectMessageVisible, setRejectMessageVisible] = useState(false);
@@ -140,7 +127,7 @@ const ImageUpload = (props) => {
   const uploadImages = (imagesToUpload) => {
     console.log('trying to upload images', imagesToUpload, ' to ', serverURL);
     setPhotosToUpload(imagesToUpload);
-    Array.from(imagesToUpload).forEach((image) => {
+    Array.from(imagesToUpload).forEach((image, index) => {
       const data = new FormData();
       let folderParam = '';
       if (category) {
@@ -148,7 +135,12 @@ const ImageUpload = (props) => {
         data.append('categoryId', categoryId);
         folderParam = category;
       }
+      if (tags) data.append('tags', tags);
+      const name = index > 0 ? altText + index : altText;
+      data.append('name', name);
       data.append('image', image);
+
+      onChangeUploadedImages(uploadedImages.filter(i => i !== image))
 
       axios.post(serverURL + "/images/addImage/" + folderParam, data, {})
            .then(res => {
@@ -172,10 +164,7 @@ const ImageUpload = (props) => {
   const deleteImage = (image) => {
     console.log('trying to Reset Image', image);
 
-    const data = new FormData();
-    data.append('path', image.path);
-    const folderParam = category || '';
-    axios.post(serverURL + "/images/deleteImage/" + folderParam + '/' + image._id, data)
+    axios.post(serverURL + "/images/deleteImage", image)
          .then(res => {
            console.log('result of deleting planItem image', res);
            const newUploadedImages = uploadedImages.filter(i => i !== image);
@@ -204,9 +193,8 @@ const ImageUpload = (props) => {
     let placeholderBoxes = [];
     if (photosToUpload && photosToUpload.length > 0) {
       placeholderBoxes = photosToUpload.map((photo, index) => {
-        return <GridListTile key={'placeholder' + index} cols={1} className={classes.dropzoneTile}>
-          {/*<Box className={classes.photoBoxPlaceholder} key={i}>{photo.name}</Box>;*/}
-          {photo.name}
+        return <GridListTile key={'placeholder' + index} cols={index === 0 ? 2 : 1} className={classes.dropzoneTile}>
+          <Box className={classes.placeholderTile}><CircularProgress color="inherit" /></Box>
         </GridListTile>
       });
     }
@@ -219,7 +207,6 @@ const ImageUpload = (props) => {
       setRejectMessageVisible(false);
       setRejectMessages([])
     }} message={m} className={classes.snackbarOffset} ContentProps={{ className: classes.rejectSnackbar }} />);
-
   return (
     <>
       {multiple ?
@@ -231,7 +218,7 @@ const ImageUpload = (props) => {
                              handleAcceptedFiles={handleAcceptedFiles}
                              handleRejectedFiles={handleRejectedFiles}
                              dropZoneStyles={classes.photoDropzoneMultiple} />
-            </GridListTile>,
+            </GridListTile>
             {getPhotoPlaceholders()}
           </ImageGrid>
         </GridList>
@@ -241,7 +228,7 @@ const ImageUpload = (props) => {
                          handleRejectedFiles={handleRejectedFiles}
                          dropZoneStyles={uploadedImages.length === 0 ? classes.photoDropzoneSingleEmpty : classes.photoDropzoneSingle}
                          usePlusIcon={uploadedImages.length === 0}>
-            <CircleImage src={uploadedImages[0]} altText={imageName} />
+            <CircleImage src={uploadedImages[0]} altText={altText} loading={photosToUpload.length>0} />
             {useSingleUploadOverlay ? <Box className={classes.cameraOverlay}>
               <FontAwesomeIcon className={classes.overlayIcon} icon={faCamera} mask={faCircle} transform="shrink-8" /></Box> : null}
           </PhotoDropzone>
@@ -261,7 +248,7 @@ ImageUpload.propTypes = {
    */
   uploadedImages: arrayOf(oneOfType([shape({
     name: string,
-    path: string,
+    url: string,
   }), string])),
   /** category/folder name of the image, e.g., mealImages or userProfile (make sure that folder exists in uploads folder!) */
   category: string.isRequired,
@@ -269,16 +256,19 @@ ImageUpload.propTypes = {
   categoryId: string.isRequired,
   /** function that updates the image(s) */
   onChangeUploadedImages: func.isRequired,
-  /** if multiple === false this name is the alt tag of the single uploaded image */
+  /** if multiple === false this name is the alt tag of the single uploaded image, if multiple === true, an index number will be appended.
+   * if not supplied, the category will be used */
   imageName: string,
+  /** array of tags that will be given to the image (optional) */
+  tags: array,
   /** overlay single image upload area with a transparent camera icon */
   useSingleUploadOverlay: bool,
 }
 
 ImageUpload.defaultProps = {
   multiple: false,
-  string: '',
   uploadedImages: [],
+  tags: [],
   useSingleUploadOverlay: false,
 }
 

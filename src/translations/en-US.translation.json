@@ -59,6 +59,7 @@
   "You can, however, set a custom profile picture and nickname.": "You can, however, set a custom profile picture and nickname.",
   "Use dark mode?": "Use dark mode?",
   "Missing Ingredients": "Missing Ingredients",
+  "Missing Ingredients for {{plan}}": "Missing Ingredients for {{plan}}",
   "List is currently empty": "List is currently empty",
   "Without Date": "Without Date",
   "Choose Icon for {{categoryName}}": "Choose Icon for {{categoryName}}",
@@ -77,5 +78,6 @@
   "Search for users": "Search for users",
   "Copy": "Copy",
   "Copied": "Copied",
-  "Check out the following meal: {{mealTitle}}": "Check out the following meal: {{mealTitle}}"
+  "Check out the following meal: {{mealTitle}}": "Check out the following meal: {{mealTitle}}",
+  "Import into my meals": "Import into my meals"
 }

@@ -10,13 +10,14 @@ import { getSettingsOfUser } from "../Settings/settings.util";
 import { faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { ChooseIconDialog, updateMealCategories } from "../Settings/EditMealCategories";
-import { reactSelectTheme, useCategoryIcons } from "./meals.util";
+import { reactSelectTheme } from "./meals.util";
+import useCategoryIcons from "./useCategoryIcons";
 
 const useStyles = makeStyles((theme) => ({
   textField: {
     width: '100%',
-    marginTop: '0.2rem',
-    marginBottom: '0.7rem',
+    marginTop: '0.5rem',
+    marginBottom: '1rem',
   },
   errorTextField: {
     '& .MuiOutlinedInput-notchedOutline': {
@@ -110,8 +111,6 @@ const SelectMealCategory = (props) => {
     }
   }
 
-  console.log(categoryIcons);
-  console.log(categoryName, currentCategory, allCategories);
   return (
     <>
       <CreatableSelect className={classes.textField}

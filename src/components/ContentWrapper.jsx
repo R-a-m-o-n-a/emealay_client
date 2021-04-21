@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import NavTabs from "./NavTabs";
 import Social from "./Social/Social";
 import Settings from "./Settings/Settings";
@@ -30,9 +30,6 @@ const ContentWrapper = (props) => {
   const { activeTab } = props;
   let history = useHistory();
 
-
-  let { path, url } = useRouteMatch();
-  console.log(path, url);
   const goToPlans = () => {history.push('/plans');};
   const goToMeals = () => {history.push('/meals');};
 

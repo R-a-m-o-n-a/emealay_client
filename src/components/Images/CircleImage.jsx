@@ -1,7 +1,7 @@
 import React from 'react';
-import { string } from "prop-types";
+import { bool, string } from "prop-types";
 import { makeStyles } from '@material-ui/styles';
-import Box from "@material-ui/core/Box";
+import { Box, CircularProgress } from "@material-ui/core";
 
 const useStyles = makeStyles({
   imageCropper: {
@@ -10,26 +10,26 @@ const useStyles = makeStyles({
     position: "relative",
     overflow: "hidden",
     borderRadius: '100%',
+    display: 'flex',
+    alignItems: "center",
+    justifyContent: "center",
   },
   image: {
     display: "block",
-    position: "absolute",
     height: '100%',
     width: "auto",
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
   },
 });
 
 /** Image cropped to circular shape */
 const CircleImage = (props) => {
   const classes = useStyles();
-  const { src, altText } = props;
+  const { src, altText, loading } = props;
 
   return (
     <Box className={classes.imageCropper}>
-      <img src={src} alt={altText} className={classes.image} />
+      {loading ? <CircularProgress color="secondary" style={{ width: '110px', height: '110px', }} /> :
+        <img src={src} alt={altText} className={classes.image} />}
     </Box>
   );
 }
@@ -39,6 +39,12 @@ CircleImage.propTypes = {
   src: string.isRequired,
   /** alternative text if image cannot be displayed */
   altText: string.isRequired,
+  /** shows progress instead of image */
+  loading: bool,
+};
+
+CircleImage.propTypes = {
+  loading: false,
 };
 
 export default CircleImage;

@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       color: theme.palette.primary.main,
       cursor: 'pointer',
-      boxShadow: '0 0 0.5rem ' + theme.palette.background.default,
+      boxShadow: '0 0 0.5rem ' + theme.myColors.white,
     },
   }),
   closeXIcon: {
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
   },
   x: {
-    color: theme.palette.background.default,
+    color: theme.myColors.white,
   }
 }));
 

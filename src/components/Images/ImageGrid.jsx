@@ -6,8 +6,6 @@ import { GridList, GridListTile } from "@material-ui/core";
 import InnerBoxCloseX from "../Buttons/InnerBoxCloseX";
 import InnerBoxSelection from "../Buttons/InnerBoxSelection";
 
-const serverURL = process.env.REACT_APP_SERVER_URL;
-
 const useStyles = makeStyles((theme) => ({
   noButton: {
     background: 'none',
@@ -70,12 +68,12 @@ const ImageGrid = (props) => {
   const getPhotos = () => {
     let photoBoxes = [];
     if (images && images.length > 0) {
-      photoBoxes = images.map((photo, index) => {
+      photoBoxes = images.map((image, index) => {
         return (
-          <GridListTile key={index} cols={photo.isMain ? 2 : 1} >
-            <img src={serverURL + photo.path} alt={photo.name} onClick={() => openImage(photo, index)}/>
-            {allowChoosingMain ? <InnerBoxSelection selected={photo.isMain} onClick={() => chooseAsMain(photo)} /> : null}
-            {allowDelete ? <InnerBoxCloseX onClick={() => deletePhoto(photo)} /> : null}
+          <GridListTile key={index} cols={image.isMain ? 2 : 1} >
+            <img src={image.url} alt={image.name} onClick={() => openImage(image, index)}/>
+            {allowChoosingMain ? <InnerBoxSelection selected={image.isMain} onClick={() => chooseAsMain(image)} /> : null}
+            {allowDelete ? <InnerBoxCloseX onClick={() => deletePhoto(image)} /> : null}
           </GridListTile>
         );
       });
@@ -85,7 +83,7 @@ const ImageGrid = (props) => {
 
   return (
     <>
-      <GridList cellHeight={process.env.REACT_APP_GRID_LIST_ROW_HEIGHT} className={classes.gridList} cols={3}>
+      <GridList cellHeight={Number.parseInt(process.env.REACT_APP_GRID_LIST_ROW_HEIGHT)} className={classes.gridList} cols={3}>
         {props.children}
         {getPhotos()}
       </GridList>
@@ -98,7 +96,7 @@ ImageGrid.propTypes = {
   /** all Images to display, including name (that will be the altText) and relative path to serverURL, as well as isMain boolean value (only necessary if allowChoosingMain === true) */
   images: arrayOf(shape({
     name: string,
-    path: string,
+    url: string,
     isMain: bool,
   })),
   /** should image deletion be allowed? (Otherwise delete button will not be shown) */

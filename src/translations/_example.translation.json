@@ -58,6 +58,7 @@
   "You can, however, set a custom profile picture and nickname.": "",
   "Use dark mode?": "",
   "Missing Ingredients": "",
+  "Missing Ingredients for {{plan}}": "",
   "List is currently empty": "",
   "Without Date": "",
   "Choose Icon for {{categoryName}}": "{{categoryName}}",
@@ -77,5 +78,6 @@
   "Copy": "",
   "Copied": "",
   "Check out the following meal: {{mealTitle}}": "",
+  "Import into my meals": "",
   "": ""
 }

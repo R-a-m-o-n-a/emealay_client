@@ -33,7 +33,7 @@ const MealAvatar = (props) => {
   let avatar;
   if (meal.images.length > 0) {
     const image = getMainImage(meal);
-    avatar = <Avatar alt={image.name} src={serverURL + image.path} />;
+    avatar = <Avatar alt={image.name} src={image.url} />;
   } else {
     avatar = (<Avatar className={classes.backgroundColor}><FontAwesomeIcon icon={faUtensils} /></Avatar>);
   }
@@ -43,6 +43,7 @@ const MealAvatar = (props) => {
 MealAvatar.propTypes = {
   meal: shape({
     _id: string,
+    userId: string,
     title: string,
     images: arrayOf(shape({
       name: string,

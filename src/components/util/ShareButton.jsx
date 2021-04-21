@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { IconButton, Button, DialogTitle, Dialog, TextField, InputAdornment, Grid } from '@material-ui/core';
-import { Share, Link, FileCopy, AssignmentTurnedInRounded } from '@material-ui/icons';
+import { Button, Dialog, DialogTitle, Grid, IconButton, InputAdornment, TextField } from '@material-ui/core';
+import { AssignmentTurnedInRounded, FileCopy, Link, Share } from '@material-ui/icons';
 import { string } from "prop-types";
 import { useTranslation } from "react-i18next";
 
@@ -58,8 +58,8 @@ const ShareButton = (props) => {
             ),
           }} />
           </Grid>
-          <Grid item xs>
-          <Button style={{textAlign: 'right'}} startIcon={isCopied ? <AssignmentTurnedInRounded /> : <FileCopy />} variant="contained" color={"secondary"} onClick={copyToClipboard}>
+          <Grid item xs style={{textAlign: 'right'}}>
+          <Button startIcon={isCopied ? <AssignmentTurnedInRounded /> : <FileCopy />} variant="contained" color={"secondary"} onClick={copyToClipboard}>
             {isCopied ? t('Copied') : t('Copy')}
           </Button>
         </Grid>

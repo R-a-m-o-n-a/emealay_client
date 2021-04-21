@@ -4,7 +4,8 @@ import { Box, Button, Collapse, Divider, List, ListItem, ListItemAvatar, ListIte
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import { useTranslation } from "react-i18next";
 import MealDetailView from "./MealDetailView";
-import { fetchAndUpdateMealsFromUser, useCategoryIcons } from "./meals.util";
+import { fetchAndUpdateMealsFromUser } from "./meals.util";
+import useCategoryIcons from "./useCategoryIcons";
 import { bool, string } from "prop-types";
 import { withLoginRequired } from "../util";
 import MealAvatar from "./MealAvatar";

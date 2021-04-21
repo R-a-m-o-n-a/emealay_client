@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Dialog, Grid } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import axios from 'axios';
 import { arrayOf, bool, func, shape, string } from "prop-types";
@@ -9,11 +9,11 @@ import EditMealCore from "./EditMealCore";
 import { deleteAllImagesFromMeal } from "./meals.util";
 import Navbar from "../Navbar";
 import BackButton from "../Buttons/BackButton";
-import { SlidingTransitionLeft } from "../util/SlidingTransition";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import Loading from "../Loading";
 import useSnackbars from "../util/useSnackbars";
 import DoneButton from "../Buttons/DoneButton";
+import FullScreenDialog from "../util/FullScreenDialog";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -120,7 +120,7 @@ const EditMeal = (props) => {
     <>
 
       {meal ?
-        <Dialog open={open} fullScreen onClose={closeDialog} TransitionComponent={SlidingTransitionLeft}>
+        <FullScreenDialog open={open} onClose={closeDialog}>
           <Navbar pageTitle={t('Edit Meal')}
                   leftSideComponent={<BackButton onClick={closeDialog} />}
                   rightSideComponent={meal.title ? <DoneButton onClick={editAndClose} /> : null}
@@ -139,7 +139,7 @@ const EditMeal = (props) => {
               </Grid>
             </Grid>
           </form>
-        </Dialog>
+        </FullScreenDialog>
         : ''}
 
       {Snackbars}

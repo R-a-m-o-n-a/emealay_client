@@ -11,6 +11,9 @@ import EditButton from "../Buttons/EditButton";
 import FullScreenDialog from "../util/FullScreenDialog";
 import { fetchAndUpdateMeal } from "./meals.util";
 import ShareButton from "../util/ShareButton";
+import { useAuth0 } from "@auth0/auth0-react";
+import { getUserById } from "../Settings/settings.util";
+import MealImportButton from "./MealImportButton";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -31,12 +34,29 @@ const useStyles = makeStyles((theme) => ({
 const MealDetailView = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const { user } = useAuth0();
 
   const { meal: initialMeal, open, closeDialog, onDoneEditing, allowEditing, extern } = props;
 
+  const [own, setOwn] = useState(false);
   const [meal, setMeal] = useState(initialMeal);
+  const [/*mealUser*/, setMealUser] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [mealBeingEdited, setMealBeingEdited] = useState(null);
+
+  useEffect(() => {
+    if (meal) {
+      getUserById(meal.userId, setMealUser);
+    }
+  }, [meal]);
+
+  useEffect(() => {
+    if (user && meal) {
+      setOwn(user.sub === meal.userId);
+    } else {
+      setOwn(false);
+    }
+  }, [user, meal]);
 
   useEffect(() => {
     setMeal(initialMeal);
@@ -59,15 +79,13 @@ const MealDetailView = (props) => {
     fetchMeal();
   }
 
-  const rightSideComponent = <>
-    {allowEditing && <EditButton onClick={() => {openEditItemDialog(meal)}} />}
-  </>;
-
   return (
     <>
       {meal ?
         <FullScreenDialog open={open} onClose={closeDialog}>
-          <Navbar pageTitle={t('Meal')} rightSideComponent={rightSideComponent} leftSideComponent={extern ? null : <BackButton onClick={closeDialog} />} />
+          <Navbar pageTitle={t('Meal')}
+                  rightSideComponent={own ? allowEditing && <EditButton onClick={() => {openEditItemDialog(meal)}} /> : <MealImportButton meal={meal} />}
+                  leftSideComponent={extern ? null : <BackButton onClick={closeDialog} />} />
           <Box className={classes.content}>
             <Grid container spacing={0} justify="space-between" alignItems="flex-start" wrap="nowrap">
               <Grid item xs className={classes.mealTitle}>

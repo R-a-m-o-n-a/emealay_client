@@ -65,7 +65,7 @@ export const ChooseIconDialog = (props) => {
   if (isOpen && category) {
     return (
       <Dialog open={category && isOpen} onClose={onClose} PaperProps={{ className: classes.iconSelectDialog }}>
-        <DialogTitle style={{paddingBottom: 0}}>{t('Choose Icon for {{categoryName}}', category.name)}{t('Missing Ingredients for {{plan}}', category.name)}</DialogTitle>
+        <DialogTitle style={{paddingBottom: 0}}>{t('Choose Icon for {{categoryName}}', {categoryName: category.name})}</DialogTitle>
         <Box className={classes.iconGrid}>
           {categoryIcons.map((icon) => (
               <Button key={icon.name} className={`${classes.iconListButton} ${category && category.icon && category.icon.iconName === icon.iconName && classes.iconListButtonSelected}`}>

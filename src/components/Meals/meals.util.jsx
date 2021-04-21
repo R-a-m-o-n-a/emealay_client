@@ -1,8 +1,5 @@
 /** File includes all helper methods for meals */
 import axios from "axios";
-import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect, useState } from "react";
-import { getSettingsOfUser } from "../Settings/settings.util";
 import { darken, lighten } from "@material-ui/core";
 
 const serverURL = process.env.REACT_APP_SERVER_URL;
@@ -12,11 +9,11 @@ const serverURL = process.env.REACT_APP_SERVER_URL;
  * @param {string} mealId
  * @param {function} callback optional function tht will be executed after deletion
  */
-export const deleteAllImagesFromMeal = (mealId, callback) => {
+export const deleteAllImagesFromMeal = (mealId, callback = undefined) => {
   axios.post(serverURL + '/images/deleteAllImagesFromCategory/mealImages/' + mealId)
        .then(res => {
-         console.log('deleted all images from planItem ' + mealId + ' after timeout', res);
-         callback();
+         console.log('deleted all images from meal ' + mealId, res);
+         if(callback) callback();
        }).catch(err => {console.log(err)});
 }
 
@@ -50,31 +47,21 @@ export const fetchAndUpdateMeal = (mealId, updateMeal) => {
        });
 }
 
-export const useCategoryIcons = () => {
-  const { user } = useAuth0();
+export const addMeal = (meal, callback) => {
+  if (meal.title) {
+    axios.post(serverURL + '/meals/add', meal, {})
+         .then(res => {
+           console.log('added meal', res);
+           if (callback) callback();
+         }).catch(err => {console.log(err)});
+  }
+}
 
-  const [allCategories, setAllCategories] = useState([]);
-  const [allCategoryIcons, setAllCategoryIcons] = useState({});
-
-  useEffect(() => {
-    if (user) {
-      const userId = user.sub;
-      getSettingsOfUser(userId, (settings) => {
-        setAllCategories(settings.mealCategories || []);
-      });
-    }
-  }, [user]);
-
-  useEffect(() => {
-    allCategories.forEach(c => {
-      setAllCategoryIcons(prevState => ({
-        ...prevState,
-        [c.name]: c.icon,
-      }));
-    });
-  }, [allCategories]);
-
-  return allCategoryIcons;
+export const copyMealImages = (oldId, newId, setNewImages) => {
+  axios.post(serverURL + `/images/copyImagesFromCategory/mealImages/${oldId}/${newId}`)
+       .then(res => {
+         if (setNewImages) setNewImages(res.data.newImages);
+       }).catch(err => {console.log(err)});
 }
 
 export const reactSelectTheme = (givenTheme, muiTheme, secondary = false) => {

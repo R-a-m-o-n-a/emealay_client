@@ -12,8 +12,6 @@ import BackButton from "../Buttons/BackButton";
 import { muiTableBorder } from "../util";
 import FullScreenDialog from "../util/FullScreenDialog";
 
-const serverURL = process.env.REACT_APP_SERVER_URL;
-
 const useStyles = makeStyles(theme => ({
   userProfile: {
     padding: '1rem 0',
@@ -90,7 +88,7 @@ const EditProfile = (props) => {
   }, [userId]);
 
   const updateUserData = () => {
-    const newUserData = {
+    const newUserData = usingOAuth ? { nickname } : {
       name, email, nickname
     };
     updateUserMetadata(userId, { nickname }, onUpdateUser);
@@ -98,7 +96,7 @@ const EditProfile = (props) => {
   }
 
   const updateProfileImage = (image) => {
-    const imageSrc = serverURL + image.path;
+    const imageSrc = image.url;
     console.log('set uploaded source', imageSrc);
     setProfileImage(imageSrc);
     updateProfileImageInMetadata(imageSrc);
@@ -149,7 +147,7 @@ const EditProfile = (props) => {
               </Typography>
             </CardContent>
           </Collapse>
-        </Card> }
+        </Card>}
 
         <form name="edit-user-form" onSubmit={editAndClose}>
           <TableContainer className={classes.table}>

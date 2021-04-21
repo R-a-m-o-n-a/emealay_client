@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import Navbar from "../Navbar";
 import { useHistory } from "react-router-dom";
 import BackButton from "../Buttons/BackButton";
 import { useTranslation } from 'react-i18next';
-import { deleteAllImagesFromMeal } from "./meals.util";
+import { addMeal, deleteAllImagesFromMeal } from "./meals.util";
 import EditMealCore from "./EditMealCore";
 import { useAuth0 } from "@auth0/auth0-react";
 import { withLoginRequired } from "../util";
@@ -16,7 +15,7 @@ import DoneButton from "../Buttons/DoneButton";
 
 const useStyles = makeStyles(theme => ({
   form: {
-    padding: '1rem 2.5rem',
+    padding: '1rem 1.5rem',
     maxHeight: `calc(100% - 2rem - ${process.env.REACT_APP_NAV_TOP_HEIGHT}px)`,
     overflowY: 'auto',
   },
@@ -25,8 +24,6 @@ const useStyles = makeStyles(theme => ({
     display: 'block',
   }
 }));
-
-const serverURL = process.env.REACT_APP_SERVER_URL;
 
 /** page that allows adding a meal */
 const AddMeal = (props) => {
@@ -65,13 +62,7 @@ const AddMeal = (props) => {
 
   const addNewMeal = (event) => {
     event.preventDefault();
-    if (meal.title) {
-      axios.post(serverURL + '/meals/add', meal, {})
-           .then(res => {
-             console.log('added meal', res);
-             if (onDoneAdding) onDoneAdding();
-           }).catch(err => {console.log(err)});
-    }
+    addMeal(meal, onDoneAdding);
   }
 
   return (
@@ -79,7 +70,7 @@ const AddMeal = (props) => {
       <Navbar pageTitle={t('New Meal')} leftSideComponent={<BackButton onClick={() => {
         deleteAllImagesFromMeal(meal._id, () => {updateMeal('images', []);});
         history.goBack();
-      }} />} rightSideComponent={meal.title ? <DoneButton onClick={addNewMeal}/> : null} />
+      }} />} rightSideComponent={meal.title ? <DoneButton onClick={addNewMeal} /> : null} />
 
       <form noValidate onSubmit={addNewMeal} className={classes.form}>
         <EditMealCore updateMeal={updateMeal} meal={meal} />
