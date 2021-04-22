@@ -59,7 +59,6 @@ const Social = () => {
 
   const getListItems = () => {
     return contacts.map(contact => {
-      console.log('Contact', contact);
       const userId = contact.user_id;
 
       return (

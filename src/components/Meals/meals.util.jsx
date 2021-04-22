@@ -7,13 +7,11 @@ const serverURL = process.env.REACT_APP_SERVER_URL;
 /**
  * deletes all images from the server that belong to the given mealId
  * @param {string} mealId
- * @param {function} callback optional function tht will be executed after deletion
  */
-export const deleteAllImagesFromMeal = (mealId, callback = undefined) => {
+export const deleteAllImagesFromMeal = (mealId) => {
   axios.post(serverURL + '/images/deleteAllImagesFromCategory/mealImages/' + mealId)
        .then(res => {
          console.log('deleted all images from meal ' + mealId, res);
-         if(callback) callback();
        }).catch(err => {console.log(err)});
 }
 
@@ -65,7 +63,7 @@ export const copyMealImages = (oldId, newId, setNewImages) => {
 }
 
 export const reactSelectTheme = (givenTheme, muiTheme, secondary = false) => {
-  const muiPrimary = secondary ?  muiTheme.palette.secondary.main : muiTheme.palette.primary.main;
+  const muiPrimary = secondary ? muiTheme.palette.secondary.main : muiTheme.palette.primary.main;
   const muiBackground = muiTheme.palette.background.default;
   const isLight = muiTheme.palette.type === 'light';
   const shade = (color, coefficient) => isLight ? darken(color, coefficient) : lighten(color, coefficient);
@@ -82,7 +80,7 @@ export const reactSelectTheme = (givenTheme, muiTheme, secondary = false) => {
 
     neutral0: muiBackground,
     neutral5: shade(muiPrimary, 0.05),
-    neutral10: shade(muiBackground, 0.1) , // option background
+    neutral10: shade(muiBackground, 0.1), // option background
     neutral20: shade(muiPrimary, 0.2), // border and controls
     neutral30: shade(muiPrimary, 0.3), // border on hover
     neutral40: shade(muiPrimary, 0.4), // controls on hover

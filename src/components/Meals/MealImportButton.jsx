@@ -57,7 +57,7 @@ const MealImportButton = (props) => {
 
   useEffect(() => {
     if (importDialogOpen && meal && user) {
-      setImportAllowed(false);
+      setImportAllowed(meal.images.length === 0);
       const { title, recipeLink, comment } = meal;
       const mealCopy = {
         _id: uuidv4(),

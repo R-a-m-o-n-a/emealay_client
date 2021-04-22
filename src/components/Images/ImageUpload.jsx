@@ -136,7 +136,7 @@ const ImageUpload = (props) => {
         folderParam = category;
       }
       if (tags) data.append('tags', tags);
-      const name = index > 0 ? altText + index : altText;
+      const name = index > 0 ? altText + ' ' + index : altText;
       data.append('name', name);
       data.append('image', image);
 
@@ -228,7 +228,7 @@ const ImageUpload = (props) => {
                          handleRejectedFiles={handleRejectedFiles}
                          dropZoneStyles={uploadedImages.length === 0 ? classes.photoDropzoneSingleEmpty : classes.photoDropzoneSingle}
                          usePlusIcon={uploadedImages.length === 0}>
-            <CircleImage src={uploadedImages[0]} altText={altText} loading={photosToUpload.length>0} />
+            <CircleImage src={uploadedImages[0]} altText={altText} loading={photosToUpload.length > 0} />
             {useSingleUploadOverlay ? <Box className={classes.cameraOverlay}>
               <FontAwesomeIcon className={classes.overlayIcon} icon={faCamera} mask={faCircle} transform="shrink-8" /></Box> : null}
           </PhotoDropzone>

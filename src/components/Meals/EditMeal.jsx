@@ -95,15 +95,13 @@ const EditMeal = (props) => {
 
   const deleteMeal = () => {
     axios.post(serverURL + '/meals/delete/' + meal._id).then((result) => {
-      setDeletedItem(meal);
+      const deletedMeal = result.data.meal;
+      setDeletedItem(deletedMeal);
       setDeleteImagesTimeout(setTimeout(() => {
-        deleteAllImagesFromMeal(meal._id, () => {
-          updateMeal('images', []);
-          setDeleteImagesTimeout(0);
-        });
+        deleteAllImagesFromMeal(deletedMeal._id);
       }, 10000));
       showDeletedItemMessage();
-      console.log('delete request sent', result.data);
+      console.log('delete request sent for meal ', deletedMeal._id);
       onDoneEditing();
       onDoneDelete();
       closeDialog();

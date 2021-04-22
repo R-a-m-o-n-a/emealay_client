@@ -6,9 +6,11 @@ import { IconButton } from "@material-ui/core";
 
 const useStyles = makeStyles(theme => ({
   doneButton: {
+    padding: 0,
+  },
+  doneIcon: {
     fontSize: '2rem',
     color: theme.palette.background.default,
-    padding: 0,
   }
 }));
 
@@ -18,7 +20,7 @@ const DoneButton = (props) => {
   const { onClick } = props;
 
   return (
-    <IconButton onClick={onClick}><Check className={classes.doneButton} /></IconButton>
+    <IconButton className={classes.doneButton} onClick={onClick}><Check className={classes.doneIcon} /></IconButton>
   );
 }
 
