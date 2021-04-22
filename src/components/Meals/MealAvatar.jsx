@@ -5,8 +5,6 @@ import { arrayOf, shape, string } from "prop-types";
 import React from "react";
 import { makeStyles } from "@material-ui/styles";
 
-const serverURL = process.env.REACT_APP_SERVER_URL;
-
 const useStyles = makeStyles(theme => ({
   backgroundColor: {
     color: theme.palette.background.default,
@@ -47,7 +45,7 @@ MealAvatar.propTypes = {
     title: string,
     images: arrayOf(shape({
       name: string,
-      path: string,
+      url: string,
     })),
     recipeLink: string,
     comment: string,

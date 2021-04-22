@@ -22,13 +22,13 @@ const useStyles = makeStyles((theme) => ({
 const OutlinedTextField = (props) => {
   const classes = useStyles();
 
-  const { secondary } = props;
+  const { isSecondary } = props;
 
   return (
     <TextField className={classes.textField}
                InputProps={{ margin: 'dense' }}
                InputLabelProps={{ className: classes.correctFloatingLabel }}
-               color={secondary ? "secondary" : "primary"}
+               color={isSecondary ? "secondary" : "primary"}
                variant="outlined"
                {...props} />
   );
@@ -36,11 +36,11 @@ const OutlinedTextField = (props) => {
 
 OutlinedTextField.propTypes = {
   /** whether to use primary or secondary color scheme */
-  secondary: bool,
+  isSecondary: bool,
 }
 
 OutlinedTextField.defaultProps = {
-  secondary: false,
+  isSecondary: false,
 }
 
 export default OutlinedTextField;

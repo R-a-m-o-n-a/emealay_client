@@ -38,9 +38,9 @@ const EditMealCore = (props) => {
 
   return (
     <>
-      <OutlinedTextField name="title" value={title} label={t('Meal Title')} onChange={e => updateMeal('title', e.target.value)} secondary={isSecondary} autoFocus required />
-      <OutlinedTextField name="recipeLink" value={recipeLink} label={t('Link to Recipe')} onChange={e => updateMeal('recipeLink', e.target.value)} secondary={isSecondary} />
-      <OutlinedTextField multiline rowsMax={10} name="comment" label={t('Comment')} value={comment} onChange={e => updateMeal('comment', e.target.value)} secondary={isSecondary} />
+      <OutlinedTextField name="title" value={title} label={t('Meal Title')} onChange={e => updateMeal('title', e.target.value)} isSecondary={isSecondary} autoFocus required />
+      <OutlinedTextField name="recipeLink" value={recipeLink} label={t('Link to Recipe')} onChange={e => updateMeal('recipeLink', e.target.value)} isSecondary={isSecondary} />
+      <OutlinedTextField multiline rowsMax={10} name="comment" label={t('Comment')} value={comment} onChange={e => updateMeal('comment', e.target.value)} isSecondary={isSecondary} />
 
       <SelectMealCategory currentCategory={category} updateMeal={updateMeal} />
 
@@ -61,7 +61,7 @@ EditMealCore.propTypes = {
     title: string,
     images: arrayOf(shape({
       name: string,
-      path: string,
+      url: string,
     })),
     recipeLink: string,
     comment: string,

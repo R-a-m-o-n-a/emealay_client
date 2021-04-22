@@ -70,7 +70,6 @@ const MealDetailView = (props) => {
 
   const openEditItemDialog = (mealItem) => {
     setMealBeingEdited(mealItem);
-    console.log('setting as toEdit', mealBeingEdited, mealItem, mealBeingEdited === mealItem)
     setEditDialogOpen(allowEditing && true);
   }
 
@@ -120,7 +119,7 @@ MealDetailView.propTypes = {
     title: string,
     images: arrayOf(shape({
       name: string,
-      path: string,
+      url: string,
     })),
     recipeLink: string,
     comment: string,

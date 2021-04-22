@@ -150,7 +150,7 @@ const Meals = (props) => {
             </ListItemAvatar>
             <ListItemText primary={meal.title} />
           </ListItem>,
-          <Divider key={meal.title + 'Divider'} />
+          <Divider key={'Divider' + meal._id} />
         );
       });
       const open = isCategoryOpen[categoryName];

@@ -167,7 +167,7 @@ MealImportButton.propTypes = {
     title: string,
     images: arrayOf(shape({
       name: string,
-      path: string,
+      url: string,
     })),
     recipeLink: string,
     comment: string,

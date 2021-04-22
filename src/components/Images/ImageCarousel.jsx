@@ -5,8 +5,6 @@ import Carousel from 'react-material-ui-carousel';
 import { makeStyles } from '@material-ui/styles';
 import { Box, Link } from "@material-ui/core";
 
-const serverURL = process.env.REACT_APP_SERVER_URL;
-
 const useStyles = makeStyles({
   carouselBackdrop: {
     position: 'fixed',
@@ -76,7 +74,7 @@ ImageCarousel.propTypes = {
   /** all images that can be scrolled through in the carousel, including name (that will be the altText) and relative path to serverURL */
   images: arrayOf(shape({
     name: string,
-    path: string,
+    url: string,
   })).isRequired,
   /** Array index number of image that will be displayed first */
   startIndex: number,
