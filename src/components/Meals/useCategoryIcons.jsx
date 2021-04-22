@@ -7,15 +7,17 @@ export default function useCategoryIcons() {
 
   const [allCategories, setAllCategories] = useState([]);
   const [allCategoryIcons, setAllCategoryIcons] = useState({});
+  const [categoriesChanged, setCategoriesChanged] = useState(false);
 
   useEffect(() => {
     if (user) {
       const userId = user.sub;
       getSettingsOfUser(userId, (settings) => {
         setAllCategories(settings.mealCategories || []);
+        setCategoriesChanged(false);
       });
     }
-  }, [user]);
+  }, [user, categoriesChanged]);
 
   useEffect(() => {
     allCategories.forEach(c => {
@@ -26,5 +28,9 @@ export default function useCategoryIcons() {
     });
   }, [allCategories]);
 
-  return allCategoryIcons;
+  const reload = () => {
+    setCategoriesChanged(true);
+  }
+
+  return [allCategoryIcons, reload];
 }

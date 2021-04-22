@@ -53,7 +53,7 @@ const Meals = (props) => {
   const [mealsByCategory,] = useState(new Map());
   const [isCategoryOpen, setIsCategoryOpen] = useState({});
   const [allCategoriesClosed, setAllCategoriesClosed] = useState(false);
-  const categoryIcons = useCategoryIcons();
+  const [categoryIcons] = useCategoryIcons();
 
   const { own, userId } = props;
 

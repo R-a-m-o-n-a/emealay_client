@@ -46,7 +46,7 @@ const SelectMealCategory = (props) => {
   const { t } = useTranslation();
   const muiTheme = useTheme();
 
-  const categoryIcons = useCategoryIcons();
+  const [categoryIcons, fireIconReload] = useCategoryIcons();
   const { currentCategory: categoryName, updateMeal } = props;
 
   const [currentCategory, setCurrentCategory] = useState(categoryName ? { name: categoryName, icon: null } : undefined);
@@ -135,9 +135,8 @@ const SelectMealCategory = (props) => {
         allCategories.forEach(c => {
           if (c.name === newCategory.name) c.icon = icon;
         });
-        newCategory.icon = icon;
-        updateMeal('category', newCategory);
         updateMealCategories(user.sub, allCategories, setAllCategories);
+        fireIconReload();
         setIsIconSelectOpen(false);
         setNewCategory(null);
       }} onClose={() => {
