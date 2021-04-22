@@ -17,6 +17,7 @@ import EditMealTags from "./EditMealTags";
 import EditMealCategories from "./EditMealCategories";
 import categoryIcons from "../Meals/CategoryIcons";
 import DoneButton from "../Buttons/DoneButton";
+import SwitchSelector from "react-switch-selector";
 
 const useStyles = makeStyles(theme => ({
   settings: {
@@ -39,6 +40,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     fontSize: '0.8rem',
   },
+  switchSelector: {
+    height: '2rem',
+  }
 }));
 
 /**
@@ -54,8 +58,24 @@ const Settings = (props) => {
   const { palette } = theme;
   console.log('catIcons', categoryIcons);
 
+  const contactStartPageOptions = [
+    {
+      label: t('Meals'),
+      value: 0,
+      selectedBackgroundColor: theme.palette.secondary.main,
+      selectedFontColor: theme.palette.secondary.contrastText,
+    },
+    {
+      label: t('Plans'),
+      value: 1,
+      selectedBackgroundColor: theme.palette.secondary.main,
+      selectedFontColor: theme.palette.secondary.contrastText,
+    },
+  ]
+
   const [userData, setUserData] = useState(null);
-  const [/*settings*/, setSettings] = useState(null); // settings is not currently used because settings are better fetched from other place but might be necessary in the future
+  const [/*settings*/, setSettings] = useState(null); // settings is not currently used because settings are fetched from other place but might be necessary in the future
+  const [contactStartPageIndex, setContactStartPageIndex] = useState(1); // settings is not currently used because settings are fetched from other place but might be necessary in the future
   const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -79,7 +99,10 @@ const Settings = (props) => {
   const getSettings = () => {
     if (user) {
       const userId = user.sub;
-      getSettingsOfUser(userId, setSettings);
+      getSettingsOfUser(userId, (settings) => {
+        setSettings(settings);
+        setContactStartPageIndex(settings.contactStartPageIndex);
+      });
     }
   }
 
@@ -103,6 +126,14 @@ const Settings = (props) => {
       updateUserSettingsForCategory(user.sub, 'prefersDarkMode', newValue, getSettings);
     }
     props.setDarkModeInAppLevel(newValue);
+  }
+
+  function updateContactStartPage(newValue) {
+    setContactStartPageIndex(newValue);
+    console.log(newValue);
+    if (user) {
+      updateUserSettingsForCategory(user.sub, 'contactStartPageIndex', newValue, getSettings);
+    }
   }
 
   const changeLanguage = (lng) => {
@@ -140,6 +171,19 @@ const Settings = (props) => {
                           inputProps={{ 'aria-label': 'use dark mode checkbox' }} />
               </TableCell>
             </TableRow>}
+            <TableRow>
+              <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Contact start view')}</Typography></TableCell>
+              <TableCell className={classes.tableCell}>
+                <Box className={classes.switchSelector}>
+                  <SwitchSelector onChange={updateContactStartPage}
+                                  options={contactStartPageOptions}
+                                  forcedSelectedIndex={contactStartPageIndex}
+                                  backgroundColor={theme.palette.background.paper}
+                                  fontColor={theme.palette.text.disabled}
+                                  fontSize={theme.typography.body1.fontSize} />
+                </Box>
+              </TableCell>
+            </TableRow>
           </TableBody>
         </Table>
         <EditMealCategories onUpdateSettings={getSettings} />

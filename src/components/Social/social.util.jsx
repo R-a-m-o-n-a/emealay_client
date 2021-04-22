@@ -33,10 +33,7 @@ export const updateContactsFromAuth0 = (userId, contactIDs, updateContacts) => {
     axios.get(serverURL + '/users/all')
          .then(res => {
            const usersFound = res.data;
-           console.log('usersFound', usersFound);
            const contactsOfUser = usersFound.filter(u => contactIDs.includes(u.user_id));
-           console.log('usersFiltered', contactsOfUser);
-           updateContacts(contactsOfUser);
            updateUserContacts(userId, contactsOfUser, updateContacts);
          }).catch(err => {console.log(err)});
   }

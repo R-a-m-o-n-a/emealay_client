@@ -6,7 +6,7 @@ import Meals from "../Meals/Meals";
 import Navbar from "../Navbar";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useHistory, useParams } from "react-router-dom";
-import { getUserById } from "../Settings/settings.util";
+import { getSettingsOfUser, getUserById } from "../Settings/settings.util";
 import BackButton from "../Buttons/BackButton";
 import { useTranslation } from "react-i18next";
 import { LoadingBody } from "../Loading";
@@ -41,6 +41,15 @@ const ContactsContent = () => {
   useEffect(() => {
     getUserById(userId, setOtherUser);
   }, [userId]);
+
+  useEffect(() => {
+    if (user) {
+      const userId = user.sub;
+      getSettingsOfUser(userId, (settings) => {
+        setCurrentTab(settings.contactStartPageIndex);
+      });
+    }
+  }, [user]);
 
   const leftSideComponent = () => {
     if (!isLoading && isAuthenticated && user) {

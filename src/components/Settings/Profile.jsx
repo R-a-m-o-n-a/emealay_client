@@ -27,6 +27,10 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     fontSize: '0.8rem'
   },
+  dialogPicture: {
+    maxHeight: '100%',
+    maxWidth: '100%',
+  }
 }));
 
 /** content page (excluding Navbar) that displays user's data */
@@ -49,7 +53,7 @@ const Profile = (props) => {
       </Box>
 
       <Dialog open={isImageZoomed} onClose={() => setIsImageZoomed(false)}>
-          <img src={metadata.picture || userData.picture} alt={name} />
+          <img src={metadata.picture || userData.picture} alt={name} className={classes.dialogPicture} />
       </Dialog>
 
       <TableContainer className={classes.table}>
