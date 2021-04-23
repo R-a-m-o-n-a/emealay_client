@@ -82,7 +82,7 @@ const MealDetailView = (props) => {
 
   const closeEditItemDialog = () => {
     setEditDialogOpen(false);
-    history.push('/meals/detail/' + meal._id);
+    history.goBack();
   }
 
   const afterEditing = () => {

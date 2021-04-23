@@ -61,13 +61,11 @@ const Meals = (props) => {
 
   const { own, userId } = props;
 
-  const [detailViewOpen, setDetailViewOpen] = useState(false);
   const [mealBeingViewed, setMealBeingViewed] = useState(null);
   const [emptyListFound, setEmptyListFound] = useState(false);
 
   useEffect(() => {
-    setDetailViewOpen(path.includes('detail') || path.includes('edit'));
-    if (path.includes(':mealId') && (!mealBeingViewed || (mealBeingViewed && mealBeingViewed._id !== params.mealId))) {
+    if (params.mealId && (!mealBeingViewed || mealBeingViewed?._id !== params.mealId)) {
       loadMealBeingViewed(params.mealId);
     }
   }, [path, params, mealBeingViewed]);
@@ -149,13 +147,11 @@ const Meals = (props) => {
 
   const openMealDetailView = (meal) => {
     setMealBeingViewed(meal);
-    setDetailViewOpen(true);
     history.push('/meals/detail/' + meal._id);
   };
 
   const closeMealDetailView = () => {
     setMealBeingViewed(null);
-    setDetailViewOpen(false);
     history.push('/meals');
   };
 
@@ -244,7 +240,12 @@ const Meals = (props) => {
             </List>}
         </>
       }
-      <MealDetailView open={detailViewOpen} meal={mealBeingViewed} allowEditing={own} allowImporting={!own} closeDialog={closeMealDetailView} onDoneEditing={fetchAndUpdateMeals} />
+      <MealDetailView open={path.includes('detail') || path.includes('edit')}
+                      meal={mealBeingViewed}
+                      allowEditing={own}
+                      allowImporting={!own}
+                      closeDialog={closeMealDetailView}
+                      onDoneEditing={fetchAndUpdateMeals} />
     </>
   );
 }

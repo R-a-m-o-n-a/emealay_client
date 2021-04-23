@@ -10,8 +10,6 @@ const MealDetailViewExtern = (props) => {
   const history = useHistory();
   const { mealId } = useParams();
 
-  console.log('in view', mealId);
-
   const [meal, setMeal] = useState(null);
   const [own, setOwn] = useState(false);
 
@@ -26,7 +24,7 @@ const MealDetailViewExtern = (props) => {
     });
   }, [mealId, user]);
 
-  return <MealDetailView meal={meal} allowEditing={own} closeDialog={() => {history.push('/meals');}} />;
+  return <MealDetailView meal={meal} allowEditing={own} closeDialog={() => {history.goBack();}} />;
 }
 
 export default MealDetailViewExtern;

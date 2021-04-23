@@ -6,7 +6,6 @@ import { faCheck, faShoppingBasket, faTimes } from '@fortawesome/free-solid-svg-
 import { makeStyles } from "@material-ui/styles";
 import EditPlanItem from "./EditPlanItem";
 import { useTranslation } from "react-i18next";
-import MealDetailView from "../Meals/MealDetailView";
 import { bool, string } from "prop-types";
 import { dateStringOptions, withLoginRequired } from "../util";
 import MissingIngredients from "./MissingIngredients";
@@ -60,7 +59,6 @@ const Plans = (props) => {
 
   const { own, userId } = props;
 
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [missingIngredientsDialogOpen, setMissingIngredientsDialogOpen] = useState(false);
   const [plans, setPlans] = useState([]);
   const [shoppingListOpen, setShoppingListOpen] = useState(false);
@@ -68,8 +66,6 @@ const Plans = (props) => {
   const [emptyListFound, setEmptyListFound] = useState(false);
 
   const [pastPlansOpen, setPastPlansOpen] = useState(false);
-  const [detailViewOpen, setDetailViewOpen] = useState(false);
-  const [mealBeingViewed, setMealBeingViewed] = useState(null);
 
   const fetchAndUpdatePlans = () => {
     getPlansOfUser(userId, plansFound => {
@@ -83,35 +79,28 @@ const Plans = (props) => {
   }
 
   useEffect(() => {
-    if (path.includes('edit') && params.planId && !editDialogOpen) {
-      getSinglePlan(params.planId, openEditItemDialog);
+    if (own && params.planId && (!itemBeingEdited || itemBeingEdited?._id !== params.planId)) {
+      getSinglePlan(params.planId, setItemBeingEdited);
     }
     // eslint-disable-next-line
-  }, [path, params]);
+  }, [own, itemBeingEdited, path, params]);
 
   // eslint-disable-next-line
   useEffect(fetchAndUpdatePlans, [userId]);
 
   const openMealDetailView = (meal) => {
-    setMealBeingViewed(meal);
-    setDetailViewOpen(true);
+    history.push('/meals/view/' + meal._id);
   };
 
-  const openEditItemDialog = (planItem) => {
+  const goToEdit = (planItem) => {
     if (own) {
       setItemBeingEdited(planItem);
-      setEditDialogOpen(true);
+      history.push('/plans/edit/' + planItem._id);
     }
-  }
-
-  const goToEdit = (planItem) => {
-    openEditItemDialog(planItem);
-    history.push('/plans/edit/' + planItem._id);
   }
 
   const openShoppingList = () => {
     setShoppingListOpen(true);
-    history.push('/plans/shoppingList');
   }
 
   function openMissingIngredientDialog(planItem) {
@@ -216,22 +205,14 @@ const Plans = (props) => {
         setMissingIngredientsDialogOpen(false);
       }} onDoneEditing={fetchAndUpdatePlans} open={missingIngredientsDialogOpen} />
 
-      <EditPlanItem open={editDialogOpen} planItem={itemBeingEdited} closeDialog={() => {
+      <EditPlanItem open={path.includes('edit')} planItem={itemBeingEdited} closeDialog={() => {
         setItemBeingEdited(null);
-        setEditDialogOpen(false);
         history.push('/plans');
       }} onDoneEditing={fetchAndUpdatePlans} />
-
-      <MealDetailView open={detailViewOpen} meal={mealBeingViewed} allowEditing={own} closeDialog={() => {
-        setMealBeingViewed(null);
-        setDetailViewOpen(false);
-        history.push('/plans');
-      }} />
     </>
   );
 
   const shoppingList = <ShoppingList userId={userId} plans={plans} onClose={() => {
-    history.push('/plans');
     setShoppingListOpen(false);
     fetchAndUpdatePlans();
   }} />;
