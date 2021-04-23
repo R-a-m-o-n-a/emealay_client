@@ -4,14 +4,14 @@ import { Box, Button, Collapse, Divider, List, ListItem, ListItemAvatar, ListIte
 import { ExpandLess, ExpandMore } from "@material-ui/icons";
 import { useTranslation } from "react-i18next";
 import MealDetailView from "./MealDetailView";
-import { fetchAndUpdateMealsFromUser } from "./meals.util";
+import { fetchAndUpdateMeal, fetchAndUpdateMealsFromUser } from "./meals.util";
 import useCategoryIcons from "./useCategoryIcons";
 import { bool, string } from "prop-types";
 import { withLoginRequired } from "../util";
 import MealAvatar from "./MealAvatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SelectMealTags from "./SelectMealTags";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   infoText: {
@@ -44,6 +44,8 @@ const Meals = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
   let history = useHistory();
+  let { path } = useRouteMatch();
+  const params = useParams();
 
   const [, updateState] = useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
@@ -62,6 +64,17 @@ const Meals = (props) => {
   const [detailViewOpen, setDetailViewOpen] = useState(false);
   const [mealBeingViewed, setMealBeingViewed] = useState(null);
   const [emptyListFound, setEmptyListFound] = useState(false);
+
+  useEffect(() => {
+    setDetailViewOpen(path.includes('detail') || path.includes('edit'));
+    if (path.includes(':mealId') && (!mealBeingViewed || (mealBeingViewed && mealBeingViewed._id !== params.mealId))) {
+      loadMealBeingViewed(params.mealId);
+    }
+  }, [path, params, mealBeingViewed]);
+
+  const loadMealBeingViewed = (mealId) => {
+    fetchAndUpdateMeal(mealId, setMealBeingViewed);
+  }
 
   const updateMealsCallback = (mealsFound) => {
     setMeals(mealsFound);
@@ -132,13 +145,18 @@ const Meals = (props) => {
       }
       // eslint-disable-next-line
     }, [filterTags]
-  )
-  ;
+  );
 
   const openMealDetailView = (meal) => {
     setMealBeingViewed(meal);
-    history.push('/meals/detail');
     setDetailViewOpen(true);
+    history.push('/meals/detail/' + meal._id);
+  };
+
+  const closeMealDetailView = () => {
+    setMealBeingViewed(null);
+    setDetailViewOpen(false);
+    history.push('/meals');
   };
 
   const getListItems = () => {
@@ -226,11 +244,7 @@ const Meals = (props) => {
             </List>}
         </>
       }
-      <MealDetailView open={detailViewOpen} meal={mealBeingViewed} allowEditing={own} allowImporting={!own} closeDialog={() => {
-        history.push('/meals');
-        setMealBeingViewed(null);
-        setDetailViewOpen(false);
-      }} onDoneEditing={fetchAndUpdateMeals} />
+      <MealDetailView open={detailViewOpen} meal={mealBeingViewed} allowEditing={own} allowImporting={!own} closeDialog={closeMealDetailView} onDoneEditing={fetchAndUpdateMeals} />
     </>
   );
 }

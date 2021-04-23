@@ -8,9 +8,9 @@ import { Box } from '@material-ui/core';
 import AddPlanItem from "./Plans/AddPlanItem";
 import AddMeal from "./Meals/AddMeal";
 import Home from "./Home";
-import OwnMeals from "./Meals/OwnMeals";
-import OwnPlans from "./Plans/OwnPlans";
 import MealDetailViewExtern from "./Meals/MealDetailViewExtern";
+import MealWrapper from "./Meals/MealWrapper";
+import PlanWrapper from "./Plans/PlanWrapper";
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -36,7 +36,7 @@ const ContentWrapper = (props) => {
   let contentPage;
   switch (activeTab) {
     case "meals":
-      contentPage = <OwnMeals />;
+      contentPage = <MealWrapper />;
       break;
     case "social":
       contentPage = <Social />;
@@ -54,7 +54,7 @@ const ContentWrapper = (props) => {
       contentPage = <MealDetailViewExtern />;
       break;
     case "plans":
-      contentPage = <OwnPlans />;
+      contentPage = <PlanWrapper />;
       break;
     case "home":
     default:

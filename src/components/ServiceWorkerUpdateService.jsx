@@ -28,11 +28,16 @@ const ServiceWorkerUpdateService = () => {
   };
 
   return (
-    <Snackbar open={showReload} message={t('A new version of the app is available!')} onClick={reloadPage} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} action={
-      <Button variant="outlined" color="inherit" size="small" onClick={reloadPage}>
-        {t('Reload')}
-      </Button>
-    } />
+    <Snackbar open={showReload}
+              style={{ flexWrap: "nowrap" }}
+              message={t('A new version of the app is available!')}
+              onClick={reloadPage}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              action={
+                <Button variant="outlined" color="inherit" size="small" onClick={reloadPage}>
+                  {t('Reload')}
+                </Button>
+              } />
   );
 }
 

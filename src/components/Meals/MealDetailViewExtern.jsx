@@ -26,9 +26,7 @@ const MealDetailViewExtern = (props) => {
     });
   }, [mealId, user]);
 
-  console.log(meal, own);
-
-  return (<MealDetailView extern={!user} meal={meal} allowEditing={own} closeDialog={() => {history.push('/meals');}} />);
+  return <MealDetailView meal={meal} allowEditing={own} closeDialog={() => {history.push('/meals');}} />;
 }
 
 export default MealDetailViewExtern;

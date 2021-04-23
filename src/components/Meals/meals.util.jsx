@@ -32,7 +32,7 @@ export const fetchAndUpdateMealsFromUser = (userId, updateMeals) => {
 
 /**
  * Fetches a single meal by ID from the database and provides it as a parameter to the updateMeal function
- * @param {string} mealId  ID of meals to be fetched from the database
+ * @param {string} mealId  ID of meal to be fetched from the database
  * @param {function} updateMeal  function that receives the meal and will update the state of the calling component
  */
 export const fetchAndUpdateMeal = (mealId, updateMeal) => {

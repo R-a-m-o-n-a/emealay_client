@@ -12,9 +12,8 @@ import FullScreenDialog from "../util/FullScreenDialog";
 import { fetchAndUpdateMeal } from "./meals.util";
 import ShareButton from "../util/ShareButton";
 import { useAuth0 } from "@auth0/auth0-react";
-import { getUserById } from "../Settings/settings.util";
 import MealImportButton from "./MealImportButton";
-import { useHistory } from "react-router-dom";
+import { useHistory, useRouteMatch } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -35,22 +34,26 @@ const useStyles = makeStyles((theme) => ({
 const MealDetailView = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const { user } = useAuth0();
+  const { user, isAuthenticated } = useAuth0();
+  let { path } = useRouteMatch();
   let history = useHistory();
 
-  const { meal: initialMeal, open, closeDialog, onDoneEditing, allowEditing, extern } = props;
+  const { meal: initialMeal, open, closeDialog, onDoneEditing, allowEditing } = props;
 
   const [own, setOwn] = useState(false);
   const [meal, setMeal] = useState(initialMeal);
-  const [/*mealUser*/, setMealUser] = useState(null);
+  // const [/*mealUser*/, setMealUser] = useState(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [mealBeingEdited, setMealBeingEdited] = useState(null);
 
   useEffect(() => {
-    if (meal) {
-      getUserById(meal.userId, setMealUser);
-    }
-  }, [meal]);
+    if (own && allowEditing) setEditDialogOpen(path.includes('edit'));
+  }, [own, allowEditing, path]);
+
+  /*  useEffect(() => {
+      if (meal) {
+        getUserById(meal.userId, setMealUser);
+      }
+    }, [meal]);*/
 
   useEffect(() => {
     if (user && meal) {
@@ -70,10 +73,16 @@ const MealDetailView = (props) => {
     }
   }
 
-  const openEditItemDialog = (mealItem) => {
-    history.push('/meals/edit');
-    setMealBeingEdited(mealItem);
-    setEditDialogOpen(allowEditing && true);
+  const openEditItemDialog = () => {
+    if (allowEditing) {
+      setEditDialogOpen(true);
+      history.push('/meals/edit/' + meal._id);
+    }
+  }
+
+  const closeEditItemDialog = () => {
+    setEditDialogOpen(false);
+    history.push('/meals/detail/' + meal._id);
   }
 
   const afterEditing = () => {
@@ -81,13 +90,22 @@ const MealDetailView = (props) => {
     fetchMeal();
   }
 
+  const rightSideComponent = () => {
+    if (isAuthenticated) {
+      if (own) {
+        if (allowEditing) return <EditButton onClick={() => {openEditItemDialog(meal)}} />;
+      } else {
+        return <MealImportButton meal={meal} />;
+      }
+    }
+    return null;
+  }
+
   return (
     <>
       {meal ?
         <FullScreenDialog open={open} onClose={closeDialog}>
-          <Navbar pageTitle={t('Meal')}
-                  rightSideComponent={own ? allowEditing && <EditButton onClick={() => {openEditItemDialog(meal)}} /> : <MealImportButton meal={meal} />}
-                  leftSideComponent={extern ? null : <BackButton onClick={closeDialog} />} />
+          <Navbar pageTitle={t('Meal')} rightSideComponent={rightSideComponent} leftSideComponent={isAuthenticated && <BackButton onClick={closeDialog} />} />
           <Box className={classes.content}>
             <Grid container spacing={0} justify="space-between" alignItems="flex-start" wrap="nowrap">
               <Grid item xs className={classes.mealTitle}>
@@ -104,12 +122,9 @@ const MealDetailView = (props) => {
         </FullScreenDialog>
         : ''}
 
-      {!extern && <EditMeal open={allowEditing && editDialogOpen} meal={mealBeingEdited} closeDialog={() => {
-        history.push('/meals/detail');
-        setMealBeingEdited(null);
-        setEditDialogOpen(false);
-      }} onDoneEditing={afterEditing} onDoneDelete={() => {
+      {isAuthenticated && <EditMeal open={allowEditing && editDialogOpen} meal={meal} closeDialog={closeEditItemDialog} onDoneEditing={afterEditing} onDoneDelete={() => {
         afterEditing();
+        closeEditItemDialog();
         closeDialog();
       }} />}
     </>
@@ -138,15 +153,12 @@ MealDetailView.propTypes = {
   onDoneEditing: func,
   /** allow opening edit page? (To be false if not one's own meal) */
   allowEditing: bool,
-  /** extern is coming from a link might not be logged in */
-  extern: bool,
 }
 
 MealDetailView.defaultProps = {
   meal: null,
   open: true,
   allowEditing: false,
-  extern: false,
 }
 
 export default MealDetailView;

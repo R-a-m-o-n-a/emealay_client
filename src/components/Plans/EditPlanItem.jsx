@@ -68,13 +68,11 @@ const EditPlanItem = (props) => {
       const newPlanItem = givenPlanItem;
       newPlanItem.date = givenPlanItem.date ? new Date(givenPlanItem.date) : new Date();
       newPlanItem.connectedMeal = givenPlanItem.connectedMeal || null;
-      console.log('transfer', newPlanItem);
       setPlanItem(newPlanItem);
     }
   }, [givenPlanItem]);
 
   const editPlan = () => {
-    console.log('trying to edit', planItem.title);
     if (planItem.title && user) {
       const newPlan = {
         userId: user.sub,
@@ -85,7 +83,6 @@ const EditPlanItem = (props) => {
         missingIngredients: planItem.missingIngredients,
         connectedMealId: planItem.connectedMeal ? planItem.connectedMeal._id : null,
       }
-      console.log('to become', newPlan);
 
       axios.post(serverURL + '/plans/edit/' + planItem._id, newPlan).then((result) => {
         console.log('edit request sent', result.data);

@@ -101,8 +101,7 @@ const Social = () => {
         </Route>
       </Switch>
     </>
-  )
-    ;
+  );
 }
 
 export default withLoginRequired(Social);

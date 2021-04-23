@@ -20,6 +20,21 @@ export const getPlansOfUser = (userId, updatePlans) => {
 }
 
 /**
+ * Fetches a single plan by ID from the database and provides it as a parameter to the updatePlan function
+ * @param {string} planId  ID of plan to be fetched from the database
+ * @param {function} updatePlan  function that receives the plan and will update the state of the calling component
+ */
+export const getSinglePlan = (planId, updatePlan) => {
+  axios.get(serverURL + '/plans/' + planId)
+       .then(res => {
+         updatePlan(res.data);
+       })
+       .catch(err => {
+         console.log(err.message);
+       });
+}
+
+/**
  * Toggles the checked attribute of an ingredient
  * Will also affect the plans gotEverything attribute (will be true if after execution all ingredients of the plan are checked)
  * @param {string} planId ID of the plan that the ingredient belongs to

@@ -10,10 +10,10 @@ import MealDetailView from "../Meals/MealDetailView";
 import { bool, string } from "prop-types";
 import { dateStringOptions, withLoginRequired } from "../util";
 import MissingIngredients from "./MissingIngredients";
-import { getPlansOfUser } from "./plans.util";
+import { getPlansOfUser, getSinglePlan } from "./plans.util";
 import ShoppingList from "./ShoppingList";
 import MealAvatar from "../Meals/MealAvatar";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams, useRouteMatch } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   plansTable: {
@@ -54,6 +54,8 @@ const useStyles = makeStyles((theme) => ({
 const Plans = (props) => {
   const classes = useStyles();
   let history = useHistory();
+  let { path } = useRouteMatch();
+  const params = useParams();
   const { t } = useTranslation();
 
   const { own, userId } = props;
@@ -80,6 +82,13 @@ const Plans = (props) => {
     });
   }
 
+  useEffect(() => {
+    if (path.includes('edit') && params.planId && !editDialogOpen) {
+      getSinglePlan(params.planId, openEditItemDialog);
+    }
+    // eslint-disable-next-line
+  }, [path, params]);
+
   // eslint-disable-next-line
   useEffect(fetchAndUpdatePlans, [userId]);
 
@@ -90,11 +99,14 @@ const Plans = (props) => {
 
   const openEditItemDialog = (planItem) => {
     if (own) {
-      history.push('/plans/edit');
       setItemBeingEdited(planItem);
-      console.log(itemBeingEdited, planItem, itemBeingEdited === planItem)
       setEditDialogOpen(true);
     }
+  }
+
+  const goToEdit = (planItem) => {
+    openEditItemDialog(planItem);
+    history.push('/plans/edit/' + planItem._id);
   }
 
   const openShoppingList = () => {
@@ -135,18 +147,16 @@ const Plans = (props) => {
           <TableCell className={classes.tableCell}>
             {plan.connectedMeal ?
               <Grid container spacing={1} justify="space-between" alignItems="center">
-                <Grid item xs={9} onClick={() => {openEditItemDialog(plan);}}>{plan.title}</Grid>
+                <Grid item xs={9} onClick={() => {goToEdit(plan);}}>{plan.title}</Grid>
                 <Grid item xs={3} onClick={() => {openMealDetailView(plan.connectedMeal);}}><MealAvatar meal={plan.connectedMeal} /></Grid>
               </Grid>
-              : <Box onClick={() => {openEditItemDialog(plan);}}>{plan.title}</Box>
+              : <Box onClick={() => {goToEdit(plan);}}>{plan.title}</Box>
             }
           </TableCell>
-          <TableCell onClick={() => {openEditItemDialog(plan);}} align="center" className={classes.tableCell + ' ' + classes.narrowCell}>
+          <TableCell onClick={() => {goToEdit(plan);}} align="center" className={classes.tableCell + ' ' + classes.narrowCell}>
             {(plan.hasDate && plan.date) ? new Date(plan.date).toLocaleDateString(t('dateLocale'), dateStringOptions) : ''}
           </TableCell>
-          <TableCell className={classes.tableCell}
-                     align="center"
-                     onClick={() => {plan.missingIngredients.length === 0 ? openEditItemDialog(plan) : openMissingIngredientDialog(plan);}}>
+          <TableCell className={classes.tableCell} align="center" onClick={() => {plan.missingIngredients.length === 0 ? goToEdit(plan) : openMissingIngredientDialog(plan);}}>
             <FontAwesomeIcon icon={plan.gotEverything ? faCheck : faTimes} />
           </TableCell>
         </TableRow>
@@ -207,15 +217,15 @@ const Plans = (props) => {
       }} onDoneEditing={fetchAndUpdatePlans} open={missingIngredientsDialogOpen} />
 
       <EditPlanItem open={editDialogOpen} planItem={itemBeingEdited} closeDialog={() => {
-        history.push('/plans');
         setItemBeingEdited(null);
         setEditDialogOpen(false);
+        history.push('/plans');
       }} onDoneEditing={fetchAndUpdatePlans} />
 
       <MealDetailView open={detailViewOpen} meal={mealBeingViewed} allowEditing={own} closeDialog={() => {
-        history.push('/plans');
         setMealBeingViewed(null);
         setDetailViewOpen(false);
+        history.push('/plans');
       }} />
     </>
   );

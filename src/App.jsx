@@ -7,7 +7,6 @@ import CssBaseline from '@material-ui/core/CssBaseline'; // deals with changing 
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { useAuth0 } from "@auth0/auth0-react";
 import { getSettingsOfUser } from "./components/Settings/settings.util";
-import MealDetailViewExtern from "./components/Meals/MealDetailViewExtern";
 
 /**
  * This is the main App component. It sets the MUI theme as well as the dark mode (if desired). It also deals with Frontend-Routing with the help of React Router.
@@ -65,7 +64,6 @@ const App = () => {
         <CssBaseline />
         <Switch>
           <Route exact path="/"><Home /></Route>
-          <Route exact path="/meals/view/:mealId"><MealDetailViewExtern /></Route>
 
           <Route exact path="/meals/add"><ContentWrapper activeTab="meals/add" /></Route>
           <Route path="/meals"><ContentWrapper activeTab="meals" /></Route>
