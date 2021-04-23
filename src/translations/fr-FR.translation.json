@@ -79,5 +79,7 @@
   "Copy": "Copier",
   "Copied": "Copié",
   "Check out the following meal: {{mealTitle}}": "Consultez le repas {{mealTitle}}:",
-  "Import into my meals": "Importer dans mes repas"
+  "Import into my meals": "Importer dans mes repas",
+  "A new version of the app is available!": "Une nouvelle version est disponible!",
+  "Reload": "Rechargez"
 }

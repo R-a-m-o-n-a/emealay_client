@@ -80,5 +80,7 @@
   "Copy": "Kopieren",
   "Copied": "Kopiert",
   "Check out the following meal: {{mealTitle}}": "Schau dir das Gericht \"{{mealTitle}}\" unter folgendem Link an:",
-  "Import into my meals": "In meine Gerichte importieren"
+  "Import into my meals": "In meine Gerichte importieren",
+  "A new version of the app is available!": "Eine neue Version ist verfügbar!",
+  "Reload": "Laden"
 }

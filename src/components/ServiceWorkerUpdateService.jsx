@@ -28,16 +28,17 @@ const ServiceWorkerUpdateService = () => {
   return (
     <Snackbar
       open={showReload}
-      message="A new version is available!"
+      message={t('A new version of the app is available!')}
       onClick={reloadPage}
       anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
       action={
         <Button
+          variant="outlined"
           color="inherit"
           size="small"
           onClick={reloadPage}
         >
-          Reload
+          {t('Reload')}
         </Button>
       }
     />

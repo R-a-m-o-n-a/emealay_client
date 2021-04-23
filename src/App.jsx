@@ -35,8 +35,8 @@ const App = () => {
         primary: {/*
           main: prefersDarkMode ? '#9fd105' : '#658404',
           dark: prefersDarkMode ? '#6b7a12' : '#4a5700',*/
-          main: '#ab003c',
-          dark: '#ab003c',
+          main: '#ffa000',
+          dark: '#ffa000',
         },
         secondary: {
           main: prefersDarkMode ? '#83b6d8' : '#1a274f',

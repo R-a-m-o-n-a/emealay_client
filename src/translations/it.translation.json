@@ -79,5 +79,7 @@
   "Copy": "Copia",
   "Copied": "Copiato",
   "Check out the following meal: {{mealTitle}}": "Guarda il pasto {{mealTitle}}:",
-  "Import into my meals": "Importare nei miei pasti"
+  "Import into my meals": "Importa nei miei pasti",
+  "A new version of the app is available!": "Una nuova versione è disponibile!",
+  "Reload": "Ricarica"
 }
