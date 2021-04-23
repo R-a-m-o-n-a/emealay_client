@@ -43,11 +43,6 @@ const MealDetailView = (props) => {
   const [own, setOwn] = useState(false);
   const [meal, setMeal] = useState(initialMeal);
   // const [/*mealUser*/, setMealUser] = useState(null);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-
-  useEffect(() => {
-    if (own && allowEditing) setEditDialogOpen(path.includes('edit'));
-  }, [own, allowEditing, path]);
 
   /*  useEffect(() => {
       if (meal) {
@@ -75,13 +70,11 @@ const MealDetailView = (props) => {
 
   const openEditItemDialog = () => {
     if (allowEditing) {
-      setEditDialogOpen(true);
       history.push('/meals/edit/' + meal._id);
     }
   }
 
   const closeEditItemDialog = () => {
-    setEditDialogOpen(false);
     history.goBack();
   }
 
@@ -122,7 +115,7 @@ const MealDetailView = (props) => {
         </FullScreenDialog>
         : ''}
 
-      {isAuthenticated && <EditMeal open={allowEditing && editDialogOpen} meal={meal} closeDialog={closeEditItemDialog} onDoneEditing={afterEditing} onDoneDelete={() => {
+      {isAuthenticated && <EditMeal open={allowEditing && own && path.includes('edit')} meal={meal} closeDialog={closeEditItemDialog} onDoneEditing={afterEditing} onDoneDelete={() => {
         afterEditing();
         closeEditItemDialog();
         closeDialog();
