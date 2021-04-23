@@ -15,9 +15,9 @@ import ProfilePlaceholder from "./ProfilePlaceholder";
 import { func } from "prop-types";
 import EditMealTags from "./EditMealTags";
 import EditMealCategories from "./EditMealCategories";
-import categoryIcons from "../Meals/CategoryIcons";
 import DoneButton from "../Buttons/DoneButton";
 import SwitchSelector from "react-switch-selector";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   settings: {
@@ -56,20 +56,20 @@ const Settings = (props) => {
   const { user } = useAuth0();
   const theme = useTheme();
   const { palette } = theme;
-  console.log('catIcons', categoryIcons);
+  let history = useHistory();
 
   const contactStartPageOptions = [
     {
       label: t('Meals'),
       value: 0,
-      selectedBackgroundColor: theme.palette.secondary.main,
-      selectedFontColor: theme.palette.secondary.contrastText,
+      selectedBackgroundColor: palette.secondary.main,
+      selectedFontColor: palette.secondary.contrastText,
     },
     {
       label: t('Plans'),
       value: 1,
-      selectedBackgroundColor: theme.palette.secondary.main,
-      selectedFontColor: theme.palette.secondary.contrastText,
+      selectedBackgroundColor: palette.secondary.main,
+      selectedFontColor: palette.secondary.contrastText,
     },
   ]
 
@@ -146,11 +146,21 @@ const Settings = (props) => {
     return allLanguages.map(lang => <MenuItem key={lang.key} value={lang.key}>{lang.description}</MenuItem>);
   }
 
+  const closeEditProfileDialog = () => {
+    setEditDialogOpen(false);
+    history.push('/settings');
+  }
+
+  const openEditProfileDialog = () => {
+    setEditDialogOpen(true);
+    history.push('/settings/editProfile');
+  }
+
   return (
     <>
       <Navbar pageTitle={t('Settings')} rightSideComponent={editDialogOpen ?
-        <DoneButton onClick={() => {setEditDialogOpen(false);}} />
-        : <EditButton onClick={() => {setEditDialogOpen(true);}} />} />
+        <DoneButton onClick={closeEditProfileDialog} />
+        : <EditButton onClick={openEditProfileDialog} />} />
       <Box className={classes.settings}>
         {userData && !editDialogOpen ? <Profile userData={userData} /> : <ProfilePlaceholder />}
         <Table aria-label="profile data" size="small" className={classes.table}>
@@ -178,8 +188,8 @@ const Settings = (props) => {
                   <SwitchSelector onChange={updateContactStartPage}
                                   options={contactStartPageOptions}
                                   forcedSelectedIndex={contactStartPageIndex}
-                                  backgroundColor={theme.palette.background.paper}
-                                  fontColor={theme.palette.text.disabled}
+                                  backgroundColor={palette.background.paper}
+                                  fontColor={palette.text.disabled}
                                   fontSize={theme.typography.body1.fontSize} />
                 </Box>
               </TableCell>
@@ -196,9 +206,7 @@ const Settings = (props) => {
 
 
       {userData &&
-      <EditProfile userData={userData} onUpdateUser={getUser} open={editDialogOpen} closeDialog={() => {
-        setEditDialogOpen(false);
-      }} isSecondary />
+      <EditProfile userData={userData} onUpdateUser={getUser} open={editDialogOpen} closeDialog={closeEditProfileDialog} isSecondary />
       }
     </>
   );

@@ -32,11 +32,9 @@ const App = () => {
     createMuiTheme({
       palette: {
         type: prefersDarkMode ? 'dark' : 'light',
-        primary: {/*
+        primary: {
           main: prefersDarkMode ? '#9fd105' : '#658404',
-          dark: prefersDarkMode ? '#6b7a12' : '#4a5700',*/
-          main: '#ffa000',
-          dark: '#ffa000',
+          dark: prefersDarkMode ? '#6b7a12' : '#4a5700',
         },
         secondary: {
           main: prefersDarkMode ? '#83b6d8' : '#1a274f',
@@ -47,7 +45,6 @@ const App = () => {
         background: {
           default: prefersDarkMode ? '#202020' : '#ffffff',
           paper: prefersDarkMode ? '#252525' : '#fafafa',
-          // paper: prefersDarkMode ? '#202020' : '#ffffff',
         },
       },/*
       typography: {
@@ -70,12 +67,12 @@ const App = () => {
           <Route exact path="/"><Home /></Route>
           <Route exact path="/meals/view/:mealId"><MealDetailViewExtern /></Route>
 
-          <Route exact path="/meals"><ContentWrapper activeTab="meals" /></Route>
           <Route exact path="/meals/add"><ContentWrapper activeTab="meals/add" /></Route>
-          <Route exact path="/plans"><ContentWrapper activeTab="plans" /></Route>
+          <Route path="/meals"><ContentWrapper activeTab="meals" /></Route>
           <Route exact path="/plans/add"><ContentWrapper activeTab="plans/add" /></Route>
+          <Route path="/plans"><ContentWrapper activeTab="plans" /></Route>
           <Route path="/social"><ContentWrapper activeTab="social" /></Route>
-          <Route exact path="/settings"><ContentWrapper activeTab="settings" setDarkMode={setPrefersDarkMode} /></Route>
+          <Route path="/settings"><ContentWrapper activeTab="settings" setDarkMode={setPrefersDarkMode} /></Route>
         </Switch>
       </ThemeProvider>
     </>

@@ -14,6 +14,7 @@ import ShareButton from "../util/ShareButton";
 import { useAuth0 } from "@auth0/auth0-react";
 import { getUserById } from "../Settings/settings.util";
 import MealImportButton from "./MealImportButton";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -35,6 +36,7 @@ const MealDetailView = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { user } = useAuth0();
+  let history = useHistory();
 
   const { meal: initialMeal, open, closeDialog, onDoneEditing, allowEditing, extern } = props;
 
@@ -69,6 +71,7 @@ const MealDetailView = (props) => {
   }
 
   const openEditItemDialog = (mealItem) => {
+    history.push('/meals/edit');
     setMealBeingEdited(mealItem);
     setEditDialogOpen(allowEditing && true);
   }
@@ -102,6 +105,7 @@ const MealDetailView = (props) => {
         : ''}
 
       {!extern && <EditMeal open={allowEditing && editDialogOpen} meal={mealBeingEdited} closeDialog={() => {
+        history.push('/meals/detail');
         setMealBeingEdited(null);
         setEditDialogOpen(false);
       }} onDoneEditing={afterEditing} onDoneDelete={() => {

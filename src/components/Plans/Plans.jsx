@@ -13,6 +13,7 @@ import MissingIngredients from "./MissingIngredients";
 import { getPlansOfUser } from "./plans.util";
 import ShoppingList from "./ShoppingList";
 import MealAvatar from "../Meals/MealAvatar";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   plansTable: {
@@ -52,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
 /** content of page that displays all plans of a given user (not including Navbar) */
 const Plans = (props) => {
   const classes = useStyles();
-
+  let history = useHistory();
   const { t } = useTranslation();
 
   const { own, userId } = props;
@@ -89,10 +90,16 @@ const Plans = (props) => {
 
   const openEditItemDialog = (planItem) => {
     if (own) {
+      history.push('/plans/edit');
       setItemBeingEdited(planItem);
       console.log(itemBeingEdited, planItem, itemBeingEdited === planItem)
       setEditDialogOpen(true);
     }
+  }
+
+  const openShoppingList = () => {
+    setShoppingListOpen(true);
+    history.push('/plans/shoppingList');
   }
 
   function openMissingIngredientDialog(planItem) {
@@ -181,7 +188,7 @@ const Plans = (props) => {
               <TableRow key='planListHeader'>
                 <TableCell className={classes.thCell}>{t('Plan')}</TableCell>
                 <TableCell align="center" className={classes.narrowCell + ' ' + classes.thCell}>{t('Due Date')}</TableCell>
-                <TableCell align="center" className={classes.thCell} onClick={() => {setShoppingListOpen(true)}}>
+                <TableCell align="center" className={classes.thCell} onClick={openShoppingList}>
                 <span className="fa-layers fa-fw">
                   <FontAwesomeIcon icon={faShoppingBasket} transform="grow-6" />
                   <FontAwesomeIcon icon={faCheck} className={classes.green} transform="down-2" />
@@ -200,11 +207,13 @@ const Plans = (props) => {
       }} onDoneEditing={fetchAndUpdatePlans} open={missingIngredientsDialogOpen} />
 
       <EditPlanItem open={editDialogOpen} planItem={itemBeingEdited} closeDialog={() => {
+        history.push('/plans');
         setItemBeingEdited(null);
         setEditDialogOpen(false);
       }} onDoneEditing={fetchAndUpdatePlans} />
 
       <MealDetailView open={detailViewOpen} meal={mealBeingViewed} allowEditing={own} closeDialog={() => {
+        history.push('/plans');
         setMealBeingViewed(null);
         setDetailViewOpen(false);
       }} />
@@ -212,6 +221,7 @@ const Plans = (props) => {
   );
 
   const shoppingList = <ShoppingList userId={userId} plans={plans} onClose={() => {
+    history.push('/plans');
     setShoppingListOpen(false);
     fetchAndUpdatePlans();
   }} />;

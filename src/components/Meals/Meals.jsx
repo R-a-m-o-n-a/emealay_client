@@ -11,6 +11,7 @@ import { withLoginRequired } from "../util";
 import MealAvatar from "./MealAvatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SelectMealTags from "./SelectMealTags";
+import { useHistory } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   infoText: {
@@ -42,6 +43,7 @@ const useStyles = makeStyles(theme => ({
 const Meals = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
+  let history = useHistory();
 
   const [, updateState] = useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
@@ -135,6 +137,7 @@ const Meals = (props) => {
 
   const openMealDetailView = (meal) => {
     setMealBeingViewed(meal);
+    history.push('/meals/detail');
     setDetailViewOpen(true);
   };
 
@@ -224,6 +227,7 @@ const Meals = (props) => {
         </>
       }
       <MealDetailView open={detailViewOpen} meal={mealBeingViewed} allowEditing={own} allowImporting={!own} closeDialog={() => {
+        history.push('/meals');
         setMealBeingViewed(null);
         setDetailViewOpen(false);
       }} onDoneEditing={fetchAndUpdateMeals} />
