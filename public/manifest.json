@@ -1,6 +1,7 @@
 {
   "name": "Emealay",
   "short_name": "Emealay",
+  "start_url": "./plans",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",
@@ -15,5 +16,5 @@
   ],
   "theme_color": "#98f56e",
   "background_color": "#98f56e",
-  "display": "standalone"
+  "display": "fullscreen"
 }
