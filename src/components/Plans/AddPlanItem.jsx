@@ -80,7 +80,7 @@ const AddPlanItem = (props) => {
               leftSideComponent={<BackButton onClick={() => {history.goBack()}} />}
               rightSideComponent={planItem.title ? <DoneButton label={t('Done')} onClick={addNewPlan} /> : null} />
       <form noValidate onSubmit={addNewPlan} className={classes.form}>
-        <EditPlanItemCore updatePlanItem={updatePlanItem} planItem={planItem} isAdd />
+        <EditPlanItemCore updatePlanItem={updatePlanItem} planItem={planItem} isAdd autoFocusFirstInput />
         <Button type="submit" disabled={!planItem.title} className={classes.submitButton} variant='contained' color='primary'>{t('Add Plan')}</Button>
       </form>
     </>

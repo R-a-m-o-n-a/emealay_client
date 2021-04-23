@@ -98,6 +98,7 @@ const EditPlanItemCore = (props) => {
       connectedMeal,
     },
     isSecondary,
+    autoFocusFirstInput,
   } = props;
 
   const colorA = isSecondary ? "primary" : "secondary";
@@ -155,7 +156,7 @@ const EditPlanItemCore = (props) => {
           setInputValueUpdateAllowed(false);
         }
       }} options={meals} getOptionLabel={(option) => option.title || ''} renderInput={(params) => (
-        <TextField {...params} color={colorB} className={classes.textField} label={t('Title')} variant="outlined" autoFocus required />
+        <TextField {...params} color={colorB} className={classes.textField} label={t('Title')} variant="outlined" autoFocus={autoFocusFirstInput} required />
       )} />
       <Box className={classes.dateSelectionWrapper}>
         <FormControlLabel className={classes.dateLabel} label={t('Date')} control={
@@ -238,11 +239,14 @@ EditPlanItemCore.propTypes = {
   }).isRequired,
   /** whether to use primary or secondary color scheme */
   isSecondary: bool,
+  /** whether to autofocus title input (will open keyboard on smartphones) */
+  autoFocusFirstInput: bool,
 }
 
 EditPlanItemCore.defaultProps = {
   isAdd: false,
   isSecondary: false,
+  autoFocusFirstInput: false,
 }
 
 export default withAuthenticationRequired(EditPlanItemCore, {

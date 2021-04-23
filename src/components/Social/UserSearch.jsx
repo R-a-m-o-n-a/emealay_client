@@ -25,9 +25,10 @@ const useStyles = makeStyles(theme => ({
   },
   infoText: {
     textAlign: "center",
-    margin: "3rem 2rem 1rem",
+    margin: "3rem 2rem",
     fontFamily: "Cookie",
-    fontSize: "2rem",
+    fontSize: "1.5rem",
+    lineHeight: "1.6rem",
   },
   topNav: props => ({
     height: props.height,

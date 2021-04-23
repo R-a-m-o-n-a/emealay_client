@@ -25,6 +25,7 @@ const EditMealCore = (props) => {
       category,
     },
     isSecondary,
+    autoFocusFirstInput,
   } = props;
 
   const [, updateState] = useState();
@@ -38,7 +39,7 @@ const EditMealCore = (props) => {
 
   return (
     <>
-      <OutlinedTextField name="title" value={title} label={t('Meal Title')} onChange={e => updateMeal('title', e.target.value)} isSecondary={isSecondary} autoFocus required />
+      <OutlinedTextField name="title" value={title} label={t('Meal Title')} onChange={e => updateMeal('title', e.target.value)} isSecondary={isSecondary} autoFocus={autoFocusFirstInput} required />
       <OutlinedTextField name="recipeLink" value={recipeLink} label={t('Link to Recipe')} onChange={e => updateMeal('recipeLink', e.target.value)} isSecondary={isSecondary} />
       <OutlinedTextField multiline rowsMax={10} name="comment" label={t('Comment')} value={comment} onChange={e => updateMeal('comment', e.target.value)} isSecondary={isSecondary} />
 
@@ -70,10 +71,13 @@ EditMealCore.propTypes = {
   }).isRequired,
   /** whether to use primary or secondary color scheme */
   isSecondary: bool,
+  /** whether to autofocus title input (will open keyboard on smartphones) */
+  autoFocusFirstInput: bool,
 }
 
 EditMealCore.defaultProps = {
   isSecondary: false,
+  autoFocusFirstInput: false,
 }
 
 export default withAuthenticationRequired(EditMealCore, {

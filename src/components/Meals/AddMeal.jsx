@@ -73,7 +73,7 @@ const AddMeal = (props) => {
       }} />} rightSideComponent={meal.title ? <DoneButton onClick={addNewMeal} /> : null} />
 
       <form noValidate onSubmit={addNewMeal} className={classes.form}>
-        <EditMealCore updateMeal={updateMeal} meal={meal} />
+        <EditMealCore updateMeal={updateMeal} meal={meal} autoFocusFirstInput />
         <Button type="submit" disabled={!meal.title} className={classes.submitButton} variant='contained' color='primary'>{t('Add')}</Button>
       </form>
 

@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     fontFamily: "Cookie",
     fontSize: "1.5rem",
     lineHeight: "1.6rem",
-  }
+  },
 }));
 
 /** content of page that displays all plans of a given user (not including Navbar) */

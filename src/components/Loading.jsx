@@ -7,9 +7,10 @@ import { useTranslation } from "react-i18next";
 const useStyles = makeStyles({
   infoText: {
     textAlign: "center",
-    margin: "3rem 2rem 1rem",
+    margin: "3rem 2rem",
     fontFamily: "Cookie",
-    fontSize: "2rem",
+    fontSize: "1.5rem",
+    lineHeight: "1.6rem",
   },
   loadingCircle: {
     display: "block",

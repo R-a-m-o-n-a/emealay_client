@@ -89,6 +89,7 @@ const ShoppingList = (props) => {
 
   const checkOrUncheck = (ingredient, planId) => {
     console.log('checking', ingredient);
+    ingredient.checked = !ingredient.checked;
     checkOrUncheckIngredient(planId, ingredient, fetchAndUpdatePlans); // todo when will the crossed out ingredients be removed from the list?
   }
 

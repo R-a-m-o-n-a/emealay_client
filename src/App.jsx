@@ -32,9 +32,11 @@ const App = () => {
     createMuiTheme({
       palette: {
         type: prefersDarkMode ? 'dark' : 'light',
-        primary: {
+        primary: {/*
           main: prefersDarkMode ? '#9fd105' : '#658404',
-          dark: prefersDarkMode ? '#6b7a12' : '#4a5700',
+          dark: prefersDarkMode ? '#6b7a12' : '#4a5700',*/
+          main: '#ac0013',
+          dark: '#ac0013',
         },
         secondary: {
           main: prefersDarkMode ? '#83b6d8' : '#1a274f',
