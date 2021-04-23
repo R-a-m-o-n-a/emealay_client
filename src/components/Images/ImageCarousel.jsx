@@ -61,7 +61,7 @@ const ImageCarousel = (props) => {
   return (
     <Box id="carouselBackdrop" className={classes.carouselBackdrop}>
       <Box className={classes.imageCarousel}>
-        <Carousel autoPlay={false} index={startIndex} indicators>
+        <Carousel autoPlay={false} timeout={0} index={startIndex} indicators>
           {slides}
         </Carousel>
         <BoxCloseX onClick={props.dismissCarousel} />
