@@ -22,7 +22,7 @@
   "Add": "Ajouter",
   "Done": "Terminé",
   "Share": "Partager",
-  "Due Date": "Date d'échéance",
+  "Due Date": "Date",
   "Got everything?": "Vous avez tout?",
   "Link to Recipe": "Lien vers la recette",
   "Meal Title": "Nom du repas",
@@ -86,5 +86,7 @@
   "Import into my meals": "Importer dans mes repas",
   "Contact start view": "Afficher en premier",
   "A new version of the app is available!": "Une nouvelle version est disponible!",
-  "Reload": "Rechargez"
+  "Reload": "Rechargez",
+  "placeholder tag": "par ex. végétarien",
+  "placeholder category": "par ex. Recettes de famille"
 }

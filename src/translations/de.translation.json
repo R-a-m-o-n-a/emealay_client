@@ -87,5 +87,7 @@
   "Import into my meals": "In meine Gerichte importieren",
   "Contact start view": "Startansicht für Kontakte",
   "A new version of the app is available!": "Neue Version verfügbar!",
-  "Reload": "Laden"
+  "Reload": "Laden",
+  "placeholder tag": "z.B. vegetarisch",
+  "placeholder category": "z.B. Familienrezepte"
 }

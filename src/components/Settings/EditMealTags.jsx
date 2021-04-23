@@ -62,9 +62,18 @@ const EditMealTags = (props) => {
   }
 
   return (
-    <ChipInput label={t('Tags')} color="secondary" classes={{ inputRoot: classes.chipInput, input: classes.input }} chipRenderer={(data) => {
-      return <Chip color="secondary" label={data.text} onDelete={data.handleDelete} deleteIcon={<Delete />} className={classes.chip} />
-    }} fullWidth variant="outlined" value={tags} onAdd={addTag} onDelete={removeTag} />
+    <ChipInput fullWidth
+               placeholder={t('placeholder tag')}
+               variant="outlined"
+               value={tags}
+               onAdd={addTag}
+               onDelete={removeTag}
+               label={t('Tags')}
+               color="secondary"
+               classes={{ inputRoot: classes.chipInput, input: classes.input }}
+               chipRenderer={(data) => {
+                 return <Chip color="secondary" label={data.text} onDelete={data.handleDelete} deleteIcon={<Delete />} className={classes.chip} />
+               }} />
   );
 }
 

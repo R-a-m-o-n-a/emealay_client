@@ -86,5 +86,7 @@
   "Import into my meals": "Import into my meals",
   "Contact start view": "Contact start view",
   "A new version of the app is available!": "A new version is available!",
-  "Reload": "Reload"
+  "Reload": "Reload",
+  "placeholder tag": "vegetarian",
+  "placeholder category": "family recipes"
 }

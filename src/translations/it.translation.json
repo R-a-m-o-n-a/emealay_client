@@ -86,5 +86,7 @@
   "Import into my meals": "Importa nei miei pasti",
   "Contact start view": "Vista iniziale dei contatti",
   "A new version of the app is available!": "Una nuova versione è disponibile!",
-  "Reload": "Ricarica"
+  "Reload": "Ricarica",
+  "placeholder tag": "ad es. vegetariano",
+  "placeholder category": "ad es. antipasti"
 }

@@ -86,5 +86,7 @@
   "Import into my meals": "Importar a mis comidas",
   "Contact start view": "Vista inicial de contactos",
   "A new version of the app is available!": "¡Una nueva versión está disponible!",
-  "Reload": "Recargar"
+  "Reload": "Recargar",
+  "placeholder tag": "p. ej., vegetariano",
+  "placeholder category": "p. ej., recetas internacionales"
 }

@@ -65,12 +65,13 @@ export const ChooseIconDialog = (props) => {
   if (isOpen && category) {
     return (
       <Dialog open={category && isOpen} onClose={onClose} PaperProps={{ className: classes.iconSelectDialog }}>
-        <DialogTitle style={{paddingBottom: 0}}>{t('Choose Icon for {{categoryName}}', {categoryName: category.name})}</DialogTitle>
+        <DialogTitle style={{ paddingBottom: 0 }}>{t('Choose Icon for {{categoryName}}', { categoryName: category.name })}</DialogTitle>
         <Box className={classes.iconGrid}>
           {categoryIcons.map((icon) => (
-              <Button key={icon.name} className={`${classes.iconListButton} ${category && category.icon && category.icon.iconName === icon.iconName && classes.iconListButtonSelected}`}>
-                <FontAwesomeIcon icon={icon} size="2x" onClick={() => {chooseIcon(icon)}} />
-              </Button>
+            <Button key={icon.name}
+                    className={`${classes.iconListButton} ${category && category.icon && category.icon.iconName === icon.iconName && classes.iconListButtonSelected}`}>
+              <FontAwesomeIcon icon={icon} size="2x" onClick={() => {chooseIcon(icon)}} />
+            </Button>
           ))}
         </Box>
       </Dialog>
@@ -161,17 +162,26 @@ const EditMealCategories = (props) => {
   }
 
   return (<>
-      <ChipInput label={t('Categories')} color="primary" classes={{ inputRoot: classes.chipInput, input: classes.input }} chipRenderer={(data) => {
-        const { value: category, value: { name, icon } } = data;
-        return <Chip color="primary"
-                     label={name}
-                     clickable
-                     onClick={() => {openIconSelect(category)}}
-                     onDelete={data.handleDelete}
-                     deleteIcon={<Delete />}
-                     className={classes.chip}
-                     avatar={<FontAwesomeIcon icon={icon || faPlusCircle} className={classes.chipIcon} />} />
-      }} fullWidth variant="outlined" value={categories} onAdd={addCategory} onDelete={removeCategory} />
+      <ChipInput fullWidth
+                 placeholder={t('placeholder category')}
+                 variant="outlined"
+                 value={categories}
+                 onAdd={addCategory}
+                 onDelete={removeCategory}
+                 label={t('Categories')}
+                 color="primary"
+                 classes={{ inputRoot: classes.chipInput, input: classes.input }}
+                 chipRenderer={(data) => {
+                   const { value: category, value: { name, icon } } = data;
+                   return <Chip color="primary"
+                                label={name}
+                                clickable
+                                onClick={() => {openIconSelect(category)}}
+                                onDelete={data.handleDelete}
+                                deleteIcon={<Delete />}
+                                className={classes.chip}
+                                avatar={<FontAwesomeIcon icon={icon || faPlusCircle} className={classes.chipIcon} />} />
+                 }} />
       <ChooseIconDialog chooseIcon={chooseIcon} onClose={closeIconSelect} isOpen={isIconSelectOpen} category={categoryInIconSelect} />
     </>
   );
