@@ -67,9 +67,7 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Switch>
-          <Route exact path="/">
-            <Home />
-          </Route>
+          <Route exact path="/"><Home /></Route>
           <Route exact path="/meals/view/:mealId"><MealDetailViewExtern /></Route>
 
           <Route exact path="/meals"><ContentWrapper activeTab="meals" /></Route>

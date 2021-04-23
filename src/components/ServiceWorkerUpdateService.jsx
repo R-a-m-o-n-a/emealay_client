@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { Snackbar, Button } from '@material-ui/core';
 import * as serviceWorker from '../serviceWorkerRegistration';
+import { useTranslation } from "react-i18next";
 
 /**
  * notifies the user when a new version is available and lets them trigger an update.
  * Without this, the app  would only update once the user has closed all active tabs
  * Source: https://felixgerschau.com/create-a-pwa-update-notification-with-create-react-app/ */
 const ServiceWorkerUpdateService = () => {
+  const { t } = useTranslation();
   const [showReload, setShowReload] = React.useState(false);
   const [waitingWorker, setWaitingWorker] = React.useState(null);
 
@@ -26,22 +28,11 @@ const ServiceWorkerUpdateService = () => {
   };
 
   return (
-    <Snackbar
-      open={showReload}
-      message={t('A new version of the app is available!')}
-      onClick={reloadPage}
-      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-      action={
-        <Button
-          variant="outlined"
-          color="inherit"
-          size="small"
-          onClick={reloadPage}
-        >
-          {t('Reload')}
-        </Button>
-      }
-    />
+    <Snackbar open={showReload} message={t('A new version of the app is available!')} onClick={reloadPage} anchorOrigin={{ vertical: 'top', horizontal: 'center' }} action={
+      <Button variant="outlined" color="inherit" size="small" onClick={reloadPage}>
+        {t('Reload')}
+      </Button>
+    } />
   );
 }
 
