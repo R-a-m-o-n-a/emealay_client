@@ -116,6 +116,7 @@ const SelectMealCategory = (props) => {
       <CreatableSelect className={classes.textField}
                        isClearable
                        placeholder={<ListItemText primary={t('Select Category') + '...'} />}
+                       noOptionsMessage={() => t('Type to add a Category')}
                        components={{ Option: SelectOption, SingleValue: ChosenOption }}
                        getOptionLabel={option => option.name}
                        onChange={handleCategoryChange}

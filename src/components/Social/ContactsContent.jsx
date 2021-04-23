@@ -16,7 +16,13 @@ import { getContactName, getContactPicture } from "./social.util";
 const useStyles = makeStyles((theme) => ({
   contactsContent: {
     width: '100%',
+    height: '100%',
+    maxHeight: '100%',
+    overflowY: "hidden",
   },
+  swipeView: {
+    height: `calc(100% - ${process.env.REACT_APP_NAV_BOTTOM_HEIGHT}px)`,
+  }
 }));
 
 /**
@@ -46,7 +52,7 @@ const ContactsContent = () => {
     if (user) {
       const userId = user.sub;
       getSettingsOfUser(userId, (settings) => {
-        setCurrentTab(settings.contactStartPageIndex);
+        setCurrentTab(settings.contactStartPageIndex || 1);
       });
     }
   }, [user]);
@@ -61,8 +67,8 @@ const ContactsContent = () => {
 
   const getTabs = () =>
     <Tabs value={currentTab} onChange={(event, newValue) => {setCurrentTab(newValue);}} indicatorColor="secondary" textColor="secondary" variant="fullWidth">
-      <Tab label="Meals" />
-      <Tab label="Plans" />
+      <Tab label={t('Meals')} />
+      <Tab label={t('Plans')} />
     </Tabs>
   ;
 
@@ -77,7 +83,7 @@ const ContactsContent = () => {
           </Dialog>
 
           {getTabs()}
-          <SwipeableViews axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'} index={currentTab} onChangeIndex={setCurrentTab}>
+          <SwipeableViews style={{height: '100%'}} axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'} index={currentTab} onChangeIndex={setCurrentTab}>
             <Box role="tabpanel" hidden={currentTab !== 0} dir={theme.direction}>
               <Meals own={false} userId={otherUser.user_id} />
             </Box>

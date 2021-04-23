@@ -73,9 +73,9 @@ const SelectMealTags = (props) => {
 
   if (allowCreate) {
     // getNewOptionData is necessary because otherwise the new option will be an object with identical label and value attributes
-    return <CreatableSelect {...commonProps} getNewOptionData={(value) => value} />;
+    return <CreatableSelect {...commonProps} getNewOptionData={(value) => value} noOptionsMessage={() => t('Type to add Tags')} />;
   } else {
-    return <ReactSelect {...commonProps} />;
+    return <ReactSelect {...commonProps} noOptionsMessage={() => t('No Tags so far')}/>;
   }
 }
 
