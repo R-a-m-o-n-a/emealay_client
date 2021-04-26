@@ -104,7 +104,6 @@ const EditMeal = (props) => {
       console.log('delete request sent for meal ', deletedMeal._id);
       onDoneEditing();
       onDoneDelete();
-      closeDialog();
     });
   }
 

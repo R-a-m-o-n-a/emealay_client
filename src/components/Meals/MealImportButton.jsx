@@ -128,7 +128,7 @@ const MealImportButton = (props) => {
               rightSideComponent={importAllowed ? (meal.title ? <DoneButton onClick={submitImport} /> : null) : <CircularProgress color="inherit" size={25} />}
               leftSideComponent={<BackButton onClick={cancel} />} />
       <form noValidate onSubmit={submitImport} className={classes.form}>
-        <EditMealCore meal={newMeal} updateMeal={updateMeal} isSecondary />
+        <EditMealCore meal={newMeal} updateMeal={updateMeal} isSecondary={true} />
         <Grid container spacing={0} justify="space-between" alignItems="center" wrap="nowrap">
           <Grid item xs>
             <Button type="button" color="secondary" variant="outlined" onClick={cancel}>{t('Cancel')}</Button>

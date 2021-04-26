@@ -124,7 +124,7 @@ const Meals = (props) => {
   useEffect(() => {
     fetchAndUpdateMeals();
     // eslint-disable-next-line
-  }, [userId]);
+  }, [userId, path]);
 
   useEffect(() => {
     sortMealsIntoCategories();
@@ -244,8 +244,7 @@ const Meals = (props) => {
                       meal={mealBeingViewed}
                       allowEditing={own}
                       allowImporting={!own}
-                      closeDialog={closeMealDetailView}
-                      onDoneEditing={fetchAndUpdateMeals} />
+                      closeDialog={closeMealDetailView} />
     </>
   );
 }

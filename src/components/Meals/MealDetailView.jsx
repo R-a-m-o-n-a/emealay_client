@@ -38,7 +38,7 @@ const MealDetailView = (props) => {
   let { path } = useRouteMatch();
   let history = useHistory();
 
-  const { meal: initialMeal, open, closeDialog, onDoneEditing, allowEditing } = props;
+  const { meal: initialMeal, open, closeDialog, allowEditing } = props;
 
   const [own, setOwn] = useState(false);
   const [meal, setMeal] = useState(initialMeal);
@@ -78,11 +78,6 @@ const MealDetailView = (props) => {
     history.goBack();
   }
 
-  const afterEditing = () => {
-    onDoneEditing();
-    fetchMeal();
-  }
-
   const rightSideComponent = () => {
     if (isAuthenticated) {
       if (own) {
@@ -115,8 +110,8 @@ const MealDetailView = (props) => {
         </FullScreenDialog>
         : ''}
 
-      {isAuthenticated && <EditMeal open={allowEditing && own && path.includes('edit')} meal={meal} closeDialog={closeEditItemDialog} onDoneEditing={afterEditing} onDoneDelete={() => {
-        afterEditing();
+      {isAuthenticated && <EditMeal open={allowEditing && own && path.includes('edit')} meal={meal} closeDialog={closeEditItemDialog} onDoneEditing={fetchMeal} onDoneDelete={() => {
+        fetchMeal();
         closeEditItemDialog();
         closeDialog();
       }} />}
@@ -142,8 +137,6 @@ MealDetailView.propTypes = {
   open: bool,
   /** function that sets open to false */
   closeDialog: func.isRequired,
-  /** function to be executed after editing (receives no parameters) */
-  onDoneEditing: func,
   /** allow opening edit page? (To be false if not one's own meal) */
   allowEditing: bool,
 }
