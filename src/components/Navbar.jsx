@@ -6,8 +6,8 @@ import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   topNav: props => ({
-    height: process.env.REACT_APP_NAVBAR_TOP_HEIGHT,
-    minHeight: process.env.REACT_APP_NAVBAR_TOP_HEIGHT,
+    height: process.env.REACT_APP_NAV_TOP_HEIGHT + 'px',
+    minHeight: process.env.REACT_APP_NAV_TOP_HEIGHT + 'px',
     justifyContent: 'space-between',
     backgroundColor: props.secondary ? theme.palette.secondary.main : theme.palette.primary.main,
   }),

@@ -21,7 +21,18 @@ const useStyles = makeStyles((theme) => ({
     overflowY: "hidden",
   },
   swipeView: {
-    height: `calc(100% - ${process.env.REACT_APP_NAV_BOTTOM_HEIGHT}px)`,
+    height: `calc(100% - 2 * ${process.env.REACT_APP_NAV_TOP_HEIGHT}px)`,
+    overflowY: 'auto',
+  },
+  dialogPicture: {
+    maxHeight: '100%',
+    maxWidth: '100%',
+  },
+  tabs: {
+    minHeight: `${process.env.REACT_APP_NAV_BOTTOM_HEIGHT}px`,
+  },
+  tab: {
+    minHeight: `${process.env.REACT_APP_NAV_BOTTOM_HEIGHT}px`,
   }
 }));
 
@@ -66,9 +77,14 @@ const ContactsContent = () => {
   }
 
   const getTabs = () =>
-    <Tabs value={currentTab} onChange={(event, newValue) => {setCurrentTab(newValue);}} indicatorColor="secondary" textColor="secondary" variant="fullWidth">
-      <Tab label={t('Meals')} />
-      <Tab label={t('Plans')} />
+    <Tabs value={currentTab}
+          className={classes.tabs}
+          onChange={(event, newValue) => {setCurrentTab(newValue);}}
+          indicatorColor="secondary"
+          textColor="secondary"
+          variant="fullWidth">
+      <Tab label={t('Meals')} className={classes.tab} />
+      <Tab label={t('Plans')} className={classes.tab} />
     </Tabs>
   ;
 
@@ -79,11 +95,14 @@ const ContactsContent = () => {
           <Navbar pageTitle={getContactName(otherUser)} secondary titleOnClick={() => {setIsContactProfileOpen(true);}} leftSideComponent={leftSideComponent()} />
 
           <Dialog open={isContactProfileOpen} onClose={() => setIsContactProfileOpen(false)}>
-            <img src={getContactPicture(otherUser)} alt={getContactName(otherUser)} />
+            <img src={getContactPicture(otherUser)} alt={getContactName(otherUser)} className={classes.dialogPicture} />
           </Dialog>
 
           {getTabs()}
-          <SwipeableViews style={{height: '100%'}} axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'} index={currentTab} onChangeIndex={setCurrentTab}>
+          <SwipeableViews style={{
+            height: `calc(100% - 2 * ${process.env.REACT_APP_NAV_TOP_HEIGHT}px)`,
+            overflowY: 'auto',
+          }} axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'} index={currentTab} onChangeIndex={setCurrentTab}>
             <Box role="tabpanel" hidden={currentTab !== 0} dir={theme.direction}>
               <Meals own={false} userId={otherUser.user_id} />
             </Box>

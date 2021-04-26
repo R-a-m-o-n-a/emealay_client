@@ -152,7 +152,7 @@ const Meals = (props) => {
 
   const closeMealDetailView = () => {
     setMealBeingViewed(null);
-    history.push('/meals');
+    history.goBack();
   };
 
   const getListItems = () => {
@@ -211,14 +211,14 @@ const Meals = (props) => {
       {meals.length === 0 ?
         <Typography className={classes.infoText}>{emptyListFound ? t("Looks like there are no meals here yet") : t('Loading') + '...'} </Typography> :
         <>
-          <Box style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Button variant={"text"}
-                    className={classes.optionRowButton}
-                    color="secondary"
-                    onClick={() => {setIsFilterOpen(prevState => !prevState)}}
-                    endIcon={isFilterOpen ? <ExpandLess /> : <ExpandMore />}>
+          <Box style={{ display: 'flex', justifyContent: own ? 'space-between' : 'end' }}>
+            {own && <Button variant={"text"}
+                            className={classes.optionRowButton}
+                            color="secondary"
+                            onClick={() => {setIsFilterOpen(prevState => !prevState)}}
+                            endIcon={isFilterOpen ? <ExpandLess /> : <ExpandMore />}>
               {t('Filter')}
-            </Button>
+            </Button>}
             <Button variant="text"
                     className={classes.optionRowButton}
                     color="primary"
