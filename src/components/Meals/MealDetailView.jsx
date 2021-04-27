@@ -25,6 +25,10 @@ const useStyles = makeStyles((theme) => ({
   mealTitle: {
     flexGrow: 10,
   },
+  comment: {
+    margin: '0.5rem 0',
+    whiteSpace: "pre-wrap",
+  },
   shareButton: {
     textAlign: "right",
   },
@@ -104,7 +108,7 @@ const MealDetailView = (props) => {
               </Grid>
             </Grid>
             {meal.recipeLink ? <Typography><Link href={meal.recipeLink} target="_blank">{meal.recipeLink}</Link></Typography> : ''}
-            {meal.comment ? <Typography>{meal.comment}</Typography> : ''}
+            {meal.comment ? <Typography className={classes.comment}>{meal.comment}</Typography> : ''}
             {meal.images && meal.images.length > 0 ? <ImageGrid images={meal.images} allowChoosingMain={false} /> : ''}
           </Box>
         </FullScreenDialog>
