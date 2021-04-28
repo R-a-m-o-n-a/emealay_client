@@ -89,5 +89,8 @@
   "Reload": "Ricarica",
   "placeholder tag": "ad es. vegetariano",
   "placeholder category": "ad es. antipasti",
-  "Go to my meals": "Ai miei pasti"
+  "Go to my meals": "Ai miei pasti",
+  "Import": "Importare",
+  "Import Meal": "Importare pasto",
+  "Successfully imported meal": "Pasto importato con successo"
 }

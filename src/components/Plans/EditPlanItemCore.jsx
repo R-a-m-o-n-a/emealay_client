@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@material-ui/core';
-// import MuiAlert from '@material-ui/lab/Alert';
+import { Box, Button, IconButton, Checkbox, FormControlLabel, Grid, TextField, fade } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinusCircle, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
@@ -44,6 +43,10 @@ const useStyles = makeStyles((theme) => ({
   newIngredientInputGrid: {
     marginBottom: '0.5em',
   },
+  addIngredientTextField: {
+    width: '100%',
+    paddingRight: '1rem',
+  },
   addIngredientButton: {
     borderRadius: '100%',
     minWidth: '1em',
@@ -52,6 +55,9 @@ const useStyles = makeStyles((theme) => ({
   },
   addIngredientButtonIcon: {
     color: theme.palette.primary.main,
+  },
+  addIngredientButtonIconDisabled: {
+    color: fade(theme.palette.primary.main, 0.3),
   },
   removeIngredientButtonIcon: {
     color: theme.palette.error.light,
@@ -140,7 +146,7 @@ const EditPlanItemCore = (props) => {
     console.log(updatedIngredients);
     updatePlanItem('missingIngredients', updatedIngredients);
   }
-
+  console.log('newIngredient', newIngredient);
   return (
     <>
       <Autocomplete id="planTitle" freeSolo clearOnBlur={false} clearOnEscape={false} value={connectedMeal} onChange={(event, newValue) => {
@@ -179,19 +185,25 @@ const EditPlanItemCore = (props) => {
       <Box className={classes.missingIngredientsBox} hidden={gotEverything}>
         <Grid container spacing={1} justify="space-between" alignItems="flex-end" className={classes.newIngredientInputGrid}>
           <Grid item xs style={{ width: 'calc(100% - (2em + 8px))' }}>
-            <TextField value={newIngredient} color={colorA} name="newIngredient" onChange={e => setNewIngredient(e.target.value)} onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                if (newIngredient) addIngredient();
-              }
-            }} label={t('Missing Ingredient')} InputLabelProps={{ className: classes.missingIngredientInputLabel }} variant="standard" />
+            <TextField value={newIngredient}
+                       color={colorA}
+                       name="newIngredient"
+                       className={classes.addIngredientTextField}
+                       label={t('Missing Ingredient')}
+                       InputLabelProps={{ className: classes.missingIngredientInputLabel }}
+                       variant="standard"
+                       onChange={e => setNewIngredient(e.target.value)}
+                       onKeyDown={(event) => {
+                         if (event.key === 'Enter') {
+                           event.preventDefault();
+                           if (newIngredient) addIngredient();
+                         }
+                       }} />
           </Grid>
           <Grid item className={classes.buttonGridCell}>
-            <Button type="button"
-                    disabled={!newIngredient}
-                    className={classes.addIngredientButton}
-                    onClick={addIngredient}
-                    variant='text'><FontAwesomeIcon className={classes.addIngredientButtonIcon} icon={faPlusCircle} size="2x" /></Button>
+            <IconButton type="button" disabled={!newIngredient} className={classes.addIngredientButton} onClick={addIngredient} variant='text'>
+              <FontAwesomeIcon className={newIngredient ? classes.addIngredientButtonIcon : classes.addIngredientButtonIconDisabled} icon={faPlusCircle} />
+            </IconButton>
           </Grid>
         </Grid>
 

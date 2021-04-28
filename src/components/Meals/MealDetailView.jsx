@@ -97,7 +97,7 @@ const MealDetailView = (props) => {
     <>
       {meal ?
         <FullScreenDialog open={open} onClose={closeDialog}>
-          <Navbar pageTitle={t('Meal')} rightSideComponent={rightSideComponent} leftSideComponent={isAuthenticated && <BackButton onClick={closeDialog} />} />
+          <Navbar pageTitle={t('Meal')} rightSideComponent={rightSideComponent()} leftSideComponent={isAuthenticated && <BackButton onClick={closeDialog} />} />
           <Box className={classes.content}>
             <Grid container spacing={0} justify="space-between" alignItems="flex-start" wrap="nowrap">
               <Grid item xs className={classes.mealTitle}>

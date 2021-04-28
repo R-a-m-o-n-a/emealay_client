@@ -10,7 +10,7 @@ import AddMeal from "./Meals/AddMeal";
 import Home from "./Home";
 import MealDetailViewExtern from "./Meals/MealDetailViewExtern";
 import MealWrapper from "./Meals/MealWrapper";
-import PlanWrapper from "./Plans/PlanWrapper";
+import OwnPlans from "./Plans/OwnPlans";
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -54,7 +54,7 @@ const ContentWrapper = (props) => {
       contentPage = <MealDetailViewExtern />;
       break;
     case "plans":
-      contentPage = <PlanWrapper />;
+      contentPage = <OwnPlans />;
       break;
     case "home":
     default:

@@ -89,5 +89,8 @@
   "Reload": "Reload",
   "placeholder tag": "vegetarian",
   "placeholder category": "family recipes",
-  "Go to my meals": "Go to my meals"
+  "Go to my meals": "Go to my meals",
+  "Import": "Import",
+  "Import Meal": "Import Meal",
+  "Successfully imported meal": "Successfully imported meal"
 }

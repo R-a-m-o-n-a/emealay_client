@@ -89,5 +89,8 @@
   "Reload": "Rechargez",
   "placeholder tag": "par ex. végétarien",
   "placeholder category": "par ex. Recettes de famille",
-  "Go to my meals": "A mes repas"
+  "Go to my meals": "A mes repas",
+  "Import": "Importer",
+  "Import Meal": "Importer un repas",
+  "Successfully imported meal": "Importation réussie du repas"
 }

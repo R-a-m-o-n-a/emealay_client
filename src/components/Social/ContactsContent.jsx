@@ -5,8 +5,8 @@ import { Box, Dialog, Tab, Tabs } from '@material-ui/core';
 import Meals from "../Meals/Meals";
 import Navbar from "../Navbar";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useHistory, useParams } from "react-router-dom";
-import { getSettingsOfUser, getUserById } from "../Settings/settings.util";
+import { useHistory, useParams, useRouteMatch } from "react-router-dom";
+import { getUserById } from "../Settings/settings.util";
 import BackButton from "../Buttons/BackButton";
 import { useTranslation } from "react-i18next";
 import { LoadingBody } from "../Loading";
@@ -48,8 +48,9 @@ const ContactsContent = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const { user, isAuthenticated, isLoading } = useAuth0();
-  let { userId } = useParams();
+  let { userId, tab } = useParams();
   let history = useHistory();
+  let { path, url } = useRouteMatch();
 
   const [otherUser, setOtherUser] = React.useState(null);
   const [currentTab, setCurrentTab] = React.useState(1);
@@ -60,13 +61,9 @@ const ContactsContent = () => {
   }, [userId]);
 
   useEffect(() => {
-    if (user) {
-      const userId = user.sub;
-      getSettingsOfUser(userId, (settings) => {
-        setCurrentTab(settings.contactStartPageIndex || 1);
-      });
-    }
-  }, [user]);
+    if (tab === 'meals') setCurrentTab(0);
+    if (tab === 'plans') setCurrentTab(1);
+  }, [tab]);
 
   const leftSideComponent = () => {
     if (!isLoading && isAuthenticated && user) {
@@ -76,10 +73,17 @@ const ContactsContent = () => {
     }
   }
 
+  const switchTab = (newIndex) => {
+    setCurrentTab(newIndex);
+    const newPage = (newIndex === 0) ? 'meals' : 'plans';
+    let basicURL = url.slice(0, url.lastIndexOf('/'));
+    history.replace(basicURL + '/' + newPage);
+  }
+
   const getTabs = () =>
     <Tabs value={currentTab}
           className={classes.tabs}
-          onChange={(event, newValue) => {setCurrentTab(newValue);}}
+          onChange={(event, newValue) => {switchTab(newValue);}}
           indicatorColor="secondary"
           textColor="secondary"
           variant="fullWidth">
@@ -88,6 +92,7 @@ const ContactsContent = () => {
     </Tabs>
   ;
 
+  console.log(url, path);
   return (
     <Box className={classes.contactsContent}>
       {otherUser ?
@@ -102,7 +107,7 @@ const ContactsContent = () => {
           <SwipeableViews style={{
             height: `calc(100% - 2 * ${process.env.REACT_APP_NAV_TOP_HEIGHT}px)`,
             overflowY: 'auto',
-          }} axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'} index={currentTab} onChangeIndex={setCurrentTab}>
+          }} axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'} index={currentTab} onChangeIndex={switchTab}>
             <Box role="tabpanel" hidden={currentTab !== 0} dir={theme.direction}>
               <Meals own={false} userId={otherUser.user_id} />
             </Box>

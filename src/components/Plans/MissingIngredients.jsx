@@ -4,8 +4,22 @@ import { any, arrayOf, bool, func, shape, string } from "prop-types";
 import { useTranslation } from "react-i18next";
 import { checkOrUncheckIngredient } from "./plans.util";
 
+import { makeStyles } from '@material-ui/styles';
+
+const useStyles = makeStyles({
+  dialogHeading: {
+    lineHeight: '1.5rem',
+    marginBottom: '0.5rem',
+  },
+  dialog: {
+    minWidth: '200px',
+    padding: '1.5rem 2rem',
+  }
+});
+
 /** Dialog that displays a plans missing ingredients and allows to check or uncheck them */
 const MissingIngredients = (props) => {
+  const classes = useStyles();
   const { t } = useTranslation();
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
@@ -18,15 +32,17 @@ const MissingIngredients = (props) => {
     });
   }
 
-  if(!planItem) return null;
+  if (!planItem) return null;
 
   return (
-    <Dialog open={open} onClose={closeDialog} >
-      <FormControl style={{minWidth: '200px', padding: '1.5rem 2rem'}}>
-        <FormLabel style={{marginBottom: '1rem'}}>{t('Missing Ingredients for {{plan}}', {plan: planItem.title})}</FormLabel>
+    <Dialog open={open} onClose={closeDialog}>
+      <FormControl className={classes.dialog}>
+        <FormLabel className={classes.dialogHeading}>{t('Missing Ingredients for {{plan}}', { plan: planItem.title })}</FormLabel>
         <FormGroup>
           {planItem.missingIngredients.map((ingredient) => (
-            <FormControlLabel key={ingredient.name} control={<Checkbox checked={ingredient.checked} onChange={(event) => {checkIngredient(ingredient, event.target.checked);}} />} label={ingredient.name} />))}
+            <FormControlLabel key={ingredient.name}
+                              control={<Checkbox checked={ingredient.checked} onChange={(event) => {checkIngredient(ingredient, event.target.checked);}} />}
+                              label={ingredient.name} />))}
         </FormGroup>
       </FormControl>
     </Dialog>

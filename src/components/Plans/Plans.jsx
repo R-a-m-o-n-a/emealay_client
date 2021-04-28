@@ -9,10 +9,13 @@ import { useTranslation } from "react-i18next";
 import { bool, string } from "prop-types";
 import { dateStringOptions, withLoginRequired } from "../util";
 import MissingIngredients from "./MissingIngredients";
-import { getPlansOfUser, getSinglePlan } from "./plans.util";
+import { addPlan, getPlansOfUser, getSinglePlan } from "./plans.util";
 import ShoppingList from "./ShoppingList";
 import MealAvatar from "../Meals/MealAvatar";
-import { useHistory, useParams, useRouteMatch } from "react-router-dom";
+import { Route, Switch, useHistory, useParams, useRouteMatch } from "react-router-dom";
+import useSnackbars from "../util/useSnackbars";
+import AddButton from "../Buttons/AddButton";
+import Navbar from "../Navbar";
 
 const useStyles = makeStyles((theme) => ({
   plansTable: {
@@ -53,18 +56,18 @@ const useStyles = makeStyles((theme) => ({
 const Plans = (props) => {
   const classes = useStyles();
   let history = useHistory();
-  let { path } = useRouteMatch();
   const params = useParams();
   const { t } = useTranslation();
+  let { path, url } = useRouteMatch();
 
   const { own, userId } = props;
 
   const [missingIngredientsDialogOpen, setMissingIngredientsDialogOpen] = useState(false);
   const [plans, setPlans] = useState([]);
-  const [shoppingListOpen, setShoppingListOpen] = useState(false);
   const [itemBeingEdited, setItemBeingEdited] = useState(null);
   const [emptyListFound, setEmptyListFound] = useState(false);
 
+  const [deletedItem, setDeletedItem] = useState(null);
   const [pastPlansOpen, setPastPlansOpen] = useState(false);
 
   const fetchAndUpdatePlans = () => {
@@ -100,7 +103,21 @@ const Plans = (props) => {
   }
 
   const openShoppingList = () => {
-    setShoppingListOpen(true);
+    history.push(`${url}/shoppingList`);
+  }
+
+  const undoDeletion = () => {
+    addPlan(deletedItem, () => {
+      fetchAndUpdatePlans();
+      showReaddedItemMessage();
+    });
+  }
+
+  const { Snackbars, showDeletedItemMessage, showReaddedItemMessage } = useSnackbars('Plan', deletedItem, undoDeletion);
+
+  const onDeletePlan = (planItem) => {
+    setDeletedItem(planItem);
+    showDeletedItemMessage();
   }
 
   function openMissingIngredientDialog(planItem) {
@@ -127,8 +144,8 @@ const Plans = (props) => {
     const pastPlans = [];
     const futurePlans = [];
     plans.forEach((plan, index) => {
-      const planIsInPast = new Date(plan.date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0);
-      if (!plan.hasDate || (plan.hasDate && !(planIsInPast))) {
+      const planIsInPast = plan.hasDate && new Date(plan.date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0);
+      if (!planIsInPast) {
         pastPlansDone = true;
       }
       const currentRow = (
@@ -178,46 +195,59 @@ const Plans = (props) => {
     return rows;
   }
 
-  const planList = (
-    <>
-      {plans.length === 0 ? <Typography className={classes.infoText}>{emptyListFound ? t("Currently nothing planned") : t('Loading') + '...'} </Typography> :
-        <TableContainer className={classes.plansTable}>
-          <Table aria-label="table of all plans" stickyHeader>
-            <TableHead>
-              <TableRow key='planListHeader'>
-                <TableCell className={classes.thCell}>{t('Plan')}</TableCell>
-                <TableCell align="center" className={classes.narrowCell + ' ' + classes.thCell}>{t('Due Date')}</TableCell>
-                <TableCell align="center" className={classes.thCell} onClick={openShoppingList}>
-                <span className="fa-layers fa-fw">
-                  <FontAwesomeIcon icon={faShoppingBasket} transform="grow-6" />
-                  <FontAwesomeIcon icon={faCheck} className={classes.green} transform="down-2" />
-                </span>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            {getPlanRows()}
-          </Table>
-        </TableContainer>
-      }
+  return (
+    <Switch>
+      <Route path={`${path}/edit/:planId`}>
+        <EditPlanItem planItem={itemBeingEdited} closeDialog={() => {
+          setItemBeingEdited(null);
+          history.push('/plans');
+        }} onDoneEditing={fetchAndUpdatePlans} onDelete={onDeletePlan} />
+      </Route>
+      <Route path={path}>
+        <>
+          {own && <Navbar pageTitle={t('Plans')} rightSideComponent={<AddButton onClick={() => {history.push('/plans/add');}} />} />}
+          <Switch>
 
-      <MissingIngredients planItem={itemBeingEdited} closeDialog={() => {
-        setItemBeingEdited(null);
-        setMissingIngredientsDialogOpen(false);
-      }} onDoneEditing={fetchAndUpdatePlans} open={missingIngredientsDialogOpen} />
+            <Route path={`${path}/shoppingList`}>
+              <ShoppingList userId={userId} plans={plans} onClose={() => {
+                history.goBack();
+                fetchAndUpdatePlans();
+              }} />
+            </Route>
 
-      <EditPlanItem open={path.includes('edit')} planItem={itemBeingEdited} closeDialog={() => {
-        setItemBeingEdited(null);
-        history.push('/plans');
-      }} onDoneEditing={fetchAndUpdatePlans} />
-    </>
+            <Route path={path}>
+              {plans.length === 0 ? <Typography className={classes.infoText}>{emptyListFound ? t("Currently nothing planned") : t('Loading') + '...'} </Typography> :
+                <TableContainer className={classes.plansTable}>
+                  <Table aria-label="table of all plans" stickyHeader>
+                    <TableHead>
+                      <TableRow key='planListHeader'>
+                        <TableCell className={classes.thCell}>{t('Plan')}</TableCell>
+                        <TableCell align="center" className={classes.narrowCell + ' ' + classes.thCell}>{t('Due Date')}</TableCell>
+                        <TableCell align="center" className={classes.thCell} onClick={openShoppingList}>
+                          <span className="fa-layers fa-fw">
+                            <FontAwesomeIcon icon={faShoppingBasket} transform="grow-6" />
+                            <FontAwesomeIcon icon={faCheck} className={classes.green} transform="down-2" />
+                          </span>
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    {getPlanRows()}
+                  </Table>
+                </TableContainer>
+              }
+
+              <MissingIngredients planItem={itemBeingEdited} closeDialog={() => {
+                setItemBeingEdited(null);
+                setMissingIngredientsDialogOpen(false);
+              }} onDoneEditing={fetchAndUpdatePlans} open={missingIngredientsDialogOpen} />
+
+              {Snackbars}
+            </Route>
+          </Switch>
+        </>
+      </Route>
+    </Switch>
   );
-
-  const shoppingList = <ShoppingList userId={userId} plans={plans} onClose={() => {
-    setShoppingListOpen(false);
-    fetchAndUpdatePlans();
-  }} />;
-
-  return shoppingListOpen ? shoppingList : planList;
 }
 
 Plans.propTypes = {

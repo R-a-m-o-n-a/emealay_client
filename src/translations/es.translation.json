@@ -78,7 +78,7 @@
   "Type to add a Category": "Teclear para añadir una categoría",
   "No meals found for filter selection": "No se ha encontrado ninguna comida para la selección de filtros",
   "expand all": "expandir todo",
-  "collapse all": "colapsar todo",
+  "collapse all": "contraer todo",
   "Search for users": "Buscar usuarios",
   "Copy": "Copiar",
   "Copied": "Copiado",
@@ -89,5 +89,8 @@
   "Reload": "Recargar",
   "placeholder tag": "p. ej., vegetariano",
   "placeholder category": "p. ej., recetas internacionales",
-  "Go to my meals": "A mis comidas"
+  "Go to my meals": "A mis comidas",
+  "Import": "Importar",
+  "Import Meal": "Importar Comida",
+  "Successfully imported meal": "Comida importada con éxito"
 }

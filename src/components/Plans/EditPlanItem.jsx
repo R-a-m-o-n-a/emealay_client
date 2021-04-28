@@ -10,9 +10,7 @@ import EditPlanItemCore from "./EditPlanItemCore";
 import BackButton from "../Buttons/BackButton";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import Loading from "../Loading";
-import useSnackbars from "../util/useSnackbars";
 import DoneButton from "../Buttons/DoneButton";
-import FullScreenDialog from "../util/FullScreenDialog";
 
 /** Dialog page that allows user to edit plan */
 const useStyles = makeStyles((theme) => ({
@@ -57,11 +55,9 @@ const EditPlanItem = (props) => {
   const { t } = useTranslation();
   const { user } = useAuth0();
 
-  const { closeDialog, onDoneEditing, planItem: givenPlanItem, open } = props;
+  const { closeDialog, onDoneEditing, onDelete, planItem: givenPlanItem } = props;
 
   const [planItem, setPlanItem] = useState(givenPlanItem);
-
-  const [deletedItem, setDeletedItem] = useState(null);
 
   useEffect(() => {
     if (givenPlanItem) {
@@ -93,23 +89,12 @@ const EditPlanItem = (props) => {
 
   const deletePlan = () => {
     axios.post(serverURL + '/plans/delete/' + planItem._id).then((result) => {
-      setDeletedItem(planItem);
-      showDeletedItemMessage();
+      onDelete(planItem);
       console.log('delete request sent', result.data);
       onDoneEditing();
       closeDialog();
     });
   }
-
-  const undoDeletion = () => {
-    axios.post(serverURL + '/plans/add', deletedItem).then((result) => {
-      console.log('re-add request sent', result.data);
-      showReaddedItemMessage();
-      onDoneEditing();
-    });
-  }
-
-  const { Snackbars, showDeletedItemMessage, showReaddedItemMessage } = useSnackbars('Plan', deletedItem, undoDeletion);
 
   const editAndClose = (event) => {
     event.preventDefault();
@@ -125,30 +110,27 @@ const EditPlanItem = (props) => {
   }
 
   return (
-    <>{planItem ?
-      <FullScreenDialog open={open} onClose={closeDialog}>
-        <Navbar pageTitle={t('Edit Plan')}
-                leftSideComponent={<BackButton onClick={closeDialog} />}
-                rightSideComponent={planItem.title ? <DoneButton onClick={editAndClose} /> : null}
-                secondary={inverseColors} />
+    planItem &&
+    <>
+      <Navbar pageTitle={t('Edit Plan')}
+              leftSideComponent={<BackButton onClick={closeDialog} />}
+              rightSideComponent={planItem.title ? <DoneButton onClick={editAndClose} /> : null}
+              secondary={inverseColors} />
 
-        <form noValidate onSubmit={editAndClose} className={classes.form}>
-          <EditPlanItemCore planItem={planItem} updatePlanItem={updatePlanItem} isSecondary={inverseColors} />
-          <Grid container spacing={0} justify="space-between" alignItems="center" wrap="nowrap" className={classes.actionButtonWrapper}>
-            <Grid item xs className={classes.cancelButton}>
-              <Button type="button" color={inverseColors ? "secondary" : "primary"} variant="outlined" onClick={closeDialog}>{t('Cancel')}</Button>
-            </Grid>
-            <Grid item xs className={classes.deleteButton}>
-              <DeleteButton onClick={deletePlan} />
-            </Grid>
-            <Grid item xs className={classes.saveButton}>
-              <Button type="submit" disabled={!planItem.title} color={inverseColors ? "secondary" : "primary"} variant="contained">{t('Save')}</Button>
-            </Grid>
+      <form noValidate onSubmit={editAndClose} className={classes.form}>
+        <EditPlanItemCore planItem={planItem} updatePlanItem={updatePlanItem} isSecondary={inverseColors} />
+        <Grid container spacing={0} justify="space-between" alignItems="center" wrap="nowrap" className={classes.actionButtonWrapper}>
+          <Grid item xs className={classes.cancelButton}>
+            <Button type="button" color={inverseColors ? "secondary" : "primary"} variant="outlined" onClick={closeDialog}>{t('Cancel')}</Button>
           </Grid>
-        </form>
-      </FullScreenDialog>
-      : ''}
-      {Snackbars}
+          <Grid item xs className={classes.deleteButton}>
+            <DeleteButton onClick={deletePlan} />
+          </Grid>
+          <Grid item xs className={classes.saveButton}>
+            <Button type="submit" disabled={!planItem.title} color={inverseColors ? "secondary" : "primary"} variant="contained">{t('Save')}</Button>
+          </Grid>
+        </Grid>
+      </form>
     </>
   );
 }
@@ -166,10 +148,10 @@ EditPlanItem.propTypes = {
     })),
     connectedMealId: string,
   }),
-  /** is component visible? */
-  open: bool.isRequired,
   /** function to be executed after editing complete (receives no parameters) */
   onDoneEditing: func.isRequired,
+  /** function to be executed after deleting an item (receives deleted item as parameter) */
+  onDelete: func.isRequired,
   /** function that closes Dialog / sets open to false */
   closeDialog: func.isRequired,
 }

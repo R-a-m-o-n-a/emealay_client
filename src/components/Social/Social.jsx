@@ -7,9 +7,10 @@ import { makeStyles } from '@material-ui/styles';
 import UserSearch from "./UserSearch";
 import { useTranslation } from "react-i18next";
 import { fetchContactsOfUser, getContactName, getContactPicture, updateContactsFromAuth0 } from "./social.util";
-import { Route, Switch, useHistory, useRouteMatch } from "react-router-dom";
+import { Route, Switch, Redirect, useHistory, useRouteMatch } from "react-router-dom";
 import ContactsContent from "./ContactsContent";
 import { withLoginRequired } from "../util";
+import { getSettingsOfUser } from "../Settings/settings.util";
 
 const useStyles = makeStyles({
   infoText: {
@@ -34,6 +35,7 @@ const Social = () => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [noContactsFound, setNoContactsFound] = useState(false);
+  const [contactStartPage, setContactStartPage] = useState('plans');
 
   const fetchContacts = (updateContactsData = false) => {
     if (user) {
@@ -50,13 +52,21 @@ const Social = () => {
   useEffect(() => {
     fetchContacts(true);
     // eslint-disable-next-line
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      const userId = user.sub;
+      getSettingsOfUser(userId, (settings) => {
+        console.log(settings, settings.contactStartPageIndex);
+        setContactStartPage(settings.contactStartPageIndex === 0 ? 'meals' : 'plans');
+      });
+    }
+  }, [user]);
 
   const showUser = (userId) => {
-    history.push(`${url}/contact/${userId}`);
+    history.push(`${url}/contact/${userId}/${contactStartPage}`);
   }
-
-  console.log(contacts);
 
   const getListItems = () => {
     return contacts.map(contact => {
@@ -76,8 +86,6 @@ const Social = () => {
     });
   }
 
-  console.log(url, path);
-
   return (
     <>
       <Switch>
@@ -96,7 +104,8 @@ const Social = () => {
             </List>
           }
         </Route>
-        <Route path={`${path}/contact/:userId`}>
+        <Redirect exact from={`${path}/contact/:userId`} to={`${path}/contact/:userId/${contactStartPage}`} />
+        <Route path={`${path}/contact/:userId/:tab`}>
           <ContactsContent />
         </Route>
       </Switch>

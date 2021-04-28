@@ -7,7 +7,6 @@ import MealDetailView from "./MealDetailView";
 import { fetchAndUpdateMeal, fetchAndUpdateMealsFromUser } from "./meals.util";
 import useCategoryIcons from "./useCategoryIcons";
 import { bool, string } from "prop-types";
-import { withLoginRequired } from "../util";
 import MealAvatar from "./MealAvatar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SelectMealTags from "./SelectMealTags";
@@ -256,4 +255,4 @@ Meals.propTypes = {
   own: bool.isRequired,
 }
 
-export default withLoginRequired(Meals);
+export default Meals;

@@ -90,5 +90,8 @@
   "Reload": "Laden",
   "placeholder tag": "z.B. vegetarisch",
   "placeholder category": "z.B. Familienrezepte",
-  "Go to my meals": "Zu meinen Gerichten"
+  "Go to my meals": "Zu meinen Gerichten",
+  "Import": "Importieren",
+  "Import Meal": "Gericht importieren",
+  "Successfully imported meal": "Gericht erfolgreich importiert"
 }

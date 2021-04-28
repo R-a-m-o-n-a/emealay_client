@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import axios from 'axios';
 import Navbar from "../Navbar";
 import { useHistory } from "react-router-dom";
 import BackButton from "../Buttons/BackButton";
@@ -11,6 +10,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { withLoginRequired } from "../util";
 import { func } from "prop-types";
 import DoneButton from "../Buttons/DoneButton";
+import { addPlan } from "./plans.util";
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -23,8 +23,6 @@ const useStyles = makeStyles(theme => ({
     display: 'block',
   }
 }));
-
-const serverURL = process.env.REACT_APP_SERVER_URL;
 
 /** page that allows adding a plan */
 const AddPlanItem = (props) => {
@@ -67,10 +65,7 @@ const AddPlanItem = (props) => {
         connectedMealId: planItem.connectedMeal ? planItem.connectedMeal._id : null,
       }
 
-      axios.post(serverURL + '/plans/add', newPlan).then((result) => {
-        console.log('add request sent', result.data);
-        onDoneAdding();
-      });
+      addPlan(newPlan, onDoneAdding);
     }
   }
 

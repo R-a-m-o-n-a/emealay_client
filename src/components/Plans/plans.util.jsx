@@ -35,6 +35,18 @@ export const getSinglePlan = (planId, updatePlan) => {
 }
 
 /**
+ * Add plan to database
+ * @param {object} newPlan plan to be added
+ * @param {function} callback
+ */
+export const addPlan = (newPlan, callback) => {
+  axios.post(serverURL + '/plans/add', newPlan).then((result) => {
+    console.log('add request sent', result.data);
+    if (callback) callback();
+  });
+}
+
+/**
  * Toggles the checked attribute of an ingredient
  * Will also affect the plans gotEverything attribute (will be true if after execution all ingredients of the plan are checked)
  * @param {string} planId ID of the plan that the ingredient belongs to

@@ -71,7 +71,7 @@ const ShoppingList = (props) => {
     if (plans) {
       dateIngredientMap.clear();
       plans.forEach((plan) => {
-        const planIsInPast = new Date(plan.date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0);
+        const planIsInPast = plan.hasDate && new Date(plan.date).setHours(0, 0, 0, 0) < new Date().setHours(0, 0, 0, 0);
         if (!planIsInPast && plan.missingIngredients && plan.missingIngredients.length > 0) {
           const key = plan.hasDate && plan.date ? new Date(plan.date).setHours(0, 0, 0, 0) : 'noDate';
           let mappedPlans = dateIngredientMap.get(key);
