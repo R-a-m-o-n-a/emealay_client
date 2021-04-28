@@ -21,6 +21,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/** Chip Input Component that displays all meal tags and lets the user add or delete meal tags */
 const EditMealTags = (props) => {
   const classes = useStyles();
   const { onUpdateSettings, onUpdateTags } = props;

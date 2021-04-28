@@ -22,20 +22,17 @@ export const getMainImage = (meal) => {
   return mainImage || meal.images[0];
 }
 
-/**
- * A Meal's Avatar: meal's main image or the general meal icon (if no image provided) in MUI Avatar format
- */
+/** A Meal's Avatar: meal's main image or the general meal icon (if no image provided) in MUI Avatar format */
 const MealAvatar = (props) => {
   const classes = useStyles();
   const { meal } = props;
-  let avatar;
+
   if (meal.images.length > 0) {
     const image = getMainImage(meal);
-    avatar = <Avatar alt={image.name} src={image.url} />;
+    return <Avatar alt={image.name} src={image.url} />;
   } else {
-    avatar = (<Avatar className={classes.backgroundColor}><FontAwesomeIcon icon={faUtensils} /></Avatar>);
+     return <Avatar className={classes.backgroundColor}><FontAwesomeIcon icon={faUtensils} /></Avatar>;
   }
-  return avatar;
 }
 
 MealAvatar.propTypes = {

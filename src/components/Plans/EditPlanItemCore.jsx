@@ -85,8 +85,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-/** component is used by AddPlanItem and EditPlanItem and provides their shared input elements
- *  Does not handle communication to server */
+/** component is used by AddPlanItem and EditPlanItem and provides their shared input elements.
+ *
+ *  Does not handle communication to server. */
 const EditPlanItemCore = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();

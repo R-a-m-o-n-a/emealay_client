@@ -17,7 +17,7 @@ const useStyles = makeStyles({
   }
 });
 
-/** Dialog that displays a plans missing ingredients and allows to check or uncheck them */
+/** Dialog that displays a plan's missing ingredients and allows to check or uncheck them */
 const MissingIngredients = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();

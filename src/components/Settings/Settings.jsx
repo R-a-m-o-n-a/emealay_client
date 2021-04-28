@@ -49,7 +49,11 @@ const useStyles = makeStyles(theme => ({
  * page that displays user profile (and allows editing user profile) and underneath allows changing remaining settings
  * + settings that can be changed:
  *    + language
- *    + use dark mode? */
+ *    + use dark mode?
+ *    + which page to display initially when opening a contact's page
+ *    + manage meal categories
+ *    + manage meal tags
+ **/
 const Settings = (props) => {
   const classes = useStyles();
   const { t, i18n } = useTranslation();

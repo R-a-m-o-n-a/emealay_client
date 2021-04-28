@@ -4,6 +4,9 @@ import OwnMeals from "./OwnMeals";
 import MealDetailViewExtern from "./MealDetailViewExtern";
 import { useAuth0 } from "@auth0/auth0-react";
 
+/** Wrapper component for Meals. Makes sure that Meals component receives the complete routing path to render the correct view.
+ *
+ * Might become obsolete in a future version if routing is properly handled by Meals */
 const MealWrapper = () => {
 
   let { path } = useRouteMatch();

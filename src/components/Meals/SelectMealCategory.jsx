@@ -38,8 +38,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-/** component is used by AddMeal and EditMeal and provides their shared core elements: text and photo input.
- *  Does not handle communication to server */
+/** Select input that allows the user to either choose or create a meal category */
 const SelectMealCategory = (props) => {
   const classes = useStyles();
   const { user } = useAuth0();
@@ -153,10 +152,6 @@ SelectMealCategory.propTypes = {
   currentCategory: string,
   /** setState function of the parent component's meal that takes key and value of attribute and updates it */
   updateMeal: func.isRequired,
-}
-
-SelectMealCategory.defaultProps = {
-  value: undefined,
 }
 
 export default withAuthenticationRequired(SelectMealCategory, {

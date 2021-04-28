@@ -19,9 +19,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.default,
     height: `calc(100% - ${process.env.REACT_APP_NAV_BOTTOM_HEIGHT}px)`,
   },
-  submitButton: {
-    margin: '1.5em 0 0',
-  },
   cancelButton: {
     textAlign: 'center',
     flexGrow: 4,
@@ -36,20 +33,12 @@ const useStyles = makeStyles((theme) => ({
   actionButtonWrapper: {
     margin: '1.5em 0 0',
   },
-  snackbarOffset: {
-    bottom: parseInt(process.env.REACT_APP_NAV_BOTTOM_HEIGHT) + 10 + 'px',
-  },
-  deleteSnackbar: {
-    backgroundColor: theme.palette.error.light,
-  },
-  readdSnackbar: {
-    backgroundColor: theme.palette.primary.light,
-  },
 }));
 
 const inverseColors = true;
 const serverURL = process.env.REACT_APP_SERVER_URL;
 
+/** page that allows editing a plan */
 const EditPlanItem = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();

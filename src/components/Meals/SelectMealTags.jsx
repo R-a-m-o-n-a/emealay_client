@@ -9,6 +9,8 @@ import { LoadingBody } from "../Loading";
 import { getSettingsOfUser, updateUserSettingsForCategory } from "../Settings/settings.util";
 import { reactSelectTheme } from "./meals.util";
 
+/** Select input that lets the user choose meal tags.
+ * If allowCreate is true, user can also create new tags. */
 const SelectMealTags = (props) => {
   const { t } = useTranslation();
   const muiTheme = useTheme();
@@ -88,7 +90,9 @@ SelectMealTags.propTypes = {
   allowCreate: bool,
   /** optional custom placeholder text */
   placeholderText: string,
+  /** optional className for styling */
   className: string,
+  /** style object to allow overwriting styles of the select control component */
   customControlStyles: object,
 }
 

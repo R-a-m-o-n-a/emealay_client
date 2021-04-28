@@ -1,12 +1,11 @@
 const path = require('path');
 
 module.exports = {
-  // components: './src/components/*.jsx',
-  title: 'Emealay Documentation',
+  title: 'Emealay - Documentation of Client Components',
   pagePerSection: true,
   exampleMode: 'hide', // 'hide' | 'collapse' | 'expand'
   usageMode: 'expand', // 'hide' | 'collapse' | 'expand'
-  ignore: ['**/*.util.{jsx,js}', '**/use*.{jsx,js}'], // Styleguidist can only document components, not pure functions or Hooks. That is why these must be ignored.
+  ignore: ['**/*.util.{jsx,js}', '**/use*.{jsx,js}', './src/components/Meals/CategoryIcons.jsx'], // Styleguidist can only document components, not pure functions or Hooks. That is why these must be ignored.
   styleguideDir: './docs',
   sections: [
     {
@@ -37,6 +36,7 @@ module.exports = {
     },
     {
       name: 'Util Components',
+      description: 'Helper components to be used in different parts of the app',
       components: ['./src/components/util/*.jsx'],
     },
   ],

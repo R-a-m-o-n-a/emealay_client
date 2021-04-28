@@ -4,7 +4,8 @@ import { useAuth0 } from "@auth0/auth0-react";
 import MealDetailView from "./MealDetailView";
 import { fetchAndUpdateMeal } from "./meals.util";
 
-/** Dialog page that displays Meal Details and optionally opens Edit Dialog */
+/** Wrapper for MealDetailView that determines whether the viewed meal belongs to the logged in user.
+ * Also shows Meal without import function to users that are not logged in. */
 const MealDetailViewExtern = (props) => {
   const { user } = useAuth0();
   const history = useHistory();

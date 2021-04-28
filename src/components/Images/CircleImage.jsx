@@ -39,11 +39,11 @@ CircleImage.propTypes = {
   src: string.isRequired,
   /** alternative text if image cannot be displayed */
   altText: string.isRequired,
-  /** shows progress instead of image */
-  loading: bool,
+  /** shows circular progress instead of image */
+  loading: bool.isRequired,
 };
 
-CircleImage.propTypes = {
+CircleImage.defaultProps = {
   loading: false,
 };
 

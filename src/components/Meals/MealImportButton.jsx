@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-/** Page that displays a user's own meals and adds a Navbar to the Meals list that allows adding a meal */
+/** This Button allows importing a meal frrom another user into one's own meals. It contains all the importing functionality. */
 const MealImportButton = (props) => {
   const { t } = useTranslation();
   const { user } = useAuth0();

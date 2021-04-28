@@ -8,8 +8,8 @@ import SelectMealCategory from "./SelectMealCategory";
 import SelectMealTags from "./SelectMealTags";
 import OutlinedTextField from "../util/OutlinedTextField";
 
-/** component is used by AddMeal and EditMeal and provides their shared core elements: text and photo input.
- *  Does not handle communication to server */
+/** component is used by AddMeal and EditMeal and provides their shared core elements: text and photo input as well as choosing a category and adding tags.
+ *  Does not handle communication to server. */
 const EditMealCore = (props) => {
   const { t } = useTranslation();
 

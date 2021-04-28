@@ -52,7 +52,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-/** content of page that displays all plans of a given user (not including Navbar) */
+/** Component displays all Plans of any given user. Also handles routing to show
+ * * Shopping List
+ * * Edit Plan item */
 const Plans = (props) => {
   const classes = useStyles();
   let history = useHistory();

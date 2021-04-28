@@ -58,6 +58,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+/** Dialog that lets the user choose an icon for a meal category */
 export const ChooseIconDialog = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -99,6 +100,7 @@ export function updateMealCategories(userId, categoriesToAdd, onUpdateCategories
   });
 }
 
+/** Chip Input Component that displays all meal categories and lets the user delete them or change their icon, also allows creating new categories */
 const EditMealCategories = (props) => {
   const classes = useStyles();
   const { onUpdateSettings, onUpdateCategories } = props;

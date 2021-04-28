@@ -23,8 +23,9 @@ const useStyles = makeStyles({
 });
 
 /**
- * displays a list of current user's contacts and allows searching for all users through Button in Navbar
- * on clicking on a contact's name will open ContactContent */
+ * Main contacts page. Displays a list of current user's contacts and allows searching for all users through Button in Navbar.
+ *
+ * On clicking on a contact's name will open ContactContent */
 const Social = () => {
   const classes = useStyles();
   const { user } = useAuth0();

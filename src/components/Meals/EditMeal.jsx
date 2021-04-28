@@ -34,16 +34,6 @@ const useStyles = makeStyles((theme) => ({
   actionButtonWrapper: {
     margin: '1.5em 0 0',
   },
-  snackbarOffset: {
-    bottom: parseInt(process.env.REACT_APP_NAV_BOTTOM_HEIGHT) + 10 + 'px',
-  },
-  deleteSnackbar: {
-    backgroundColor: theme.palette.error.light,
-    width: '100%',
-  },
-  readdSnackbar: {
-    backgroundColor: theme.palette.primary.light,
-  },
 }));
 
 const inverseColors = true;

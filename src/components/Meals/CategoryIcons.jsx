@@ -38,6 +38,7 @@ function sortFunction(a, b) { // icons will get sorted in the order they appear 
   return solidIconNames.indexOf(a.iconName) < solidIconNames.indexOf(b.iconName) ? -1 : 1;
 }
 
+/** contains all fontawesome icons in the order specified above to be used by other components */
 const categoryIcons = Object.values(SolidIcons)
                             .filter(i => solidIconNames.includes(i.iconName))
                             .sort(sortFunction);

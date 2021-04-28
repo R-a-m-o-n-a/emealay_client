@@ -8,6 +8,8 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.default,
   }
 }));
+
+/** MUI Dialog component that slides a full page in from the right */
 const FullScreenDialog = (props) => {
   const classes = useStyles();
 

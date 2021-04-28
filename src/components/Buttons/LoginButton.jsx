@@ -10,6 +10,7 @@ const useStyles = makeStyles({
   }
 });
 
+/** Login button which includes logic to log the user in via Auth0 */
 const LoginButton = () => {
   const classes = useStyles();
   const { loginWithRedirect } = useAuth0();

@@ -38,7 +38,10 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-/** content of page that displays all meals of a given user and opens their details views on click (not including Navbar) */
+/** Content of page that displays all meals of a given use and opens their detail views on click.
+ * If meals belong to logged in user, editing will be allowed.
+ *
+ * todo: needs to be reworked to respect proper routing and not rely on MUI dialogs */
 const Meals = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
@@ -250,7 +253,7 @@ const Meals = (props) => {
 
 Meals.propTypes = {
   /** userId of user whose meals are to be displayed */
-  userId: string,
+  userId: string.isRequired,
   /** are these the user's own meals or is another user watching foreign meals? In the latter case editing will be prohibited. */
   own: bool.isRequired,
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { any, bool, func } from 'prop-types';
+import { bool, func, string } from 'prop-types';
 import { useDropzone } from 'react-dropzone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle } from '@fortawesome/free-solid-svg-icons';
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 /** Dropzone that will wrap around elements that are passed as children
- * + accepts png, jpg and jpeg of max. 10MB */
+ * + accepts all images with a size of max. 10MB */
 function PhotoDropzone(props) {
 
   const classes = useStyles();
@@ -38,7 +38,7 @@ function PhotoDropzone(props) {
     isDragAccept,
     isDragReject,
   } = useDropzone({
-    accept: ['image/png', 'image/jpg', 'image/jpeg'],
+    accept: ['image'],
     maxSize: 10485760,
     multiple: multiple,
     onDrop(acceptedFiles, rejectedFiles, event) {
@@ -68,7 +68,7 @@ PhotoDropzone.propTypes = {
   /** allow uploading more than one image? */
   multiple: bool,
   /** pass any className for styles to be applied to dropZone */
-  dropZoneStyles: any,
+  dropZoneStyles: string,
   /** display plus icon in the center of the dropzone? */
   usePlusIcon: bool,
 };
