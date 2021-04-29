@@ -72,9 +72,9 @@ const SelectMealCategory = (props) => {
 
   const SelectOption = props => {
     const { data: { name, icon }, innerProps } = props;
-
+    console.log(props);
     return (
-      <ListItem button {...innerProps} >
+      <ListItem button {...innerProps} selected={props.isFocused} >
         <ListItemIcon className={classes.listItemIcon}>
           {icon ? <FontAwesomeIcon icon={icon} /> : null}
         </ListItemIcon>

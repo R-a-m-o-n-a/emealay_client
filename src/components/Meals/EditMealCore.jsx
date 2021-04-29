@@ -31,7 +31,7 @@ const EditMealCore = (props) => {
     setImagesLoading,
   } = props;
 
-  const [placeholder, setPlaceholder] = useState(t('Rezept, Anweisungen, Kommentare, etc.'));
+  const [placeholder, setPlaceholder] = useState(t('Recipe, instructions, comments, etc.'));
   const [, updateState] = useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
 
