@@ -22,7 +22,7 @@ const solidIconNames = [
   'shopping-cart', 'shopping-basket', 'shopping-bag',
   'globe-africa', 'globe-americas', 'globe-asia', 'globe-europe',
   'suitcase-rolling', 'suitcase',
-  'snowflake', 'fire', 'thermometer-empty', 'thermometer-quarter', 'thermometer-half','thermometer-three-quarters', 'thermometer-full',
+  'snowflake', 'fire', 'thermometer-empty', 'thermometer-quarter', 'thermometer-half', 'thermometer-three-quarters', 'thermometer-full',
   'book', 'bookOpen',
   'disease',
   'tag', 'tags', 'thumbtack',
@@ -43,4 +43,5 @@ const categoryIcons = Object.values(SolidIcons)
                             .filter(i => solidIconNames.includes(i.iconName))
                             .sort(sortFunction);
 categoryIcons.push(faYoutube, faPinterest, faGoogle, faFacebook);
+
 export default categoryIcons;

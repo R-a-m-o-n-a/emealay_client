@@ -39,9 +39,22 @@ const EditMealCore = (props) => {
 
   return (
     <>
-      <OutlinedTextField name="title" value={title} label={t('Meal Title')} onChange={e => updateMeal('title', e.target.value)} isSecondary={isSecondary} autoFocus={autoFocusFirstInput} required />
+      <OutlinedTextField name="title"
+                         value={title}
+                         label={t('Meal Title')}
+                         onChange={e => updateMeal('title', e.target.value)}
+                         isSecondary={isSecondary}
+                         autoFocus={autoFocusFirstInput}
+                         required />
       <OutlinedTextField name="recipeLink" value={recipeLink} label={t('Link to Recipe')} onChange={e => updateMeal('recipeLink', e.target.value)} isSecondary={isSecondary} />
-      <OutlinedTextField multiline rowsMax={10} name="comment" label={t('Comment')} value={comment} onChange={e => updateMeal('comment', e.target.value)} isSecondary={isSecondary} />
+      <OutlinedTextField multiline
+                         rowsMax={10}
+                         rows={3}
+                         name="comment"
+                         placeholder={t('You can use this field to add a recipe in text form, instructions, experience or other comments.')}
+                         value={comment}
+                         onChange={e => updateMeal('comment', e.target.value)}
+                         isSecondary={isSecondary} />
 
       <SelectMealCategory currentCategory={category} updateMeal={updateMeal} />
 

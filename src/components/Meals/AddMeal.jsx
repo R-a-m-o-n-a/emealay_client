@@ -68,7 +68,9 @@ const AddMeal = (props) => {
   return (
     <>
       <Navbar pageTitle={t('New Meal')} leftSideComponent={<BackButton onClick={() => {
-        deleteAllImagesFromMeal(meal._id);
+        if (meal.images) {
+          deleteAllImagesFromMeal(meal._id);
+        }
         history.goBack();
       }} />} rightSideComponent={meal.title ? <DoneButton onClick={addNewMeal} /> : null} />
 

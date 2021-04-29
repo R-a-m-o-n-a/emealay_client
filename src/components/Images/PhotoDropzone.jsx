@@ -38,7 +38,7 @@ function PhotoDropzone(props) {
     isDragAccept,
     isDragReject,
   } = useDropzone({
-    accept: ['image'],
+    accept: ['image/*'],
     maxSize: 10485760,
     multiple: multiple,
     onDrop(acceptedFiles, rejectedFiles, event) {

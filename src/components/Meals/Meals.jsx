@@ -49,6 +49,8 @@ const Meals = (props) => {
   let { path } = useRouteMatch();
   const params = useParams();
 
+  const { own, userId } = props;
+
   const [, updateState] = useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
 
@@ -59,9 +61,7 @@ const Meals = (props) => {
   const [mealsByCategory,] = useState(new Map());
   const [isCategoryOpen, setIsCategoryOpen] = useState({});
   const [allCategoriesClosed, setAllCategoriesClosed] = useState(false);
-  const [categoryIcons] = useCategoryIcons();
-
-  const { own, userId } = props;
+  const [categoryIcons, fireIconReload] = useCategoryIcons(userId);
 
   const [mealBeingViewed, setMealBeingViewed] = useState(null);
   const [emptyListFound, setEmptyListFound] = useState(false);
@@ -121,6 +121,7 @@ const Meals = (props) => {
 
   const fetchAndUpdateMeals = () => {
     fetchAndUpdateMealsFromUser(userId, updateMealsCallback);
+    fireIconReload();
   }
 
   useEffect(() => {
@@ -223,6 +224,7 @@ const Meals = (props) => {
             </Button>}
             <Button variant="text"
                     className={classes.optionRowButton}
+                    style={{ marginLeft: 'auto' }}
                     color="primary"
                     onClick={toggleAllCategories}>{allCategoriesClosed ? t('expand all') : t('collapse all')}</Button>
           </Box>
@@ -242,11 +244,7 @@ const Meals = (props) => {
             </List>}
         </>
       }
-      <MealDetailView open={path.includes('detail') || path.includes('edit')}
-                      meal={mealBeingViewed}
-                      allowEditing={own}
-                      allowImporting={!own}
-                      closeDialog={closeMealDetailView} />
+      <MealDetailView open={path.includes('detail') || path.includes('edit')} meal={mealBeingViewed} allowEditing={own} allowImporting={!own} closeDialog={closeMealDetailView} />
     </>
   );
 }

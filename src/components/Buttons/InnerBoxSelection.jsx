@@ -11,11 +11,11 @@ const useStyles = makeStyles((theme) => ({
     top: '0',
     transform: 'translate(25%, 25%)',
     borderRadius: '100%',
-    border: '1px solid ' + theme.palette.secondary.main,
-    color: theme.palette.secondary.main,
+    border: '1px solid ' + theme.palette.primary.main,
+    color: theme.palette.primary.main,
     padding: 0,
     background: 'transparent',
-     opacity: props.selected ? '100%': '50%',
+    opacity: props.selected ? '100%' : '50%',
 
     '&:hover': {
       color: theme.palette.primary.main,
@@ -27,10 +27,10 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '1.5rem',
     lineHeight: '1.5rem',
   },
-  xBackground: {
+  greenBackground: {
     color: theme.palette.primary.main,
   },
-  x: {
+  white: {
     color: theme.myColors.white,
   }
 }));
@@ -44,8 +44,8 @@ function InnerBoxSelection(props) {
   return (
     <button type="button" className={classes.boxCloseX} onClick={onClick}>
       <span className={`${classes.closeXIcon} fa-layers`}>
-        <FontAwesomeIcon icon={faCircle} className={classes.x}  />
-        <FontAwesomeIcon icon={faCheckCircle} className={classes.xBackground} transform="shrink--2" />
+        <FontAwesomeIcon icon={faCircle} className={classes.white}  />
+        <FontAwesomeIcon icon={faCheckCircle} className={classes.greenBackground} transform="shrink--2" />
       </span>
     </button>
   );

@@ -75,8 +75,8 @@
   "Filter": "Filter",
   "Filter by Tags": "Nach Tags filtern",
   "No Tags so far": "Noch keine Tags vorhanden",
-  "Type to add Tags": "Tippen, um Tags hinzuzufügen",
-  "Type to add a Category": "Tippen, um eine Kategorie hinzuzufügen",
+  "Type to add Tags": "Sie können neue Tags durch Tastatureingabe hinzufügen",
+  "Type to add a Category": "Neue Kategorie über die Tastatur eingeben, um sie hinzuzufügen",
   "No meals found for filter selection": "Für die derzeitige Filterkombination wurden keine Gerichte gefunden",
   "expand all": "Alle ausklappen",
   "collapse all": "Alle einklappen",
@@ -93,5 +93,6 @@
   "Go to my meals": "Zu meinen Gerichten",
   "Import": "Importieren",
   "Import Meal": "Gericht importieren",
-  "Successfully imported meal": "Gericht erfolgreich importiert"
+  "Successfully imported meal": "Gericht erfolgreich importiert",
+  "You can use this field to add a recipe in text form, instructions, experience or other comments.": "Sie können dieses Feld nutzen, um ein Rezept in Textform, Anweisungen, Erfahrungswerte oder andere Kommentare hinzuzufügen."
 }

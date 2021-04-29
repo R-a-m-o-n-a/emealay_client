@@ -2,22 +2,30 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useState } from "react";
 import { getSettingsOfUser } from "../Settings/settings.util";
 
-export default function useCategoryIcons() {
+export default function useCategoryIcons(foreignUserId = undefined) {
   const { user } = useAuth0();
 
+  const [userId, setUserId] = useState(foreignUserId);
   const [allCategories, setAllCategories] = useState([]);
   const [allCategoryIcons, setAllCategoryIcons] = useState({});
   const [categoriesChanged, setCategoriesChanged] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      const userId = user.sub;
-      getSettingsOfUser(userId, (settings) => {
-        setAllCategories(settings.mealCategories || []);
-        setCategoriesChanged(false);
-      });
+    getSettingsOfUser(userId, (settings) => {
+      setAllCategories(settings.mealCategories || []);
+      setCategoriesChanged(false);
+    });
+  }, [userId, categoriesChanged]);
+
+  useEffect(() => {
+    if (!foreignUserId) {
+      if (user) {
+        setUserId(user.sub);
+      }
+    } else {
+      setUserId(foreignUserId);
     }
-  }, [user, categoriesChanged]);
+  }, [foreignUserId, user]);
 
   useEffect(() => {
     allCategories.forEach(c => {

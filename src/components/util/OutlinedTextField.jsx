@@ -9,16 +9,14 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '0.5rem',
     marginBottom: '0.5rem',
   },
-  outlinedInput: {
-    padding: '14px',
-  },
   correctFloatingLabel: {
     transform: 'translate(14px, 12px) scale(1)',
   }
 }));
 
-/** component is used by AddMeal and EditMeal and provides their shared core elements: text and photo input.
- *  Does not handle communication to server */
+/** This is a wrapper the Outlined TextField that is used mostly throughout the app.
+ * It bundles common attributes and styles.
+ * Any other Attributes for a MUI TextField are passed through to the actual component */
 const OutlinedTextField = (props) => {
   const classes = useStyles();
 
