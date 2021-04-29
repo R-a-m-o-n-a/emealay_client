@@ -18,6 +18,7 @@ import EditMealCategories from "./EditMealCategories";
 import DoneButton from "../Buttons/DoneButton";
 import SwitchSelector from "react-switch-selector";
 import { useHistory } from "react-router-dom";
+import DeleteAccountButton from "../Buttons/DeleteAccountButton";
 
 const useStyles = makeStyles(theme => ({
   settings: {
@@ -206,6 +207,7 @@ const Settings = (props) => {
         <EditMealTags onUpdateSettings={getSettings} />
         <br />
         <LogoutButton />
+        <DeleteAccountButton />
       </Box>
 
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PhotoDropzone from './PhotoDropzone';
 import ImageGrid from './ImageGrid.jsx';
 import axios from "axios";
@@ -98,7 +98,7 @@ const useStyles = makeStyles((theme) => ({
 const ImageUpload = (props) => {
   const classes = useStyles();
 
-  const { uploadedImages, category, categoryId, onChangeUploadedImages, multiple, imageName, useSingleUploadOverlay, tags } = props;
+  const { uploadedImages, category, categoryId, onChangeUploadedImages, multiple, imageName, useSingleUploadOverlay, tags, setLoading } = props;
   const altText = imageName || category;
 
   const [photosToUpload, setPhotosToUpload] = useState([]);
@@ -123,6 +123,11 @@ const ImageUpload = (props) => {
       setRejectMessageVisible(true);
     }
   };
+
+  useEffect(() => {
+    if (setLoading) setLoading(photosToUpload.length > 0);
+    // eslint-disable-next-line
+  }, [photosToUpload]);
 
   const uploadImages = (imagesToUpload) => {
     console.log('trying to upload images', imagesToUpload, ' to ', serverURL);
@@ -162,8 +167,6 @@ const ImageUpload = (props) => {
   }
 
   const deleteImage = (image) => {
-    console.log('trying to Reset Image', image);
-
     axios.post(serverURL + "/images/deleteImage", image)
          .then(res => {
            console.log('result of deleting planItem image', res);
@@ -263,6 +266,8 @@ ImageUpload.propTypes = {
   tags: array,
   /** overlay single image upload area with a transparent camera icon */
   useSingleUploadOverlay: bool,
+  /** this is a function to update the state of the calling component. It will receive false, if all images have been uploaded, and true otherwise */
+  setLoading: func,
 }
 
 ImageUpload.defaultProps = {
@@ -270,6 +275,7 @@ ImageUpload.defaultProps = {
   uploadedImages: [],
   tags: [],
   useSingleUploadOverlay: false,
+  setLoading: undefined,
 }
 
 export default ImageUpload;

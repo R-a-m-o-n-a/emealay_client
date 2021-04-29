@@ -57,12 +57,13 @@ const Social = () => {
 
   useEffect(() => {
     if (user) {
+      fetchContacts();
       const userId = user.sub;
       getSettingsOfUser(userId, (settings) => {
-        console.log(settings, settings.contactStartPageIndex);
         setContactStartPage(settings.contactStartPageIndex === 0 ? 'meals' : 'plans');
       });
     }
+    // eslint-disable-next-line
   }, [user]);
 
   const showUser = (userId) => {

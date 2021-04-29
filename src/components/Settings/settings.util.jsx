@@ -9,13 +9,15 @@ const serverURL = process.env.REACT_APP_SERVER_URL;
  * @param {function} callback function to be executed after settings are created, receives newly created settings
  */
 export const createNewSettingsForUser = (userId, callback) => {
-  console.log('creating new settings for user', userId);
-  const newSettings = { userId: userId };
-  axios.post(serverURL + '/settings/add/', newSettings)
-       .then(res => {
-         console.log('result of adding settings for ' + userId, res);
-         if (callback) callback(res.data);
-       }).catch(err => {console.log(err)});
+  if (userId) {
+    console.log('creating new settings for user', userId);
+    const newSettings = { userId: userId };
+    axios.post(serverURL + '/settings/add/', newSettings)
+         .then(res => {
+           console.log('result of adding settings for ' + userId, res);
+           if (callback) callback(res.data);
+         }).catch(err => {console.log(err)});
+  }
 }
 
 /**
@@ -29,6 +31,19 @@ export const updateUser = (userId, newData, callback) => {
        .then((result) => {
          console.log('updated user', result.data);
          if (callback) callback(result.data);
+       }).catch(err => {console.log(err)});
+}
+
+/**
+ * deletes user from everything: all plans, meals, images, settings, as well as user in Auth0 database
+ * @param {string} userId id of the user to be deleted
+ * @param {function} callback function to be executed after updating (receives new updated data)
+ */
+export const deleteUser = (userId, callback) => {
+  axios.delete(serverURL + '/users/' + userId)
+       .then((result) => {
+         console.log('deleted user');
+         if (callback) callback();
        }).catch(err => {console.log(err)});
 }
 
@@ -84,7 +99,6 @@ export const getSettingsOfUser = (userId, updateSettings) => {
  */
 export const updateUserSettingsForCategory = (userId, key, value, updateAllSettings) => {
   axios.put(serverURL + '/settings/updateSingleUserSetting/' + userId, { key, value }).then((result) => {
-    console.log('result from updateUser' + key, result);
     if (updateAllSettings) updateAllSettings(result.data.settingSaved);
   });
 }

@@ -93,5 +93,14 @@
   "Import": "Import",
   "Import Meal": "Import Meal",
   "Successfully imported meal": "Successfully imported meal",
-  "You can use this field to add a recipe in text form, instructions, experience or other comments.": "You can use this field to add a recipe in text form, instructions, experience or other comments."
+  "You can use this field to add a recipe in text form, instructions, experience or other comments.": "You can use this field to add a recipe in text form, instructions, experience or other comments.",
+  "Delete Account": "Delete Account",
+  "Are you sure you want to delete your Emealay Account?": "Are you sure you want to delete your Emealay Account?",
+  "This cannot be undone.": "This cannot be undone.",
+  "No, cancel.": "No, cancel.",
+  "Yes, delete my account for good.": "Yes, delete my account for good.",
+  "Your account is being deleted": "Your account is being deleted",
+  "Your Account has been deleted": "Your Account has been deleted",
+  "You will be logged out now.": "You will be logged out now.",
+  "OK": "OK"
 }

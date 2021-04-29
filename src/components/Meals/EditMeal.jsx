@@ -47,6 +47,7 @@ const EditMeal = (props) => {
   const { closeDialog, onDoneEditing, onDoneDelete, meal: givenMeal, open } = props;
 
   const [meal, setMeal] = useState(givenMeal);
+  const [loading, setLoading] = useState(false);
 
   const updateMeal = (key, value) => {
     setMeal(prevState => ({
@@ -110,10 +111,10 @@ const EditMeal = (props) => {
         <FullScreenDialog open={open} onClose={closeDialog}>
           <Navbar pageTitle={t('Edit Meal')}
                   leftSideComponent={<BackButton onClick={closeDialog} />}
-                  rightSideComponent={meal.title ? <DoneButton onClick={editAndClose} /> : null}
+                  rightSideComponent={meal.title && !loading ? <DoneButton onClick={editAndClose} /> : null}
                   secondary={inverseColors} />
           <form noValidate onSubmit={editAndClose} className={classes.form}>
-            <EditMealCore updateMeal={updateMeal} meal={meal} isSecondary={inverseColors} />
+            <EditMealCore updateMeal={updateMeal} meal={meal} isSecondary={inverseColors} setImagesLoading={setLoading} />
             <Grid container spacing={0} justify="space-between" alignItems="center" wrap="nowrap" className={classes.actionButtonWrapper}>
               <Grid item xs className={classes.cancelButton}>
                 <Button type="button" color={inverseColors ? "secondary" : "primary"} variant="outlined" onClick={closeDialog}>{t('Cancel')}</Button>
@@ -122,7 +123,7 @@ const EditMeal = (props) => {
                 <DeleteButton onClick={deleteMeal} />
               </Grid>
               <Grid item xs className={classes.saveButton}>
-                <Button type="submit" disabled={!meal.title} color={inverseColors ? "secondary" : "primary"} variant="contained">{t('Save')}</Button>
+                <Button type="submit" disabled={!meal.title || loading} color={inverseColors ? "secondary" : "primary"} variant="contained">{t('Save')}</Button>
               </Grid>
             </Grid>
           </form>

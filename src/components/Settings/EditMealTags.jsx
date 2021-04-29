@@ -33,7 +33,6 @@ const EditMealTags = (props) => {
     if (user) {
       const userId = user.sub;
       getSettingsOfUser(userId, (settings) => {
-        console.log('getting tags from settings', settings.mealTags);
         setTags(settings.mealTags || []);
       }); // tags must not be empty!
     }

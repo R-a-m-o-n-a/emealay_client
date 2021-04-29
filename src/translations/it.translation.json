@@ -93,5 +93,14 @@
   "Import": "Importare",
   "Import Meal": "Importare pasto",
   "Successfully imported meal": "Pasto importato con successo",
-  "You can use this field to add a recipe in text form, instructions, experience or other comments.": "Puoi usare questo campo per aggiungere una ricetta in forma di testo, istruzioni, esperienze o altri commenti."
+  "You can use this field to add a recipe in text form, instructions, experience or other comments.": "Puoi usare questo campo per aggiungere una ricetta in forma di testo, istruzioni, esperienze o altri commenti.",
+  "Delete Account": "Cancellare il conto",
+  "Are you sure you want to delete your Emealay Account?": "Sei sicuro di voler cancellare il tuo conto di Emealay?",
+  "This cannot be undone.": "Questo non può essere annullato.",
+  "No, cancel.": "No, annullare.",
+  "Yes, delete my account for good.": "Sì, cancella il mio conto per sempre.",
+  "Your account is being deleted": "Stiamo cancellando il tuo conto",
+  "Your Account has been deleted": "Il tuo conto è stato cancellato",
+  "You will be logged out now.": "Sarai disconnesso ora.",
+  "OK": "OK"
 }

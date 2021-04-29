@@ -1,6 +1,6 @@
 /** File includes all helper methods for social */
 import axios from "axios";
-import { createNewSettingsForUser, updateUserSettingsForCategory } from "../Settings/settings.util";
+import { getSettingsOfUser, updateUserSettingsForCategory } from "../Settings/settings.util";
 
 const serverURL = process.env.REACT_APP_SERVER_URL;
 
@@ -10,16 +10,10 @@ const serverURL = process.env.REACT_APP_SERVER_URL;
  * @param {function} updateContacts  function that receives the contacts and will update the state of the calling component
  */
 export const fetchContactsOfUser = (userId, updateContacts) => {
-  axios.get(serverURL + '/settings/ofUser/' + userId)
-       .then(res => {
-         const settingsFound = res.data;
-         if (!settingsFound) {
-           createNewSettingsForUser(userId, fetchContactsOfUser(userId, updateContacts));
-         } else {
-           const sortedContacts = settingsFound.contacts.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1)
-           updateContacts(sortedContacts);
-         }
-       }).catch(err => {console.log(err)});
+  getSettingsOfUser(userId, (settingsFound) => {
+    const sortedContacts = settingsFound.contacts.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1)
+    updateContacts(sortedContacts);
+  });
 }
 
 /**

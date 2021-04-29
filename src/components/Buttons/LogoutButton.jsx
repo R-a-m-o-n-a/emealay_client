@@ -10,10 +10,6 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '60%',
     margin: '1.5em auto',
     display: "block",
-    backgroundColor: theme.palette.error.main,
-    '&:hover': {
-      backgroundColor: theme.palette.error.dark,
-    }
   },
 }));
 
@@ -26,7 +22,7 @@ const LogoutButton = () => {
   const { t } = useTranslation();
 
   return (
-    <Button color="secondary" variant="contained" size="large" className={classes.logoutButton} onClick={() => logout({ returnTo: logoutRedirect})}>
+    <Button color="secondary" variant="outlined" size="large" className={classes.logoutButton} onClick={() => logout({ returnTo: logoutRedirect})}>
       {t('Logout')}
     </Button>
   );

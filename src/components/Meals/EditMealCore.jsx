@@ -1,17 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { arrayOf, bool, func, shape, string } from "prop-types";
 import { useTranslation } from "react-i18next";
 import ImageUpload from "../Images/ImageUpload";
-import { withAuthenticationRequired } from "@auth0/auth0-react";
+import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { LoadingBody } from "../Loading";
 import SelectMealCategory from "./SelectMealCategory";
 import SelectMealTags from "./SelectMealTags";
 import OutlinedTextField from "../util/OutlinedTextField";
+import { fetchAndUpdateMealsFromUser } from "./meals.util";
 
 /** component is used by AddMeal and EditMeal and provides their shared core elements: text and photo input as well as choosing a category and adding tags.
  *  Does not handle communication to server. */
 const EditMealCore = (props) => {
   const { t } = useTranslation();
+  const { user } = useAuth0();
 
   const {
     updateMeal,
@@ -26,8 +28,10 @@ const EditMealCore = (props) => {
     },
     isSecondary,
     autoFocusFirstInput,
+    setImagesLoading,
   } = props;
 
+  const [placeholder, setPlaceholder] = useState(t('Rezept, Anweisungen, Kommentare, etc.'));
   const [, updateState] = useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
 
@@ -36,6 +40,15 @@ const EditMealCore = (props) => {
     updateMeal('images', newUploadedImages);
     forceUpdate(); // I don't know why the component does not rerender on state change but this solution fixes it. Source: https://stackoverflow.com/questions/53215285/how-can-i-force-component-to-re-render-with-hooks-in-react
   }
+
+  useEffect(() => {
+    if (user) {
+      fetchAndUpdateMealsFromUser(user.sub, meals => {
+        if (meals.length < 3) setPlaceholder(t('You can use this field to add a recipe in text form, instructions, experience or other comments.'));
+      })
+    }
+    // eslint-disable-next-line
+  }, [user]);
 
   return (
     <>
@@ -49,9 +62,9 @@ const EditMealCore = (props) => {
       <OutlinedTextField name="recipeLink" value={recipeLink} label={t('Link to Recipe')} onChange={e => updateMeal('recipeLink', e.target.value)} isSecondary={isSecondary} />
       <OutlinedTextField multiline
                          rowsMax={10}
-                         rows={3}
+                         rows={1}
                          name="comment"
-                         placeholder={t('You can use this field to add a recipe in text form, instructions, experience or other comments.')}
+                         placeholder={placeholder}
                          value={comment}
                          onChange={e => updateMeal('comment', e.target.value)}
                          isSecondary={isSecondary} />
@@ -60,7 +73,14 @@ const EditMealCore = (props) => {
 
       <SelectMealTags currentTags={tags} updateTags={(newTags) => {updateMeal('tags', newTags)}} allowCreate />
 
-      <ImageUpload multiple uploadedImages={images} category="mealImages" categoryId={mealId} onChangeUploadedImages={onChangeUploadedImages} imageName={title} tags={tags} />
+      <ImageUpload multiple
+                   uploadedImages={images}
+                   category="mealImages"
+                   categoryId={mealId}
+                   onChangeUploadedImages={onChangeUploadedImages}
+                   imageName={title}
+                   tags={tags}
+                   setLoading={setImagesLoading} />
     </>
   );
 }
@@ -86,11 +106,14 @@ EditMealCore.propTypes = {
   isSecondary: bool,
   /** whether to autofocus title input (will open keyboard on smartphones) */
   autoFocusFirstInput: bool,
+  /** this is a function to update the state of the calling component. It will receive false, if all images of the meal have been uploaded, and true otherwise */
+  setImagesLoading: func,
 }
 
 EditMealCore.defaultProps = {
   isSecondary: false,
   autoFocusFirstInput: false,
+  setImagesLoading: undefined,
 }
 
 export default withAuthenticationRequired(EditMealCore, {

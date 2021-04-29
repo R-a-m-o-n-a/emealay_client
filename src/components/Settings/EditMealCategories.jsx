@@ -93,7 +93,6 @@ ChooseIconDialog.propTypes = {
 }
 
 export function updateMealCategories(userId, categoriesToAdd, onUpdateCategories, onUpdateSettings) {
-  console.log('updating', categoriesToAdd);
   updateUserSettingsForCategory(userId, 'mealCategories', categoriesToAdd, (setting) => {
     if (onUpdateSettings) onUpdateSettings(setting);
     if (onUpdateCategories) onUpdateCategories(setting.mealCategories);
@@ -118,7 +117,6 @@ const EditMealCategories = (props) => {
     if (user) {
       const userId = user.sub;
       getSettingsOfUser(userId, (settings) => {
-        console.log('getting categories from settings', settings.mealCategories);
         setCategories(settings.mealCategories || []);
       }); // categories must not be empty!
     }

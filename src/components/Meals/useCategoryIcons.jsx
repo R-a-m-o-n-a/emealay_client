@@ -11,10 +11,12 @@ export default function useCategoryIcons(foreignUserId = undefined) {
   const [categoriesChanged, setCategoriesChanged] = useState(false);
 
   useEffect(() => {
-    getSettingsOfUser(userId, (settings) => {
-      setAllCategories(settings.mealCategories || []);
-      setCategoriesChanged(false);
-    });
+    if(userId) {
+      getSettingsOfUser(userId, (settings) => {
+        setAllCategories(settings.mealCategories || []);
+        setCategoriesChanged(false);
+      });
+    }
   }, [userId, categoriesChanged]);
 
   useEffect(() => {

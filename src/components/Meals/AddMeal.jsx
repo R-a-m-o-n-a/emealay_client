@@ -52,6 +52,7 @@ const AddMeal = (props) => {
   }, [user]);
 
   const [meal, setMeal] = useState(emptyMeal);
+  const [loading, setLoading] = useState(false);
 
   const updateMeal = (key, value) => {
     setMeal(prevState => ({
@@ -72,11 +73,11 @@ const AddMeal = (props) => {
           deleteAllImagesFromMeal(meal._id);
         }
         history.goBack();
-      }} />} rightSideComponent={meal.title ? <DoneButton onClick={addNewMeal} /> : null} />
+      }} />} rightSideComponent={meal.title && !loading ? <DoneButton onClick={addNewMeal} /> : null} />
 
       <form noValidate onSubmit={addNewMeal} className={classes.form}>
-        <EditMealCore updateMeal={updateMeal} meal={meal} autoFocusFirstInput />
-        <Button type="submit" disabled={!meal.title} className={classes.submitButton} variant='contained' color='primary'>{t('Add')}</Button>
+        <EditMealCore updateMeal={updateMeal} meal={meal} autoFocusFirstInput setImagesLoading={setLoading} />
+        <Button type="submit" disabled={!meal.title || loading} className={classes.submitButton} variant='contained' color='primary'>{t('Add')}</Button>
       </form>
 
     </>
