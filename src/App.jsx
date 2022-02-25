@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import ContentWrapper from "./components/ContentWrapper";
 import Home from "./components/Home";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
@@ -23,6 +23,7 @@ const App = () => {
     if (user) {
       getSettingsOfUser(user.sub, (settings) => {
         if (settings.prefersDarkMode) setPrefersDarkMode(settings.prefersDarkMode);
+        if (settings.ownStartPageIndex) setOwnStartPageIndex(settings.ownStartPageIndex);
       })
     }
   }, [user]);
@@ -63,7 +64,9 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Switch>
-          <Route exact path="/"><Home /></Route>
+          <Route exact path="/">
+            <Redirect to="/meals" />
+          </Route>
 
           <Route exact path="/meals/add"><ContentWrapper activeTab="meals/add" /></Route>
           <Route path="/meals"><ContentWrapper activeTab="meals" /></Route>
