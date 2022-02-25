@@ -63,21 +63,6 @@ const Settings = (props) => {
   const { palette } = theme;
   let history = useHistory();
 
-  const ownStartPageOptions = [
-    {
-      label: t('Meals'),
-      value: 0,
-      selectedBackgroundColor: palette.secondary.main,
-      selectedFontColor: palette.secondary.contrastText,
-    },
-    {
-      label: t('Plans'),
-      value: 1,
-      selectedBackgroundColor: palette.secondary.main,
-      selectedFontColor: palette.secondary.contrastText,
-    },
-  ]
-
   const contactStartPageOptions = [
     {
       label: t('Meals'),
@@ -95,8 +80,7 @@ const Settings = (props) => {
 
   const [userData, setUserData] = useState(null);
   const [/*settings*/, setSettings] = useState(null); // settings is not currently used because settings are fetched from other place but might be necessary in the future
-  const [ownStartPageIndex, setOwnStartPageIndex] = useState(1);
-  const [contactStartPageIndex, setContactStartPageIndex] = useState(1);
+  const [contactStartPageIndex, setContactStartPageIndex] = useState(1); // settings is not currently used because settings are fetched from other place but might be necessary in the future
   const [editDialogOpen, setEditDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -122,7 +106,6 @@ const Settings = (props) => {
       const userId = user.sub;
       getSettingsOfUser(userId, (settings) => {
         setSettings(settings);
-        setOwnStartPageIndex(settings.ownStartPageIndex);
         setContactStartPageIndex(settings.contactStartPageIndex);
       });
     }
@@ -148,14 +131,6 @@ const Settings = (props) => {
       updateUserSettingsForCategory(user.sub, 'prefersDarkMode', newValue, getSettings);
     }
     props.setDarkModeInAppLevel(newValue);
-  }
-
-  function updateOwnStartPage(newValue) {
-    setOwnStartPageIndex(newValue);
-    console.log(newValue);
-    if (user) {
-      updateUserSettingsForCategory(user.sub, 'ownStartPageIndex', newValue, getSettings);
-    }
   }
 
   function updateContactStartPage(newValue) {
@@ -211,19 +186,6 @@ const Settings = (props) => {
                           inputProps={{ 'aria-label': 'use dark mode checkbox' }} />
               </TableCell>
             </TableRow>}
-            <TableRow>
-              <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Own start view')}</Typography></TableCell>
-              <TableCell className={classes.tableCell}>
-                <Box className={classes.switchSelector}>
-                  <SwitchSelector onChange={updateOwnStartPage}
-                                  options={ownStartPageOptions}
-                                  forcedSelectedIndex={ownStartPageIndex}
-                                  backgroundColor={palette.background.paper}
-                                  fontColor={palette.text.disabled}
-                                  fontSize={theme.typography.body1.fontSize} />
-                </Box>
-              </TableCell>
-            </TableRow>
             <TableRow>
               <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Contact start view')}</Typography></TableCell>
               <TableCell className={classes.tableCell}>
