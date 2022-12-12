@@ -22,7 +22,7 @@ const ServiceWorkerUpdateService = () => {
   }, []);
 
   const reloadPage = () => {
-    waitingWorker?.postMessage({ type: 'SKIP_WAITING' });
+    waitingWorker.postMessage({ type: 'SKIP_WAITING' });
     setShowReload(false);
     window.location.reload(true);
   };

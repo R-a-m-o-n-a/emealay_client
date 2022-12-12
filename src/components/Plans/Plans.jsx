@@ -84,7 +84,8 @@ const Plans = (props) => {
   }
 
   useEffect(() => {
-    if (own && params.planId && (!itemBeingEdited || itemBeingEdited?._id !== params.planId)) {
+    console.log("Plans ", params);
+    if (own && params.planId && (!itemBeingEdited || itemBeingEdited._id !== params.planId)) {
       getSinglePlan(params.planId, setItemBeingEdited);
     }
     // eslint-disable-next-line

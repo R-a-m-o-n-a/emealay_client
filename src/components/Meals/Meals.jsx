@@ -67,7 +67,8 @@ const Meals = (props) => {
   const [emptyListFound, setEmptyListFound] = useState(false);
 
   useEffect(() => {
-    if (params.mealId && (!mealBeingViewed || mealBeingViewed?._id !== params.mealId)) {
+    console.log(params);
+    if (params.mealId && (!mealBeingViewed || mealBeingViewed._id !== params.mealId)) {
       loadMealBeingViewed(params.mealId);
     }
   }, [path, params, mealBeingViewed]);
