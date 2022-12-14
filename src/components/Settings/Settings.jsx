@@ -67,14 +67,14 @@ const Settings = (props) => {
     {
       label: t('Meals'),
       value: 0,
-      selectedBackgroundColor: palette.secondary.main,
-      selectedFontColor: palette.secondary.contrastText,
+      selectedBackgroundColor: palette.primary.main,
+      selectedFontColor: palette.primary.contrastText,
     },
     {
       label: t('Plans'),
       value: 1,
-      selectedBackgroundColor: palette.secondary.main,
-      selectedFontColor: palette.secondary.contrastText,
+      selectedBackgroundColor: palette.primary.main,
+      selectedFontColor: palette.primary.contrastText,
     },
   ]
 
@@ -245,6 +245,11 @@ const Settings = (props) => {
         <EditMealTags onUpdateSettings={getSettings} />
         <br />
         <LogoutButton />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
         <DeleteAccountButton />
       </Box>
 

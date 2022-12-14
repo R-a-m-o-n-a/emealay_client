@@ -17,6 +17,7 @@ const useStyles = makeStyles({
   bottomNavAction: {
     paddingTop: '8px',
     minWidth: "auto",
+    alignItems: "flex-start",
   }
 });
 

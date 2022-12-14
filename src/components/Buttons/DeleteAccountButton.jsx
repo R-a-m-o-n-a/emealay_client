@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Dialog, DialogTitle, DialogActions, DialogContent, DialogContentText, CircularProgress } from '@material-ui/core';
+import { Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { useTranslation } from "react-i18next";
 import { deleteUser } from "../Settings/settings.util";

@@ -75,7 +75,6 @@ const Plans = (props) => {
   const fetchAndUpdatePlans = () => {
     getPlansOfUser(userId, plansFound => {
       setPlans(plansFound);
-      console.log(plansFound);
       if (plansFound.length === 0) setEmptyListFound(true);
       if (itemBeingEdited) {
         setItemBeingEdited(plansFound.find(p => p._id === itemBeingEdited._id)); // update itemBeingEdited

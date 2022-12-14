@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Route, Switch } from 'react-router-dom';
+import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import ContentWrapper from "./components/ContentWrapper";
-import Home from "./components/Home";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CssBaseline from '@material-ui/core/CssBaseline'; // deals with changing the background according to light/dark mode
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -17,15 +16,27 @@ const App = () => {
   const prefersDarkModeInitially = useMediaQuery('(prefers-color-scheme: dark)');
   const [prefersDarkMode, setPrefersDarkMode] = useState(prefersDarkModeInitially);
 
+  let history = useHistory();
+  let location = useLocation();
+
   const { user } = useAuth0();
 
   useEffect(() => {
+    console.log('in useEffect', user, location.pathname);
     if (user) {
       getSettingsOfUser(user.sub, (settings) => {
         if (settings.prefersDarkMode) setPrefersDarkMode(settings.prefersDarkMode);
+        console.log("Settings of User", settings.ownStartPageIndex, settings);
+        if (location.pathname === '/') {
+          if (settings.ownStartPageIndex === 0) {
+            history.push('/meals');
+          } else {
+            history.push('/plans');
+          }
+        }
       })
     }
-  }, [user]);
+  }, [user, location.pathname]);
 
   const theme = useMemo(() =>
     createMuiTheme({
@@ -63,7 +74,9 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <Switch>
-          <Route exact path="/"><Home /></Route>
+          <Route exact path="/">
+            <ContentWrapper activeTab='home' />
+          </Route>
 
           <Route exact path="/meals/add"><ContentWrapper activeTab="meals/add" /></Route>
           <Route path="/meals"><ContentWrapper activeTab="meals" /></Route>
