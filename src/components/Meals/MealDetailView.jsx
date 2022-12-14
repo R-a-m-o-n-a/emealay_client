@@ -14,6 +14,7 @@ import ShareButton from "../util/ShareButton";
 import { useAuth0 } from "@auth0/auth0-react";
 import MealImportButton from "./MealImportButton";
 import { useHistory, useRouteMatch } from "react-router-dom";
+import PlanMealButton from "../util/PlanMealButton";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -28,9 +29,6 @@ const useStyles = makeStyles((theme) => ({
   comment: {
     margin: '0.5rem 0',
     whiteSpace: "pre-wrap",
-  },
-  shareButton: {
-    textAlign: "right",
   },
 }));
 
@@ -103,7 +101,7 @@ const MealDetailView = (props) => {
               <Grid item xs className={classes.mealTitle}>
                 <Typography variant="h4">{meal.title}</Typography>
               </Grid>
-              <Grid item xs className={classes.shareButton}>
+              <Grid item xs>
                 <ShareButton link={window.location.origin + '/meals/view/' + meal._id} title={meal.title} text={t('Check out the following meal: {{mealTitle}}', meal.title)} />
               </Grid>
             </Grid>
@@ -111,14 +109,17 @@ const MealDetailView = (props) => {
             {meal.comment ? <Typography className={classes.comment}>{meal.comment}</Typography> : ''}
             {meal.images && meal.images.length > 0 ? <ImageGrid images={meal.images} allowChoosingMain={false} /> : ''}
           </Box>
+
+          {own ? <PlanMealButton meal={meal} /> : ''}
         </FullScreenDialog>
         : ''}
 
-      {isAuthenticated && <EditMeal open={allowEditing && own && path.includes('edit')} meal={meal} closeDialog={closeEditItemDialog} onDoneEditing={fetchMeal} onDoneDelete={() => {
-        fetchMeal();
-        closeEditItemDialog();
-        closeDialog();
-      }} />}
+      {isAuthenticated &&
+        <EditMeal open={allowEditing && own && path.includes('edit')} meal={meal} closeDialog={closeEditItemDialog} onDoneEditing={fetchMeal} onDoneDelete={() => {
+          fetchMeal();
+          closeEditItemDialog();
+          closeDialog();
+        }} />}
     </>
   );
 }

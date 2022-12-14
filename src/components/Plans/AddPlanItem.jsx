@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import EditPlanItemCore from "./EditPlanItemCore";
 import { useAuth0 } from "@auth0/auth0-react";
 import { withLoginRequired } from "../util";
-import { func } from "prop-types";
+import { any, array, arrayOf, bool, func, shape, string } from "prop-types";
 import DoneButton from "../Buttons/DoneButton";
 import { addPlan } from "./plans.util";
 
@@ -31,7 +31,7 @@ const AddPlanItem = (props) => {
   const { t } = useTranslation();
   const { user } = useAuth0();
 
-  const { onDoneAdding } = props;
+  const { onDoneAdding, presetPlanItem, backFunction } = props;
 
   const emptyPlanItem = {
     title: '',
@@ -42,7 +42,7 @@ const AddPlanItem = (props) => {
     connectedMeal: null,
   };
 
-  const [planItem, setPlanItem] = useState(emptyPlanItem);
+  const [planItem, setPlanItem] = useState(presetPlanItem || emptyPlanItem);
 
   const updatePlanItem = (key, value) => {
     setPlanItem(prevState => ({
@@ -69,13 +69,15 @@ const AddPlanItem = (props) => {
     }
   }
 
+  const autoFocusTitle = !(presetPlanItem && presetPlanItem.title);
+
   return (
     <>
       <Navbar pageTitle={t('New Plan')}
-              leftSideComponent={<BackButton onClick={() => {history.goBack()}} />}
+              leftSideComponent={<BackButton onClick={backFunction ? backFunction : () => {history.goBack()}} />}
               rightSideComponent={planItem.title ? <DoneButton label={t('Done')} onClick={addNewPlan} /> : null} />
       <form noValidate onSubmit={addNewPlan} className={classes.form}>
-        <EditPlanItemCore updatePlanItem={updatePlanItem} planItem={planItem} isAdd autoFocusFirstInput />
+        <EditPlanItemCore updatePlanItem={updatePlanItem} planItem={planItem} autoFocusFirstInput={autoFocusTitle} />
         <Button type="submit" disabled={!planItem.title} className={classes.submitButton} variant='contained' color='primary'>{t('Add Plan')}</Button>
       </form>
     </>
@@ -85,6 +87,27 @@ const AddPlanItem = (props) => {
 AddPlanItem.propTypes = {
   /** function to be executed after Plan was added (receives no parameters) */
   onDoneAdding: func,
+  /** optional plan item to start adding an item with values already filled it */
+  presetPlanItem: shape({
+    title: string,
+    hasDate: bool,
+    date: any,
+    gotEverything: bool,
+    missingIngredients: array,
+    connectedMeal: shape({
+      _id: string,
+      title: string,
+      images: arrayOf(shape({
+        name: string,
+        url: string,
+      })),
+      recipeLink: string,
+      comment: string,
+      category: string,
+      tags: arrayOf(string),
+    }),
+  }),
+  backFunction: func,
 };
 
 export default withLoginRequired(AddPlanItem);

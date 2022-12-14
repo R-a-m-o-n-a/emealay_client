@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, IconButton, Checkbox, FormControlLabel, Grid, TextField, fade } from '@material-ui/core';
+import { alpha, Box, Button, Checkbox, FormControlLabel, Grid, IconButton, TextField } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinusCircle, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.primary.main,
   },
   addIngredientButtonIconDisabled: {
-    color: fade(theme.palette.primary.main, 0.3),
+    color: alpha(theme.palette.primary.main, 0.3),
   },
   removeIngredientButtonIcon: {
     color: theme.palette.error.light,
@@ -94,7 +94,6 @@ const EditPlanItemCore = (props) => {
   const { user } = useAuth0();
 
   const {
-    isAdd,
     updatePlanItem,
     planItem: {
       title,
@@ -112,7 +111,7 @@ const EditPlanItemCore = (props) => {
   const colorB = isSecondary ? "secondary" : "primary";
 
   const [newIngredient, setNewIngredient] = useState('');
-  const [inputValueUpdateAllowed, setInputValueUpdateAllowed] = useState(isAdd || !!connectedMeal); // if connectedMeal is null the Autocomplete input will overwrite the title, so the first change needs to be prohibited
+  const [inputValueUpdateAllowed, setInputValueUpdateAllowed] = useState(!connectedMeal); // if connectedMeal is not empty the Autocomplete input will overwrite the title, so the first change needs to be prohibited
 
   const [meals, setMeals] = useState([]);
 
@@ -147,7 +146,7 @@ const EditPlanItemCore = (props) => {
     console.log(updatedIngredients);
     updatePlanItem('missingIngredients', updatedIngredients);
   }
-  console.log('newIngredient', newIngredient);
+
   return (
     <>
       <Autocomplete id="planTitle" freeSolo clearOnBlur={false} clearOnEscape={false} value={connectedMeal} onChange={(event, newValue) => {
@@ -232,10 +231,6 @@ const EditPlanItemCore = (props) => {
 }
 
 EditPlanItemCore.propTypes = {
-  /** is this component called from AddPlanItem page?
-   * This is necessary because the MUI Autocomplete component is still a lab component and does not work 100% properly, so I had to implement a workaround that needs this info
-   */
-  isAdd: bool,
   /** setState function of the parent component's planItem that takes key and value of attribute and updates it */
   updatePlanItem: func.isRequired,
   /** planItem to be edited */
@@ -257,7 +252,6 @@ EditPlanItemCore.propTypes = {
 }
 
 EditPlanItemCore.defaultProps = {
-  isAdd: false,
   isSecondary: false,
   autoFocusFirstInput: false,
 }
