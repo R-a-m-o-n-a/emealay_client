@@ -3,7 +3,7 @@ import { Route, Switch, useHistory, useLocation } from 'react-router-dom';
 import ContentWrapper from "./components/ContentWrapper";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CssBaseline from '@material-ui/core/CssBaseline'; // deals with changing the background according to light/dark mode
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
+import { createTheme, ThemeProvider } from '@material-ui/core/styles';
 import { useAuth0 } from "@auth0/auth0-react";
 import { getSettingsOfUser } from "./components/Settings/settings.util";
 
@@ -22,11 +22,9 @@ const App = () => {
   const { user } = useAuth0();
 
   useEffect(() => {
-    console.log('in useEffect', user, location.pathname);
     if (user) {
       getSettingsOfUser(user.sub, (settings) => {
         if (settings.prefersDarkMode) setPrefersDarkMode(settings.prefersDarkMode);
-        console.log("Settings of User", settings.ownStartPageIndex, settings);
         if (location.pathname === '/') {
           if (settings.ownStartPageIndex === 0) {
             history.push('/meals');
@@ -39,7 +37,7 @@ const App = () => {
   }, [user, location.pathname]);
 
   const theme = useMemo(() =>
-    createMuiTheme({
+    createTheme({
       palette: {
         type: prefersDarkMode ? 'dark' : 'light',
         primary: {

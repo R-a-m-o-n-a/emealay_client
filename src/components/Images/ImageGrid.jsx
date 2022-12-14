@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ImageCarousel from './ImageCarousel';
 import { makeStyles } from "@material-ui/styles";
 import { arrayOf, bool, func, shape, string } from "prop-types";
-import { GridList, GridListTile } from "@material-ui/core";
+import { ImageList, ImageListItem } from "@material-ui/core";
 import InnerBoxCloseX from "../Buttons/InnerBoxCloseX";
 import InnerBoxSelection from "../Buttons/InnerBoxSelection";
 
@@ -70,11 +70,11 @@ const ImageGrid = (props) => {
     if (images && images.length > 0) {
       photoBoxes = images.map((image, index) => {
         return (
-          <GridListTile key={index} cols={image.isMain ? 2 : 1} >
+          <ImageListItem key={index} cols={image.isMain ? 2 : 1} >
             <img src={image.url} alt={image.name} onClick={() => openImage(image, index)}/>
             {allowChoosingMain ? <InnerBoxSelection selected={image.isMain} onClick={() => chooseAsMain(image)} /> : null}
             {allowDelete ? <InnerBoxCloseX onClick={() => deletePhoto(image)} /> : null}
-          </GridListTile>
+          </ImageListItem>
         );
       });
     }
@@ -83,10 +83,10 @@ const ImageGrid = (props) => {
 
   return (
     <>
-      <GridList cellHeight={Number.parseInt(process.env.REACT_APP_GRID_LIST_ROW_HEIGHT)} className={classes.gridList} cols={3}>
+      <ImageList rowHeight={Number.parseInt(process.env.REACT_APP_GRID_LIST_ROW_HEIGHT)} className={classes.gridList} cols={3}>
         {props.children}
         {getPhotos()}
-      </GridList>
+      </ImageList>
       {carouselShowing && getCarousel(carouselStartKey)}
     </>
   );
