@@ -46,7 +46,8 @@ const Navbar = (props) => {
           <img src={palette.type === 'dark' ? '/Emealay_logo_dark.webp' : '/Emealay_logo_white.webp'}
                className={classes.logo}
                alt="Emealay Logo"
-               height="32px"
+               height="32"
+               width="28"
                onClick={() => {history.push('/');}} />
           }
           <Typography onClick={titleOnClick} variant='h4' className={classes.headline}>{pageTitle}</Typography>
