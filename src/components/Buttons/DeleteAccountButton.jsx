@@ -67,6 +67,15 @@ const DeleteAccountButton = () => {
     logout({ returnTo: logoutRedirect });
   };
 
+  const handleCloseDialog = (event, reason) => {
+    console.log(event, reason);
+    if (reason === 'backdropClick') {
+      finalLogout();
+    } else {
+      closeConfirmationDialog();
+    }
+  }
+
   return (
     <>
       <Button variant="contained" size="large" className={classes.logoutButton} onClick={openConfirmDeletionDialog}>
@@ -80,11 +89,11 @@ const DeleteAccountButton = () => {
           <Button className={classes.confirmDeletionButton} onClick={deleteAccount}>{t('Yes, delete my account for good.')}</Button>
         </DialogActions>
       </Dialog>
-      <Dialog open={deletionInProgress} disableBackdropClick>
+      <Dialog open={deletionInProgress} onClose={() => {}}>
         <DialogTitle>{t('Your account is being deleted')}</DialogTitle>
         <DialogContent><CircularProgress /></DialogContent>
       </Dialog>
-      <Dialog open={confirmationDialogOpen} onClose={closeConfirmationDialog} onBackdropClick={finalLogout}>
+      <Dialog open={confirmationDialogOpen} onClose={handleCloseDialog}>
         <DialogTitle>{t('Your Account has been deleted')}</DialogTitle>
         <DialogContent><DialogContentText>{t('You will be logged out now.')}</DialogContentText></DialogContent>
         <DialogActions>

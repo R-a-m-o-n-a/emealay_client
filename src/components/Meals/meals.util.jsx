@@ -49,10 +49,24 @@ export const addMeal = (meal, callback) => {
   if (meal.title) {
     axios.post(serverURL + '/meals/add', meal, {})
          .then(res => {
-           console.log('added meal', res);
-           if (callback) callback();
+           // console.log('added meal', res);
+           if (callback) callback(res.data.meal);
          }).catch(err => {console.log(err)});
   }
+}
+
+/**
+ * Gets an array of shape [{_id, numberOfMeals}] that contains for each user that has meals in the database the number of meals they have
+ * @param {function} updateMealCounts function that receives the array and will update the state of the calling component
+ */
+export const getNumberOfMealsOfUsers = (updateMealCounts) => {
+  axios.get(serverURL + '/meals/numberOfMeals/')
+       .then(res => {
+         updateMealCounts(res.data);
+       })
+       .catch(err => {
+         console.log(err.message);
+       });
 }
 
 export const copyMealImages = (oldId, newId, setNewImages) => {

@@ -46,7 +46,7 @@ const ProfilePlaceholder = (props) => {
               <TableCell className={classes.tableCell}/>
             </TableRow>
             <TableRow>
-              <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Nickname')}</Typography></TableCell>
+              <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Username')}</Typography></TableCell>
               <TableCell className={classes.tableCell}/>
             </TableRow>
             <TableRow>

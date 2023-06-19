@@ -42,7 +42,7 @@ export const getSinglePlan = (planId, updatePlan) => {
 export const addPlan = (newPlan, callback) => {
   axios.post(serverURL + '/plans/add', newPlan).then((result) => {
     console.log('add request sent', result.data);
-    if (callback) callback();
+    if (callback) callback(result.data.plan);
   });
 }
 
@@ -58,4 +58,18 @@ export const checkOrUncheckIngredient = (planId, ingredient, callback) => {
   axios.put(serverURL + '/plans/checkOrUncheckIngredient/' + planId, ingredient).then(callback).catch(err => {
     console.log(err.message);
   });
+}
+
+/**
+ * Gets an array of shape [{_id, numberOfPlans}] that contains for each user that has plans in the database the number of future(!) plans they have
+ * @param {function} updatePlanCounts function that receives the array and will update the state of the calling component
+ */
+export const getNumberOfPlansOfUsers = (updatePlanCounts) => {
+  axios.get(serverURL + '/plans/numberOfPlans/')
+       .then(res => {
+         updatePlanCounts(res.data);
+       })
+       .catch(err => {
+         console.log(err.message);
+       });
 }

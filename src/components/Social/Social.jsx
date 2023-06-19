@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Box, Divider, List, ListItem, ListItemAvatar, ListItemText, Typography } from '@material-ui/core';
+import { List, Typography } from '@material-ui/core';
 import Navbar from "../Navbar";
 import SearchButton from "../Buttons/SearchButton";
 import { useAuth0 } from "@auth0/auth0-react";
 import { makeStyles } from '@material-ui/styles';
 import UserSearch from "./UserSearch";
 import { useTranslation } from "react-i18next";
-import { fetchContactsOfUser, getContactName, getContactPicture, updateContactsFromAuth0 } from "./social.util";
-import { Route, Switch, Redirect, useHistory, useRouteMatch } from "react-router-dom";
-import ContactsContent from "./ContactsContent";
+import { fetchContactsOfUser, updateContactsFromAuth0 } from "./social.util";
 import { withLoginRequired } from "../util";
-import { getSettingsOfUser } from "../Settings/settings.util";
+import UserList from "./UserList";
+import { getNumberOfMealsOfUsers } from "../Meals/meals.util";
+import { getNumberOfPlansOfUsers } from "../Plans/plans.util";
+import { useMap } from "../util/useMap";
 
 const useStyles = makeStyles({
   infoText: {
     textAlign: "center",
     margin: "3rem 2rem",
     fontFamily: "Cookie",
-    fontSize: "1.5rem",
-    lineHeight: "1.6rem",
+    fontSize: "1.3rem",
+    lineHeight: "1.4rem",
   },
 });
 
@@ -30,87 +31,71 @@ const Social = () => {
   const classes = useStyles();
   const { user } = useAuth0();
   const { t } = useTranslation();
-  let { path, url } = useRouteMatch();
-  let history = useHistory();
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [contacts, setContacts] = useState([]);
   const [noContactsFound, setNoContactsFound] = useState(false);
-  const [contactStartPage, setContactStartPage] = useState('plans');
+  const [numberOfMealsByUser, addToNumberOfMealsByUser] = useMap();
+  const [numberOfPlansByUser, addToNumberOfPlansByUser] = useMap();
 
-  const fetchContacts = (updateContactsData = false) => {
+  // get and store information on how many meals and plans users have on first render
+  useEffect(() => {
+    // get how many meals each user has
+    getNumberOfMealsOfUsers((mealCountArray) => {
+      mealCountArray.forEach(mealCount => {
+        addToNumberOfMealsByUser(mealCount._id, mealCount.numberOfMeals);
+      });
+    });
+
+    // get how many plans each user has
+    getNumberOfPlansOfUsers((planCountArray) => {
+      planCountArray.forEach(planCount => {
+        addToNumberOfPlansByUser(planCount._id, planCount.numberOfPlans);
+      });
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const fetchContacts = (shouldUpdateContactsData = false) => { // at the first render, update contacts once from database, all the subsequent times not.
     if (user) {
       const userId = user.sub;
       fetchContactsOfUser(userId, (contactsFound) => {
         setContacts(contactsFound);
         if (contactsFound.length === 0) {
           setNoContactsFound(true);
-        } else if (updateContactsData) updateContactsFromAuth0(userId, contactsFound.map(c => c.user_id), setContacts);
+        } else if (shouldUpdateContactsData === true) updateContactsFromAuth0(userId, contactsFound.map(c => c.user_id), setContacts);
       });
     }
   }
 
   useEffect(() => {
     fetchContacts(true);
-    // eslint-disable-next-line
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      fetchContacts();
-      const userId = user.sub;
-      getSettingsOfUser(userId, (settings) => {
-        setContactStartPage(settings.contactStartPageIndex === 0 ? 'meals' : 'plans');
-      });
-    }
-    // eslint-disable-next-line
-  }, [user]);
-
-  const showUser = (userId) => {
-    history.push(`${url}/contact/${userId}/${contactStartPage}`);
-  }
-
-  const getListItems = () => {
-    return contacts.map(contact => {
-      const userId = contact.user_id;
-
-      return (
-        <Box key={userId}>
-          <ListItem button onClick={() => {history.push(`${url}/contact/${userId}`);}}>
-            <ListItemAvatar>
-              <Avatar src={getContactPicture(contact)} alt={getContactName(contact)} />
-            </ListItemAvatar>
-            <ListItemText primary={getContactName(contact)} primaryTypographyProps={{ className: classes.listItemText }} />
-          </ListItem>
-          <Divider />
-        </Box>
-      );
-    });
-  }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
-      <Switch>
-        <Route exact path={path}>
-          {searchOpen ? <UserSearch open={searchOpen} closeSearch={() => {setSearchOpen(false)}} contacts={contacts} afterUpdateContacts={fetchContacts} openContact={showUser} />
-            : <Navbar pageTitle={t('Contacts')} rightSideComponent={<SearchButton onClick={() => {setSearchOpen(true)}} />} />}
+      {searchOpen ? <UserSearch open={searchOpen}
+                                closeSearch={() => {setSearchOpen(false)}}
+                                contacts={contacts}
+                                afterUpdateContacts={fetchContacts}
+                                numberOfMealsByUser={numberOfMealsByUser}
+                                numberOfPlansByUser={numberOfPlansByUser} />
+        : <Navbar pageTitle={t('Contacts')} rightSideComponent={<SearchButton onClick={() => {setSearchOpen(true)}} />} />}
 
-          {contacts.length === 0
-            ? <Typography className={classes.infoText}>
-              {noContactsFound
-                ? <>{t("No contacts yet")}<br />{t("Search for friends in the top right corner")}</>
-                : t('Loading') + '...'}
-            </Typography>
-            : <List component="nav" className={classes.root} aria-label="meal list">
-              {getListItems()}
-            </List>
-          }
-        </Route>
-        <Redirect exact from={`${path}/contact/:userId`} to={`${path}/contact/:userId/${contactStartPage}`} />
-        <Route path={`${path}/contact/:userId/:tab`}>
-          <ContactsContent />
-        </Route>
-      </Switch>
+      {contacts.length === 0
+        ? <Typography className={classes.infoText}>
+          {noContactsFound
+            ? <>{t("No contacts yet")}<br />{t("Search for friends in the top right corner")}</>
+            : t('Loading') + '...'}
+        </Typography>
+        : <List component="nav" aria-label="meal list">
+          <UserList variant="userContacts"
+                    userList={contacts}
+                    contacts={contacts}
+                    numberOfMealsByUser={numberOfMealsByUser}
+                    numberOfPlansByUser={numberOfPlansByUser}
+                    afterUpdateContacts={fetchContacts} />
+        </List>
+      }
     </>
   );
 }

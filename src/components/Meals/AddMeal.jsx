@@ -1,23 +1,37 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from '@material-ui/core';
+import { alpha, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { v4 as uuidv4 } from 'uuid';
 import Navbar from "../Navbar";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BackButton from "../Buttons/BackButton";
 import { useTranslation } from 'react-i18next';
 import { addMeal, deleteAllImagesFromMeal } from "./meals.util";
 import EditMealCore from "./EditMealCore";
 import { useAuth0 } from "@auth0/auth0-react";
 import { withLoginRequired } from "../util";
-import { func } from "prop-types";
 import DoneButton from "../Buttons/DoneButton";
+import SavingButton from "../Buttons/SavingButton";
 
 const useStyles = makeStyles(theme => ({
   form: {
     padding: '1rem 1.5rem',
-    maxHeight: `calc(100% - 2rem - ${process.env.REACT_APP_NAV_TOP_HEIGHT}px)`,
     overflowY: 'auto',
+  },
+  waitForPictures: {
+    fontSize: '0.9rem',
+    color: theme.palette.error.main,
+    textAlign: "right",
+  },
+  submitWithoutImagesButton: {
+    margin: '0.5em 0 0 auto',
+    display: 'block',
+    color: theme.palette.error.main,
+    borderColor: theme.palette.error.main,
+    '&:hover': {
+      borderColor: theme.palette.error.dark,
+      backgroundColor: alpha(theme.palette.error.dark, 0.04),
+    }
   },
   submitButton: {
     margin: '0.5em 0 0 auto',
@@ -26,13 +40,12 @@ const useStyles = makeStyles(theme => ({
 }));
 
 /** page that allows adding a meal */
-const AddMeal = (props) => {
+const AddMeal = () => {
   const classes = useStyles();
-  let history = useHistory();
+  let navigate = useNavigate();
   const { t } = useTranslation();
   const { user } = useAuth0();
 
-  const { onDoneAdding } = props;
 
   const emptyMeal = {
     _id: uuidv4(),
@@ -52,7 +65,9 @@ const AddMeal = (props) => {
   }, [user]);
 
   const [meal, setMeal] = useState(emptyMeal);
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingImagesTakesLong, setLoadingImagesTakesLong] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const updateMeal = (key, value) => {
     setMeal(prevState => ({
@@ -61,32 +76,45 @@ const AddMeal = (props) => {
     }));
   }
 
+  const goToMeals = () => {
+    navigate('/meals/');
+  }
+
+  const onDoneAdding = (addedMeal) => {
+    setIsSaving(false);
+    goToMeals();
+  };
+
   const addNewMeal = (event) => {
     event.preventDefault();
+    setIsSaving(true);
     addMeal(meal, onDoneAdding);
+  }
+
+  const goBackAndDeleteImagesFromMeal = () => {
+    if (meal.images && meal.images.length > 0) {
+      deleteAllImagesFromMeal(meal._id);
+    }
+    navigate(-1);
   }
 
   return (
     <>
-      <Navbar pageTitle={t('New Meal')} leftSideComponent={<BackButton onClick={() => {
-        if (meal.images) {
-          deleteAllImagesFromMeal(meal._id);
-        }
-        history.goBack();
-      }} />} rightSideComponent={meal.title && !loading ? <DoneButton onClick={addNewMeal} /> : null} />
+      <Navbar pageTitle={t('New Meal')} leftSideComponent={<BackButton onClick={goBackAndDeleteImagesFromMeal} />} rightSideComponent={meal.title && !isLoading ? <DoneButton onClick={addNewMeal} /> : null} />
 
       <form noValidate onSubmit={addNewMeal} className={classes.form}>
-        <EditMealCore updateMeal={updateMeal} meal={meal} autoFocusFirstInput setImagesLoading={setLoading} />
-        <Button type="submit" disabled={!meal.title || loading} className={classes.submitButton} variant='contained' color='primary'>{t('Add')}</Button>
+        <EditMealCore updateMeal={updateMeal} meal={meal} autoFocusFirstInput setImagesLoading={setIsLoading} setLoadingImagesTakesLong={setLoadingImagesTakesLong} />
+        {meal.title && isLoading && loadingImagesTakesLong &&
+          <>
+            <Typography className={classes.waitForPictures} color="error">{t('LOADING_IMAGES_TAKES_LONG')}</Typography>
+            <SavingButton isSaving={isSaving} type="submit" size="large" disabled={!meal.title} className={classes.submitWithoutImagesButton} variant='outlined'>{t('Add without images')}</SavingButton>
+          </>
+        }
+        <SavingButton isSaving={isSaving} type="submit" size="large" disabled={!meal.title || isLoading} className={classes.submitButton} variant='contained' color='primary'>{t('Add')}</SavingButton>
       </form>
 
     </>
   );
 }
-
-AddMeal.propTypes = {
-  /** function to be executed after Meal was added (receives no parameters) */
-  onDoneAdding: func,
-};
 
 export default withLoginRequired(AddMeal);

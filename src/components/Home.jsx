@@ -3,10 +3,10 @@ import { useAuth0 } from "@auth0/auth0-react";
 import LoginButton from "./Buttons/LoginButton";
 import Loading from "./Loading";
 import { Box, Button, InputBase, MenuItem, Select, Typography } from "@material-ui/core";
-import { ArrowForwardIos, Translate } from "@material-ui/icons";
+import { Translate } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/styles";
-import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
+import { Trans, useTranslation } from "react-i18next";
+import { Navigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import { allLanguages } from "../i18n";
 
@@ -23,12 +23,12 @@ const useStyles = makeStyles(theme => ({
   },
   cookieHeading: {
     fontFamily: 'Cookie',
-    fontSize: '140%',
+    fontSize: '120%',
   },
   cookieSubheading: {
     fontFamily: 'Cookie',
-    fontSize: '1.7rem',
-    lineHeight: '1.8rem',
+    fontSize: '1.5rem',
+    lineHeight: '1.6rem',
     marginTop: '1rem',
   },
   select: {
@@ -41,37 +41,32 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
+//@todo set start page according to settings
+const OWN_START_PAGE = 'meals';
+
 /**
  * Home component shows info text and login button if user is not logged in
  * @component
  */
 const Home = () => {
   const classes = useStyles();
-  let history = useHistory();
   const { t, i18n } = useTranslation();
 
-  const { user, isAuthenticated, isLoading } = useAuth0();
+  const { isAuthenticated, isLoading } = useAuth0();
 
   if (isLoading) return <Loading />;
+  if (isAuthenticated) return <Navigate replace to={OWN_START_PAGE} />;
 
-  let greeting = '';
-  if (isAuthenticated && user && user.given_name) greeting = ', ' + user.given_name;
   return (
-    <>
-      <Navbar pageTitle="Home" />
-      <Box className={classes.centeredContent}>
-        <Typography variant="h4">{t('Welcome to')} <span className={classes.cookieHeading}>Emealay</span>{greeting}<span className={classes.cookieHeading}>!</span></Typography>
-        <Typography variant="h5" className={classes.cookieSubheading}>"Where every meal is made<br />instead of thrown away"</Typography>
-        <br />
-        <br />
-        {isAuthenticated ?
-          <Button variant="contained"
-                  size="large"
-                  color="primary"
-                  className={classes.button}
-                  onClick={() => {history.push('/plans');}}
-                  endIcon={<ArrowForwardIos />}>{t('Plan some meals')}</Button>
-          : <Box>
+      <>
+        <Navbar pageTitle="Home" />
+        <Box className={classes.centeredContent}>
+
+          <Typography variant="h4"><Trans>Welcome to <span className={classes.cookieHeading}>Emilia</span>!</Trans></Typography>
+          <Typography variant="h5" className={classes.cookieSubheading}><Trans>APP_SUBTITLE</Trans></Typography>
+          <br />
+          <br />
+          <Box>
             <Typography>{t('Please log in to use the app')}</Typography>
             <br />
             <LoginButton />
@@ -93,10 +88,8 @@ const Home = () => {
               </Select>
             </Button>
           </Box>
-
-        }
-      </Box>
-    </>
+        </Box>
+      </>
   );
 };
 

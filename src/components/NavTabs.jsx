@@ -3,7 +3,7 @@ import { BottomNavigation, BottomNavigationAction } from '@material-ui/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClipboardList, faCog, faUserFriends, faUtensils } from '@fortawesome/free-solid-svg-icons';
 import { makeStyles } from '@material-ui/styles';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link, useLocation, useMatch } from 'react-router-dom';
 import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles({
@@ -15,9 +15,28 @@ const useStyles = makeStyles({
     width: '100%',
   },
   bottomNavAction: {
-    paddingTop: '8px',
-    minWidth: "auto",
+    paddingTop: '15px',
+    // minWidth: "auto",
+    width: '25%',
     alignItems: "flex-start",
+
+    '& .MuiBottomNavigationAction-label': {
+      fontSize: '0.9rem',
+      paddingTop: '2px',
+
+      '&.Mui-selected': {
+        fontSize: '0.95rem',
+        fontWeight: 'bold',
+      }
+    },
+    '&.MuiBottomNavigationAction-root': {
+      fontSize: '1.1rem',
+
+      '&.Mui-selected': {
+        fontSize: '1.3rem',
+        paddingTop: '13px',
+      }
+    }
   }
 });
 
@@ -25,12 +44,19 @@ const useStyles = makeStyles({
 const NavTabs = (props) => {
   const classes = useStyles(props);
   const { t } = useTranslation();
+  const { state } = useLocation();
 
   let activeTab = null;
-  if (useRouteMatch('/meals')) activeTab = 'meals';
-  if (useRouteMatch('/plans')) activeTab = 'plans';
-  if (useRouteMatch('/social')) activeTab = 'social';
-  if (useRouteMatch('/settings')) activeTab = 'settings';
+  if (useMatch('/meals/*')) {
+    if (state && (state.mealContext === 'social' || state.mealContext === 'plans')) {
+      activeTab = state.mealContext;
+    } else {
+      activeTab = 'meals';
+    }
+  }
+  if (useMatch('/plans/*')) activeTab = 'plans';
+  if (useMatch('/social/*')) activeTab = 'social';
+  if (useMatch('/settings/*')) activeTab = 'settings';
 
   return (
     <>

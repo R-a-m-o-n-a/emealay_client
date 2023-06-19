@@ -46,23 +46,26 @@ const ShareButton = (props) => {
         <Share />
         {/*<FontAwesomeIcon icon={faShareSquare} />*/}
       </IconButton>
-      <Dialog open={isCopyLinkOpen} onClose={() => {setIsCopyLinkOpen(false); setIsCopied(false);}} PaperProps={{style: {padding: '2em'}}}>
-        <DialogTitle style={{padding: '0 0 0.5em'}}>{title}</DialogTitle>
-        <Grid container spacing={2} justify="space-between" alignItems="center" wrap="wrap">
-          <Grid item xs style={{flexGrow: 5}}>
-          <TextField id="link-input" variant="standard" value={link} color="secondary" style={{minWidth: '160px'}} InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <Link />
-              </InputAdornment>
-            ),
-          }} />
+      <Dialog open={isCopyLinkOpen} onClose={() => {
+        setIsCopyLinkOpen(false);
+        setIsCopied(false);
+      }} PaperProps={{ style: { padding: '2em' } }}>
+        <DialogTitle style={{ padding: '0 0 0.5em' }}>{title}</DialogTitle>
+        <Grid container spacing={2} justifyContent="space-between" alignItems="center" wrap="wrap">
+          <Grid item xs style={{ flexGrow: 5 }}>
+            <TextField id="link-input" variant="standard" value={link} color="secondary" style={{ minWidth: '160px' }} InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Link />
+                </InputAdornment>
+              ),
+            }} />
           </Grid>
-          <Grid item xs style={{textAlign: 'right'}}>
-          <Button startIcon={isCopied ? <AssignmentTurnedInRounded /> : <FileCopy />} variant="contained" color={"secondary"} onClick={copyToClipboard}>
-            {isCopied ? t('Copied') : t('Copy')}
-          </Button>
-        </Grid>
+          <Grid item xs style={{ textAlign: 'right' }}>
+            <Button startIcon={isCopied ? <AssignmentTurnedInRounded /> : <FileCopy />} variant="contained" color={"secondary"} onClick={copyToClipboard}>
+              {isCopied ? t('Copied') : t('Copy')}
+            </Button>
+          </Grid>
         </Grid>
       </Dialog>
     </>

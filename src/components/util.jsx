@@ -1,28 +1,36 @@
 import React from "react";
-import { withAuthenticationRequired } from "@auth0/auth0-react";
-import { darken, fade, lighten } from '@material-ui/core';
+import { Auth0Provider, withAuthenticationRequired } from "@auth0/auth0-react";
+import { alpha, darken, lighten } from '@material-ui/core';
 import Loading from "./Loading";
-import i18n, { allLanguages } from "../i18n";
+import { useNavigate } from "react-router-dom";
+
+/*
+ * the refresh tokens and use of localstorage were added because the login did not persist on page refresh in firefox and safari
+ * according to this article https://community.auth0.com/t/why-is-authentication-lost-after-refreshing-my-single-page-application/56276
+ */
+
+export const Auth0ProviderWithRedirectCallback = ({ children, ...props }) => {
+  const navigate = useNavigate();
+
+  // if redirect isn't working properly, maybe because the appState is not set: https://community.auth0.com/t/auth0-react-spa-onredirectcallback-redirection-solution/42013
+  const onRedirectCallback = (appState) => {
+    navigate((appState && appState.returnTo) || window.location.pathname);
+  };
+
+  return (
+    <Auth0Provider onRedirectCallback={onRedirectCallback} useRefreshTokens cacheLocation="localstorage" {...props}>
+      {children}
+    </Auth0Provider>
+  );
+};
 
 /**
  * This HOC wraps components in Auth0's withAuthenticationRequired HOC.
- * Additionally it detects and sets the language that is set in the query (z.B. .../plans?lang=de)
  * @param WrappedComponent
- * @returns {React.FC<object>} new Component that can be only accessed by logged in users and sets the language based on the query parameter
+ * @returns new Component that can be only accessed by logged in users
  * @public
  */
 export const withLoginRequired = (WrappedComponent) => {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
-  const userLanguage = urlParams.get('lang');
-
-  if (userLanguage) {
-    if (i18n.language !== userLanguage) { // if language is not already set
-      if (allLanguages.some(l => l.key === userLanguage)) {  // if language however is in the languages array
-        i18n.changeLanguage(userLanguage).then(() => {'language changed to url param'});
-      }
-    }
-  }
 
   return withAuthenticationRequired(WrappedComponent, {
     onRedirecting: () => <Loading />,
@@ -39,13 +47,11 @@ export const muiTableBorder = (theme) => {
   return `1px solid
     ${
     theme.palette.type === 'light'
-      ? lighten(fade(theme.palette.divider, 1), 0.88)
-      : darken(fade(theme.palette.divider, 1), 0.68)
+      ? lighten(alpha(theme.palette.divider, 1), 0.88)
+      : darken(alpha(theme.palette.divider, 1), 0.68)
   }`;
 }
 
 export const dateStringOptions = { year: 'numeric', month: 'numeric', day: 'numeric' };
 
-/**This is nothing, just to display the rest.*/
-const util = () => {};
-export default util;
+

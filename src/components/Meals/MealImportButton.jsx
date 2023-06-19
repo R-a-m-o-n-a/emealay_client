@@ -16,7 +16,7 @@ import DoneButton from "../Buttons/DoneButton";
 import BackButton from "../Buttons/BackButton";
 import { addMeal, copyMealImages, deleteAllImagesFromMeal } from "./meals.util";
 import Alert from "@material-ui/lab/Alert";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   importButton: {
@@ -27,8 +27,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.background.default,
   },
   form: {
-    padding: '1rem 2.5rem',
-    maxHeight: `calc(100% - 2rem - ${process.env.REACT_APP_NAV_TOP_HEIGHT}px)`,
+    padding: '1rem 1.5rem 1.5rem',
     overflowY: 'auto',
   },
   snackbar: {
@@ -37,6 +36,7 @@ const useStyles = makeStyles(theme => ({
   },
   successSnackbar: {
     backgroundColor: theme.palette.primary[theme.palette.type],
+    color: theme.palette.primary.contrastText,
     display: "flex",
     alignItems: "center",
   },
@@ -48,7 +48,7 @@ const MealImportButton = (props) => {
   const { user } = useAuth0();
   const classes = useStyles();
   const { meal } = props;
-  let history = useHistory();
+  let navigate = useNavigate();
 
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [newMeal, setNewMeal] = useState(meal);
@@ -57,7 +57,7 @@ const MealImportButton = (props) => {
 
   useEffect(() => {
     if (importDialogOpen && meal && user) {
-      setImportAllowed(meal.images.length === 0);
+      setImportAllowed(meal.images.length === 0); // nothing to load
       const { title, recipeLink, comment } = meal;
       const mealCopy = {
         _id: uuidv4(),
@@ -69,20 +69,16 @@ const MealImportButton = (props) => {
         tags: [],
       };
 
-      // const mainImage = meal.images.find(i => i.isMain);
-
       copyMealImages(meal._id, mealCopy._id, (newImages) => {
-        /*newImages.forEach(i => {
-          i.isMain = i.name === mainImage.name;
-        });*/
-        updateMeal('images', newImages);
+        updateNewMeal('images', newImages ?? []);
         setImportAllowed(true);
       });
+
       setNewMeal(mealCopy);
     }
   }, [importDialogOpen, user, meal]);
 
-  const updateMeal = (key, value) => {
+  const updateNewMeal = (key, value) => {
     setNewMeal(prevState => ({
       ...prevState,
       [key]: value,
@@ -91,9 +87,7 @@ const MealImportButton = (props) => {
 
   const submitImport = (event) => {
     event.preventDefault();
-    console.log('new meal', newMeal);
     addMeal(newMeal, () => {
-      console.log('meal imported');
       setSuccessMessageOpen(true);
       closeDialog();
     });
@@ -109,10 +103,10 @@ const MealImportButton = (props) => {
     setImportDialogOpen(true);
   }
 
-  const goToMeals = () => {history.push('/meals');};
+  const goToMeals = () => {navigate('/meals');};
 
   const cancel = () => {
-    deleteAllImagesFromMeal(newMeal._id);
+    if(newMeal.images.length > 0) deleteAllImagesFromMeal(newMeal._id);
     closeDialog();
   }
 
@@ -128,8 +122,8 @@ const MealImportButton = (props) => {
               rightSideComponent={importAllowed ? (meal.title ? <DoneButton onClick={submitImport} /> : null) : <CircularProgress color="inherit" size={25} />}
               leftSideComponent={<BackButton onClick={cancel} />} />
       <form noValidate onSubmit={submitImport} className={classes.form}>
-        <EditMealCore meal={newMeal} updateMeal={updateMeal} isSecondary={true} />
-        <Grid container spacing={0} justify="space-between" alignItems="center" wrap="nowrap">
+        <EditMealCore meal={newMeal} updateMeal={updateNewMeal} isSecondary={true} />
+        <Grid container spacing={0} justifyContent="space-between" alignItems="center" wrap="nowrap">
           <Grid item xs>
             <Button type="button" color="secondary" variant="outlined" onClick={cancel}>{t('Cancel')}</Button>
           </Grid>

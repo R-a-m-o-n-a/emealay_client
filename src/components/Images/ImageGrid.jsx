@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 
 /**
  * Image grid that displays an array of images in a 3 column grid and includes optional buttons to delete or select an image.
- * Height of each row can be controlled via `localhost.env.REACT_APP_GRID_LIST_ROW_HEIGHT`
+ * Height of each row can be controlled via `.env.REACT_APP_GRID_LIST_ROW_HEIGHT`
  * allows children to be wrapped within ImageGrid component, they will be displayed within the grid, before the photos (e.g., Dropzone)
  */
 const ImageGrid = (props) => {

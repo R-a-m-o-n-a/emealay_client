@@ -1,6 +1,8 @@
 /** File includes all helper methods for social */
 import axios from "axios";
 import { getSettingsOfUser, updateUserSettingsForCategory } from "../Settings/settings.util";
+import { Avatar } from "@material-ui/core";
+import React from "react";
 
 const serverURL = process.env.REACT_APP_SERVER_URL;
 
@@ -17,7 +19,7 @@ export const fetchContactsOfUser = (userId, updateContacts) => {
 }
 
 /**
- * Updates all user contacts to represent the current data of the Auth0 database in case someone has changed their nickname or picture
+ * Updates all user contacts to represent the current data of the Auth0 database in case someone has changed their username or picture
  * @param {String} userId
  * @param {[String]} contactIDs
  * @param {function} updateContacts
@@ -42,11 +44,22 @@ export const updateContactsFromAuth0 = (userId, contactIDs, updateContacts) => {
 export const updateUserContacts = (userId, newContacts, updateContacts) => {
   if (userId) {
     updateUserSettingsForCategory(userId, 'contacts', newContacts, (settings) => {
-      const sortedContacts = settings.contacts.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1)
+      const sortedContacts = settings.contacts.sort((a, b) => a.name.toUpperCase() > b.name.toUpperCase() ? 1 : -1);
       updateContacts(sortedContacts);
     });
   }
 }
 
-export const getContactName = (contact) => (contact.user_metadata && contact.user_metadata.nickname) ? contact.user_metadata.nickname : contact.name;
-export const getContactPicture = (contact) => (contact.user_metadata && contact.user_metadata.picture) ? contact.user_metadata.picture : contact.picture;
+// wrap Avatar with the attribute refferer-policy to be applied to the img tag to avoid 403 error when accessing google profile pictures
+export const ContactAvatar = ({ children, ...props }) => {
+  return (
+    <Avatar imgProps={{ referrerPolicy: "no-referrer" }} {...props}>
+      {children}
+    </Avatar>
+  );
+};
+
+export const getContactName = (contact) => (contact?.user_metadata?.username ?? contact.name);
+export const getContactPicture = (contact) => (contact?.user_metadata?.picture ?? contact.picture);
+export const getContactCountry = (contact) => (contact?.user_metadata?.countryCode?.toLowerCase());
+

@@ -4,18 +4,13 @@ import { ExpandLess, History, VisibilityOff } from '@material-ui/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faShoppingBasket, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { makeStyles } from "@material-ui/styles";
-import EditPlanItem from "./EditPlanItem";
 import { useTranslation } from "react-i18next";
 import { bool, string } from "prop-types";
 import { dateStringOptions, withLoginRequired } from "../util";
 import MissingIngredients from "./MissingIngredients";
-import { addPlan, getPlansOfUser, getSinglePlan } from "./plans.util";
-import ShoppingList from "./ShoppingList";
+import { getPlansOfUser, getSinglePlan } from "./plans.util";
 import MealAvatar from "../Meals/MealAvatar";
-import { Route, Switch, useHistory, useParams, useRouteMatch } from "react-router-dom";
-import useSnackbars from "../util/useSnackbars";
-import AddButton from "../Buttons/AddButton";
-import Navbar from "../Navbar";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   plansTable: {
@@ -34,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
   },
   tableCell: {
     padding: '12px 16px',
-    fontSize: '1rem',
+    fontSize: '1.1rem',
     color: "inherit",
   },
   narrowCell: {
@@ -47,8 +42,8 @@ const useStyles = makeStyles((theme) => ({
     textAlign: "center",
     margin: "3rem 2rem",
     fontFamily: "Cookie",
-    fontSize: "1.5rem",
-    lineHeight: "1.6rem",
+    fontSize: "1.3rem",
+    lineHeight: "1.4rem",
   },
 }));
 
@@ -57,10 +52,10 @@ const useStyles = makeStyles((theme) => ({
  * * Edit Plan item */
 const Plans = (props) => {
   const classes = useStyles();
-  let history = useHistory();
+  let navigate = useNavigate();
   const params = useParams();
   const { t } = useTranslation();
-  let { path, url } = useRouteMatch();
+  const { pathname, state } = useLocation();
 
   const { own, userId } = props;
 
@@ -69,7 +64,6 @@ const Plans = (props) => {
   const [itemBeingEdited, setItemBeingEdited] = useState(null);
   const [emptyListFound, setEmptyListFound] = useState(false);
 
-  const [deletedItem, setDeletedItem] = useState(null);
   const [pastPlansOpen, setPastPlansOpen] = useState(false);
 
   const fetchAndUpdatePlans = () => {
@@ -83,43 +77,36 @@ const Plans = (props) => {
   }
 
   useEffect(() => {
-    console.log("Plans ", params);
+    if (state) {
+      if (state.refresh) { // force refresh of meals
+        fetchAndUpdatePlans();
+      }
+    }
+  }, [state]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     if (own && params.planId && (!itemBeingEdited || itemBeingEdited._id !== params.planId)) {
       getSinglePlan(params.planId, setItemBeingEdited);
     }
-    // eslint-disable-next-line
-  }, [own, itemBeingEdited, path, params]);
+  }, [own, itemBeingEdited, pathname, params]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // eslint-disable-next-line
-  useEffect(fetchAndUpdatePlans, [userId]);
+  useEffect(fetchAndUpdatePlans, [userId, pathname]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const openMealDetailView = (meal) => {
-    history.push('/meals/view/' + meal._id);
+    navigate('/meals/detail/' + meal._id, { state: { mealContext: 'plans' } });
   };
 
   const goToEdit = (planItem) => {
     if (own) {
       setItemBeingEdited(planItem);
-      history.push('/plans/edit/' + planItem._id);
+      navigate('edit/' + planItem._id, { state: { planItem } });
     }
   }
 
   const openShoppingList = () => {
-    history.push(`${url}/shoppingList`);
-  }
-
-  const undoDeletion = () => {
-    addPlan(deletedItem, () => {
-      fetchAndUpdatePlans();
-      showReaddedItemMessage();
-    });
-  }
-
-  const { Snackbars, showDeletedItemMessage, showReaddedItemMessage } = useSnackbars('Plan', deletedItem, undoDeletion);
-
-  const onDeletePlan = (planItem) => {
-    setDeletedItem(planItem);
-    showDeletedItemMessage();
+    if (own) {
+      navigate('shoppingList/' + userId, { state: { plans } });
+    }
   }
 
   function openMissingIngredientDialog(planItem) {
@@ -154,7 +141,7 @@ const Plans = (props) => {
         <TableRow key={plan._id + index} className={pastPlansDone ? '' : classes.pastPlanRow}>
           <TableCell className={classes.tableCell}>
             {plan.connectedMeal ?
-              <Grid container spacing={1} justify="space-between" alignItems="center">
+              <Grid container spacing={1} justifyContent="space-between" alignItems="center">
                 <Grid item xs={9} onClick={() => {goToEdit(plan);}}>{plan.title}</Grid>
                 <Grid item xs={3} onClick={() => {openMealDetailView(plan.connectedMeal);}}><MealAvatar meal={plan.connectedMeal} /></Grid>
               </Grid>
@@ -162,7 +149,7 @@ const Plans = (props) => {
             }
           </TableCell>
           <TableCell onClick={() => {goToEdit(plan);}} align="center" className={classes.tableCell + ' ' + classes.narrowCell}>
-            {(plan.hasDate && plan.date) ? new Date(plan.date).toLocaleDateString(t('dateLocale'), dateStringOptions) : ''}
+            {(plan.hasDate && plan.date) ? new Date(plan.date).toLocaleDateString(t('DATE_LOCALE'), dateStringOptions) : ''}
           </TableCell>
           <TableCell className={classes.tableCell} align="center" onClick={() => {plan.missingIngredients.length === 0 ? goToEdit(plan) : openMissingIngredientDialog(plan);}}>
             <FontAwesomeIcon icon={plan.gotEverything ? faCheck : faTimes} />
@@ -198,57 +185,32 @@ const Plans = (props) => {
   }
 
   return (
-    <Switch>
-      <Route path={`${path}/edit/:planId`}>
-        <EditPlanItem planItem={itemBeingEdited} closeDialog={() => {
-          setItemBeingEdited(null);
-          history.push('/plans');
-        }} onDoneEditing={fetchAndUpdatePlans} onDelete={onDeletePlan} />
-      </Route>
-      <Route path={path}>
-        <>
-          {own && <Navbar pageTitle={t('Plans')} rightSideComponent={<AddButton onClick={() => {history.push('/plans/add');}} />} />}
-          <Switch>
-
-            <Route path={`${path}/shoppingList`}>
-              <ShoppingList userId={userId} plans={plans} onClose={() => {
-                history.goBack();
-                fetchAndUpdatePlans();
-              }} />
-            </Route>
-
-            <Route path={path}>
-              {plans.length === 0 ? <Typography className={classes.infoText}>{emptyListFound ? t("Currently nothing planned") : t('Loading') + '...'} </Typography> :
-                <TableContainer className={classes.plansTable}>
-                  <Table aria-label="table of all plans" stickyHeader>
-                    <TableHead>
-                      <TableRow key='planListHeader'>
-                        <TableCell className={classes.thCell}>{t('Plan')}</TableCell>
-                        <TableCell align="center" className={classes.narrowCell + ' ' + classes.thCell}>{t('Due Date')}</TableCell>
-                        <TableCell align="center" className={classes.thCell} onClick={openShoppingList}>
+    <>
+      {plans.length === 0 ? <Typography className={classes.infoText}>{emptyListFound ? t("Currently nothing planned") : t('Loading') + '...'} </Typography> :
+        <TableContainer className={classes.plansTable}>
+          <Table aria-label="table of all plans" stickyHeader>
+            <TableHead>
+              <TableRow key='planListHeader'>
+                <TableCell className={classes.thCell}>{t('Title')}</TableCell>
+                <TableCell align="center" className={classes.narrowCell + ' ' + classes.thCell}>{t('Due Date')}</TableCell>
+                <TableCell align="center" className={classes.thCell} onClick={openShoppingList}>
                           <span className="fa-layers fa-fw">
                             <FontAwesomeIcon icon={faShoppingBasket} transform="grow-6" />
                             <FontAwesomeIcon icon={faCheck} className={classes.green} transform="down-2" />
                           </span>
-                        </TableCell>
-                      </TableRow>
-                    </TableHead>
-                    {getPlanRows()}
-                  </Table>
-                </TableContainer>
-              }
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            {getPlanRows()}
+          </Table>
+        </TableContainer>
+      }
 
-              <MissingIngredients planItem={itemBeingEdited} closeDialog={() => {
-                setItemBeingEdited(null);
-                setMissingIngredientsDialogOpen(false);
-              }} onDoneEditing={fetchAndUpdatePlans} open={missingIngredientsDialogOpen} />
-
-              {Snackbars}
-            </Route>
-          </Switch>
-        </>
-      </Route>
-    </Switch>
+      <MissingIngredients planItem={itemBeingEdited} closeDialog={() => {
+        setItemBeingEdited(null);
+        setMissingIngredientsDialogOpen(false);
+      }} onDoneEditing={fetchAndUpdatePlans} open={missingIngredientsDialogOpen} />
+    </>
   );
 }
 

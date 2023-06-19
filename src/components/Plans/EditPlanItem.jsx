@@ -4,20 +4,21 @@ import { makeStyles } from '@material-ui/styles';
 import axios from 'axios';
 import DeleteButton from "../Buttons/DeleteButton";
 import { useTranslation } from "react-i18next";
-import { any, arrayOf, bool, func, shape, string } from "prop-types";
 import Navbar from "../Navbar";
 import EditPlanItemCore from "./EditPlanItemCore";
 import BackButton from "../Buttons/BackButton";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import Loading from "../Loading";
 import DoneButton from "../Buttons/DoneButton";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { getSinglePlan } from "./plans.util";
+import SavingButton from "../Buttons/SavingButton";
 
 /** Dialog page that allows user to edit plan */
 const useStyles = makeStyles((theme) => ({
   form: {
     padding: '1em 1.5em',
     backgroundColor: theme.palette.background.default,
-    height: `calc(100% - ${process.env.REACT_APP_NAV_BOTTOM_HEIGHT}px)`,
   },
   cancelButton: {
     textAlign: 'center',
@@ -35,29 +36,49 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const inverseColors = true;
+const inverseColors = false;
 const serverURL = process.env.REACT_APP_SERVER_URL;
 
 /** page that allows editing a plan */
-const EditPlanItem = (props) => {
+const EditPlanItem = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const { state } = useLocation();
+  const navigate = useNavigate();
+  let { planItemId } = useParams();
   const { user } = useAuth0();
 
-  const { closeDialog, onDoneEditing, onDelete, planItem: givenPlanItem } = props;
 
-  const [planItem, setPlanItem] = useState(givenPlanItem);
+  const [isSaving, setIsSaving] = useState(false);
+  const [planItem, setPlanItem] = useState((state && state.planItem) ? state.planItem : null);
 
+  // get planItem if it is not there
   useEffect(() => {
-    if (givenPlanItem) {
-      const newPlanItem = givenPlanItem;
-      newPlanItem.date = givenPlanItem.date ? new Date(givenPlanItem.date) : new Date();
-      newPlanItem.connectedMeal = givenPlanItem.connectedMeal || null;
-      setPlanItem(newPlanItem);
+    if (!planItem) {
+      if (state && state.planItem) {
+        setPlanItem(state.planItem);
+      } else if (planItemId) getSinglePlan(planItemId, setPlanItem);
     }
-  }, [givenPlanItem]);
+  }, [planItemId, state]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const editPlan = () => {
+  const deletePlan = () => {
+    axios.post(serverURL + '/plans/delete/' + planItem._id).then((result) => {
+      //onDelete(planItem);
+      console.log('delete request sent', result.data, planItem);
+      navigate('../', {
+        state: {
+          snackbar: {
+            category: 'Plan', // capital letter is important here because of output in useSnackbars
+            deletedItem: planItem,
+          }
+        }
+      });
+    });
+  }
+
+  const editAndClose = (event) => {
+    event.preventDefault();
+
     if (planItem.title && user) {
       const newPlan = {
         userId: user.sub,
@@ -69,26 +90,17 @@ const EditPlanItem = (props) => {
         connectedMealId: planItem.connectedMeal ? planItem.connectedMeal._id : null,
       }
 
+      setIsSaving(true);
       axios.post(serverURL + '/plans/edit/' + planItem._id, newPlan).then((result) => {
-        console.log('edit request sent', result.data);
-        onDoneEditing();
+        // editing done
+        setIsSaving(false);
+        goBackToPlans();
       });
     }
   }
 
-  const deletePlan = () => {
-    axios.post(serverURL + '/plans/delete/' + planItem._id).then((result) => {
-      onDelete(planItem);
-      console.log('delete request sent', result.data);
-      onDoneEditing();
-      closeDialog();
-    });
-  }
-
-  const editAndClose = (event) => {
-    event.preventDefault();
-    editPlan();
-    closeDialog();
+  const goBackToPlans = () => {
+    navigate(-1);
   }
 
   const updatePlanItem = (key, value) => {
@@ -99,54 +111,29 @@ const EditPlanItem = (props) => {
   }
 
   return (
-    planItem &&
-    <>
-      <Navbar pageTitle={t('Edit Plan')}
-              leftSideComponent={<BackButton onClick={closeDialog} />}
-              rightSideComponent={planItem.title ? <DoneButton onClick={editAndClose} /> : null}
-              secondary={inverseColors} />
+    planItem ?
+      <>
+        <Navbar pageTitle={t('Edit Plan')}
+                leftSideComponent={<BackButton onClick={goBackToPlans} />}
+                rightSideComponent={planItem.title ? <DoneButton onClick={editAndClose} /> : null}
+                secondary={inverseColors} />
 
-      <form noValidate onSubmit={editAndClose} className={classes.form}>
-        <EditPlanItemCore planItem={planItem} updatePlanItem={updatePlanItem} isSecondary={inverseColors} />
-        <Grid container spacing={0} justify="space-between" alignItems="center" wrap="nowrap" className={classes.actionButtonWrapper}>
-          <Grid item xs className={classes.cancelButton}>
-            <Button type="button" color={inverseColors ? "secondary" : "primary"} variant="outlined" onClick={closeDialog}>{t('Cancel')}</Button>
+        <form noValidate onSubmit={editAndClose} className={classes.form}>
+          <EditPlanItemCore planItem={planItem} updatePlanItem={updatePlanItem} isSecondary={inverseColors} />
+          <Grid container spacing={0} justifyContent="space-between" alignItems="center" wrap="nowrap" className={classes.actionButtonWrapper}>
+            <Grid item className={classes.cancelButton}>
+              <Button type="button" color={inverseColors ? "secondary" : "primary"} size="large" variant="outlined" onClick={goBackToPlans}>{t('Cancel')}</Button>
+            </Grid>
+            <Grid item className={classes.deleteButton}>
+              <DeleteButton onClick={deletePlan} />
+            </Grid>
+            <Grid item className={classes.saveButton}>
+              <SavingButton isSaving={isSaving} type="submit" size="large" disabled={!planItem.title} color={inverseColors ? "secondary" : "primary"} variant="contained">{t('Save')}</SavingButton>
+            </Grid>
           </Grid>
-          <Grid item xs className={classes.deleteButton}>
-            <DeleteButton onClick={deletePlan} />
-          </Grid>
-          <Grid item xs className={classes.saveButton}>
-            <Button type="submit" disabled={!planItem.title} color={inverseColors ? "secondary" : "primary"} variant="contained">{t('Save')}</Button>
-          </Grid>
-        </Grid>
-      </form>
-    </>
+        </form>
+      </> : ''
   );
-}
-
-EditPlanItem.propTypes = {
-  /** plan to be edited */
-  planItem: shape({
-    title: string,
-    hasDate: bool,
-    date: any,
-    gotEverything: bool,
-    missingIngredients: arrayOf(shape({
-      name: string,
-      checked: bool,
-    })),
-    connectedMealId: string,
-  }),
-  /** function to be executed after editing complete (receives no parameters) */
-  onDoneEditing: func.isRequired,
-  /** function to be executed after deleting an item (receives deleted item as parameter) */
-  onDelete: func.isRequired,
-  /** function that closes Dialog / sets open to false */
-  closeDialog: func.isRequired,
-}
-
-EditPlanItem.defaultProps = {
-  planItem: null,
 }
 
 export default withAuthenticationRequired(EditPlanItem, {

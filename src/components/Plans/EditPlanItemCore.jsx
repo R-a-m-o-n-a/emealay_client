@@ -4,12 +4,12 @@ import { makeStyles } from '@material-ui/styles';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMinusCircle, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { any, arrayOf, bool, func, shape, string } from "prop-types";
-import dateformat from 'dateformat';
 import { useTranslation } from "react-i18next";
 import { Autocomplete } from "@material-ui/lab";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import Loading from "../Loading";
 import { fetchAndUpdateMealsFromUser } from "../Meals/meals.util";
+import DatePicker from "../util/DatePicker";
 
 const useStyles = makeStyles((theme) => ({
   dateSelectionWrapper: {
@@ -19,11 +19,6 @@ const useStyles = makeStyles((theme) => ({
   dateLabel: {
     marginTop: 'calc(10px + 0.5em)',
     marginBottom: 'calc(10px + 0.5em)',
-  },
-  dateSelection: {
-    marginTop: '.5em',
-    marginBottom: '.5em',
-    marginLeft: 'auto',
   },
   textField: {
     width: '100%',
@@ -111,7 +106,7 @@ const EditPlanItemCore = (props) => {
   const colorB = isSecondary ? "secondary" : "primary";
 
   const [newIngredient, setNewIngredient] = useState('');
-  const [inputValueUpdateAllowed, setInputValueUpdateAllowed] = useState(!connectedMeal); // if connectedMeal is not empty the Autocomplete input will overwrite the title, so the first change needs to be prohibited
+  const [inputValueUpdateAllowed, setInputValueUpdateAllowed] = useState(autoFocusFirstInput); // the Autocomplete input will overwrite the title, so the first change needs to be prohibited
 
   const [meals, setMeals] = useState([]);
 
@@ -128,7 +123,7 @@ const EditPlanItemCore = (props) => {
       name: newIngredient,
       checked: false,
     }
-    const updatedIngredients = missingIngredients;
+    const updatedIngredients = Array.from(missingIngredients);
     updatedIngredients.push(ingredientToAdd);
     updatePlanItem('missingIngredients', updatedIngredients);
     setNewIngredient('');
@@ -137,12 +132,11 @@ const EditPlanItemCore = (props) => {
   const setIngredientChecked = (ingredient, newCheckedStatus) => {
     const updatedIngredients = missingIngredients;
     updatedIngredients.forEach(i => i.checked = (i === ingredient) ? newCheckedStatus : i.checked);
-    updatePlanItem('missingIngredients', updatedIngredients);
-    // forceUpdate(); might be unnecessary after all
+    updatePlanItem('missingIngredients', Array.from(updatedIngredients));
   }
 
   const removeIngredient = (ingredient) => {
-    const updatedIngredients = missingIngredients.filter(i => i !== ingredient);
+    const updatedIngredients = Array.from(missingIngredients.filter(i => i !== ingredient));
     console.log(updatedIngredients);
     updatePlanItem('missingIngredients', updatedIngredients);
   }
@@ -169,21 +163,14 @@ const EditPlanItemCore = (props) => {
           <Checkbox checked={hasDate} onChange={e => updatePlanItem('hasDate', e.target.checked)} color={colorB} />
         } />
         {hasDate ?
-          <TextField className={classes.dateSelection}
-                     value={dateformat(date, 'yyyy-mm-dd')}
-                     onChange={e => updatePlanItem('date', e.target.value)}
-                     label={t('Due Date')}
-                     type="date"
-                     color={colorB}
-                     variant="outlined"
-                     InputLabelProps={{ shrink: true, }} />
+          <DatePicker value={date} color={colorB} onChange={newDate => updatePlanItem('date', newDate)} label={t('Due Date')} />
           : ''}
       </Box>
       <FormControlLabel label={t('Got everything?')} control={
         <Checkbox checked={gotEverything} onChange={e => updatePlanItem('gotEverything', e.target.checked)} color={colorB} />
       } />
       <Box className={classes.missingIngredientsBox} hidden={gotEverything}>
-        <Grid container spacing={1} justify="space-between" alignItems="flex-end" className={classes.newIngredientInputGrid}>
+        <Grid container spacing={1} justifyContent="space-between" alignItems="flex-end" className={classes.newIngredientInputGrid}>
           <Grid item xs style={{ width: 'calc(100% - (2em + 8px))' }}>
             <TextField value={newIngredient}
                        color={colorA}
@@ -208,7 +195,7 @@ const EditPlanItemCore = (props) => {
         </Grid>
 
         {missingIngredients.map((ingredient, index) =>
-          <Grid container spacing={1} justify="space-between" alignItems="center" key={index + ingredient.name} className={classes.missingIngredientsGrid}>
+          <Grid container spacing={1} justifyContent="space-between" alignItems="center" key={index + ingredient.name} className={classes.missingIngredientsGrid}>
             <Grid item className={classes.missingIngredientLeftGridCell}>
               <FormControlLabel label={ingredient.name} classes={{ root: classes.missingIngredientItem, label: classes.missingIngredientLabel }} control={
                 <Checkbox className={classes.missingIngredientCheckbox}

@@ -9,8 +9,8 @@ const useStyles = makeStyles({
     textAlign: "center",
     margin: "3rem 2rem",
     fontFamily: "Cookie",
-    fontSize: "1.5rem",
-    lineHeight: "1.6rem",
+    fontSize: "1.3rem",
+    lineHeight: "1.4rem",
   },
   loadingCircle: {
     display: "block",

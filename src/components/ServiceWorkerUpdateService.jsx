@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Snackbar, Button } from '@material-ui/core';
+import { Button, Snackbar } from '@material-ui/core';
 import * as serviceWorker from '../serviceWorkerRegistration';
 import { useTranslation } from "react-i18next";
 

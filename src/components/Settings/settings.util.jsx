@@ -10,18 +10,18 @@ const serverURL = process.env.REACT_APP_SERVER_URL;
  */
 export const createNewSettingsForUser = (userId, callback) => {
   if (userId) {
-    console.log('creating new settings for user', userId);
+    // console.log('creating new settings for user', userId);
     const newSettings = { userId: userId };
     axios.post(serverURL + '/settings/add/', newSettings)
          .then(res => {
-           console.log('result of adding settings for ' + userId, res);
+           // console.log('result of adding settings for ' + userId, res);
            if (callback) callback(res.data);
          }).catch(err => {console.log(err)});
   }
 }
 
 /**
- * updates user data in Auth0 database
+ * updates user data in Auth0 database (for metadata there is a separate function)
  * @param {string} userId id of the user whose data is to be changed
  * @param {Object} newData data to be changed (will not affect data that is not passed)
  * @param {function} callback function to be executed after updating (receives new updated data)
@@ -29,7 +29,7 @@ export const createNewSettingsForUser = (userId, callback) => {
 export const updateUser = (userId, newData, callback) => {
   axios.put(serverURL + '/users/update/' + userId, newData)
        .then((result) => {
-         console.log('updated user', result.data);
+         // console.log('updated user', result.data);
          if (callback) callback(result.data);
        }).catch(err => {console.log(err)});
 }
@@ -50,13 +50,14 @@ export const deleteUser = (userId, callback) => {
 /**
  * updates user metadata in Auth0 database
  * @param {string} userId id of the user whose metadata is to be changed
- * @param {Object} newMetadata metadata to be changed (will not affect attributes that is not passed)
+ * @param {Object} newMetadata metadata to be changed (when updating the picture, it DOES delete attributes that are not passed, which it should not do.
+ *                             there is an inconsistency in how other data is affected, so for safety, always pass the entire metadata object)
  * @param {function} callback function to be executed after updating (receives new updated metadata)
  */
 export const updateUserMetadata = (userId, newMetadata, callback) => {
   axios.put(serverURL + '/users/updateMetadata/' + userId, newMetadata)
        .then((result) => {
-         console.log('updated user metadata', result.data);
+        // console.log('updated user metadata', result.data);
          if (callback) callback(result.data);
        }).catch(err => {console.log(err)});
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ListItem, ListItemIcon, ListItemText, useTheme } from '@material-ui/core';
 import CreatableSelect from 'react-select/creatable';
 import { makeStyles } from '@material-ui/styles';
@@ -48,7 +48,6 @@ const SelectMealCategory = (props) => {
   const [categoryIcons, fireIconReload] = useCategoryIcons();
   const { currentCategory: categoryName, updateMeal } = props;
 
-  const [currentCategory, setCurrentCategory] = useState(categoryName ? { name: categoryName, icon: null } : undefined);
   const [allCategories, setAllCategories] = useState([]);
   const [newCategory, setNewCategory] = useState(null);
   const [isIconSelectOpen, setIsIconSelectOpen] = useState(false);
@@ -62,19 +61,18 @@ const SelectMealCategory = (props) => {
     }
   }, [user]);
 
-  useEffect(() => {
+  const currentCategory = useMemo(() => {
     if (categoryName) {
-      setCurrentCategory({ name: categoryName, icon: categoryIcons[categoryName] });
+      return { name: categoryName, icon: categoryIcons[categoryName] }
     } else {
-      setCurrentCategory(undefined);
+      return undefined;
     }
   }, [categoryName, categoryIcons]);
 
   const SelectOption = props => {
     const { data: { name, icon }, innerProps } = props;
-    console.log(props);
     return (
-      <ListItem button {...innerProps} selected={props.isFocused} >
+      <ListItem button {...innerProps} selected={props.isFocused}>
         <ListItemIcon className={classes.listItemIcon}>
           {icon ? <FontAwesomeIcon icon={icon} /> : null}
         </ListItemIcon>
@@ -94,7 +92,6 @@ const SelectMealCategory = (props) => {
   };
 
   const handleCategoryChange = (newCategory, actionMeta) => {
-    console.log(newCategory, actionMeta);
     updateMeal('category', newCategory ? newCategory.name : newCategory);
     if (actionMeta.action === 'create-option') {
       setIsIconSelectOpen(true);
@@ -110,6 +107,32 @@ const SelectMealCategory = (props) => {
     }
   }
 
+  const { typography } = muiTheme;
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      fontSize: typography.body1.fontSize,
+    }),
+  }
+
+  const closeIconSelect = () => {
+    setIsIconSelectOpen(false);
+    setNewCategory(null);
+  }
+
+  const handleChooseIcon = (icon) => {
+    if (!newCategory) throw new Error('new Category is empty but needed');
+    if (!user) throw new Error('user is empty but needed to update categories');
+    allCategories.forEach(c => {
+      if (c.name === newCategory.name) c.icon = icon;
+    });
+    updateMealCategories(user.sub, allCategories, setAllCategories);
+    fireIconReload();
+    setIsIconSelectOpen(false);
+    setNewCategory(null);
+  }
+
   return (
     <>
       <CreatableSelect className={classes.textField}
@@ -120,6 +143,7 @@ const SelectMealCategory = (props) => {
                        getOptionLabel={option => option.name}
                        onChange={handleCategoryChange}
                        theme={givenTheme => reactSelectTheme(givenTheme, muiTheme, true)}
+                       styles={customStyles}
                        getNewOptionData={(value) => {
                          return {
                            name: value,
@@ -129,20 +153,7 @@ const SelectMealCategory = (props) => {
                        options={allCategories}
                        value={currentCategory} />
 
-      <ChooseIconDialog chooseIcon={(icon) => {
-        if (!newCategory) throw new Error('new Category is empty but needed');
-        if (!user) throw new Error('user is empty but needed to update categories');
-        allCategories.forEach(c => {
-          if (c.name === newCategory.name) c.icon = icon;
-        });
-        updateMealCategories(user.sub, allCategories, setAllCategories);
-        fireIconReload();
-        setIsIconSelectOpen(false);
-        setNewCategory(null);
-      }} onClose={() => {
-        setIsIconSelectOpen(false);
-        setNewCategory(null);
-      }} isOpen={isIconSelectOpen} category={newCategory} />
+      <ChooseIconDialog chooseIcon={handleChooseIcon} onClose={closeIconSelect} isOpen={isIconSelectOpen} category={newCategory} />
     </>
   );
 }

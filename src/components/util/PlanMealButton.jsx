@@ -4,7 +4,7 @@ import { arrayOf, shape, string } from "prop-types";
 import { useTranslation } from "react-i18next";
 import FullScreenDialog from "./FullScreenDialog";
 import AddPlanItem from "../Plans/AddPlanItem";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { faClipboardList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { makeStyles } from "@material-ui/styles";
@@ -12,7 +12,7 @@ import { makeStyles } from "@material-ui/styles";
 const useStyles = makeStyles({
   fab: {
     position: "fixed",
-    bottom: '2rem',
+    bottom: `calc(2rem + ${process.env.REACT_APP_NAV_BOTTOM_HEIGHT}px)`,
     right: "2rem",
   },
   planIcon: {
@@ -28,7 +28,7 @@ const PlanMealButton = (props) => {
   const { t } = useTranslation();
   const [isPlanMealDialogOpen, setIsPlanMealDialogOpen] = useState(false);
 
-  let history = useHistory();
+  let navigate = useNavigate();
 
   const newPlanItem = {
     title: meal.title,
@@ -40,18 +40,25 @@ const PlanMealButton = (props) => {
   };
 
   const onDoneAdding = () => {
+    closePlanMealDialog();
+    navigate('plans');
+  }
+
+  const openPlanMealDialog = () => {
+    setIsPlanMealDialogOpen(true);
+  }
+  const closePlanMealDialog = () => {
     setIsPlanMealDialogOpen(false);
-    history.push('/plans');
   }
 
   return (
     <>
-      <Fab variant="extended" color={"secondary"} className={classes.fab} onClick={() => {setIsPlanMealDialogOpen(true)}}>
+      <Fab variant="extended" color="secondary" className={classes.fab} onClick={openPlanMealDialog}>
         <FontAwesomeIcon icon={faClipboardList} className={classes.planIcon} />
         {t('Plan Meal')}
       </Fab>
       <FullScreenDialog open={isPlanMealDialogOpen}>
-        <AddPlanItem onDoneAdding={onDoneAdding} presetPlanItem={newPlanItem} backFunction={() => {setIsPlanMealDialogOpen(false)}} />
+        <AddPlanItem onDoneAdding={onDoneAdding} presetPlanItem={newPlanItem} backFunction={closePlanMealDialog} />
       </FullScreenDialog>
     </>
   );

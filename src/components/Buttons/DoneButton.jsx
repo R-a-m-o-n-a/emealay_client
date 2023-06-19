@@ -9,7 +9,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
   },
   doneIcon: {
-    fontSize: '2rem',
+    fontSize: '2.2rem',
     color: theme.palette.background.default,
   }
 }));

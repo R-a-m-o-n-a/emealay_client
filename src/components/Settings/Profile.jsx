@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
   table: {
     borderTop: muiTableBorder(theme),
-    margin: '1rem 0',
+    margin: '1rem 0 0 0',
   },
   tableCell: {
     padding: '10px',
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
   label: {
     color: theme.palette.secondary.light,
-    fontSize: '0.8rem'
+    fontSize: '0.9rem'
   },
   dialogPicture: {
     maxHeight: '100%',
@@ -44,16 +44,17 @@ const Profile = (props) => {
     name,
     email,
   } = userData;
+
   const [isImageZoomed, setIsImageZoomed] = useState(false);
 
   return (
     <>
       <Box className={classes.imageWrapper} onClick={() => setIsImageZoomed(true)}>
-        <CircleImage src={metadata.picture || userData.picture} altText={`profile picture of ${name}`} />
+        <CircleImage src={metadata?.picture ?? userData.picture} altText={`profile picture of ${name}`} />
       </Box>
 
       <Dialog open={isImageZoomed} onClose={() => setIsImageZoomed(false)}>
-          <img src={metadata.picture || userData.picture} alt={name} className={classes.dialogPicture} />
+          <img src={metadata?.picture ?? userData.picture} alt={name} className={classes.dialogPicture} />
       </Dialog>
 
       <TableContainer className={classes.table}>
@@ -64,8 +65,8 @@ const Profile = (props) => {
               <TableCell className={classes.tableCell}><Typography className={classes.text}>{name}</Typography></TableCell>
             </TableRow>
             <TableRow>
-              <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Nickname')}</Typography></TableCell>
-              <TableCell className={classes.tableCell}><Typography className={classes.text}>{metadata.nickname}</Typography></TableCell>
+              <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Username')}</Typography></TableCell>
+              <TableCell className={classes.tableCell}><Typography className={classes.text}>{metadata?.username ?? ''}</Typography></TableCell>
             </TableRow>
             <TableRow>
               <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Email address')}</Typography></TableCell>
@@ -79,7 +80,7 @@ const Profile = (props) => {
 };
 
 Profile.propTypes = {
-  /** user data to be displayed, currently displays name, metadata.nickname, email and metadata.picture (or picture if no metadata.picture is set) */
+  /** user data to be displayed, currently displays name, metadata.username, email and metadata.picture (or picture if no metadata.picture is set) */
   userData: shape({}).isRequired,
 }
 

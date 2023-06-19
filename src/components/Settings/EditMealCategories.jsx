@@ -63,13 +63,14 @@ export const ChooseIconDialog = (props) => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { category, isOpen, chooseIcon, onClose } = props;
+
   if (isOpen && category) {
     return (
       <Dialog open={category && isOpen} onClose={onClose} PaperProps={{ className: classes.iconSelectDialog }}>
         <DialogTitle style={{ paddingBottom: 0 }}>{t('Choose Icon for {{categoryName}}', { categoryName: category.name })}</DialogTitle>
         <Box className={classes.iconGrid}>
           {categoryIcons.map((icon) => (
-            <Button key={icon.name}
+            <Button key={icon.iconName}
                     className={`${classes.iconListButton} ${category && category.icon && category.icon.iconName === icon.iconName && classes.iconListButtonSelected}`}>
               <FontAwesomeIcon icon={icon} size="2x" onClick={() => {chooseIcon(icon)}} />
             </Button>
@@ -106,8 +107,6 @@ const EditMealCategories = (props) => {
 
   const { user } = useAuth0();
   const { t } = useTranslation();
-  const [, updateState] = useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
 
   const [categories, setCategories] = useState([]);
   const [isIconSelectOpen, setIsIconSelectOpen] = useState(false);
@@ -117,8 +116,8 @@ const EditMealCategories = (props) => {
     if (user) {
       const userId = user.sub;
       getSettingsOfUser(userId, (settings) => {
-        setCategories(settings.mealCategories || []);
-      }); // categories must not be empty!
+        setCategories(Array.from(settings.mealCategories) ?? []);
+      });
     }
   }
 
@@ -138,7 +137,7 @@ const EditMealCategories = (props) => {
     if (user) {
       updateMealCategories(user.sub, categoriesToUpdate, (newCategories) => {
         if (onUpdateCategories) onUpdateCategories(newCategories);
-        setCategories(newCategories);
+        setCategories(Array.from(newCategories));
       }, onUpdateSettings);
     }
   }
@@ -157,13 +156,12 @@ const EditMealCategories = (props) => {
       if (c.name === categoryInIconSelect.name) c.icon = icon;
     });
     updateCategories(categories);
-    forceUpdate();
     closeIconSelect();
   }
 
   return (<>
       <ChipInput fullWidth
-                 placeholder={t('placeholder category')}
+                 placeholder={t('PLACEHOLDER_CATEGORY')}
                  variant="outlined"
                  value={categories}
                  onAdd={addCategory}

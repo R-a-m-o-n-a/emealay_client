@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { withAuthenticationRequired } from "@auth0/auth0-react";
 import { Box, Button, Card, CardContent, CardHeader, Collapse, IconButton, InputBase, Table, TableBody, TableCell, TableContainer, TableRow, Typography } from "@material-ui/core";
 import { ExpandLess, ExpandMore, InfoTwoTone } from "@material-ui/icons";
 import ImageUpload from "../Images/ImageUpload";
 import { updateUser, updateUserMetadata } from "./settings.util";
-import { bool, func, shape } from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { useTranslation } from "react-i18next";
 import Navbar from "../Navbar";
 import BackButton from "../Buttons/BackButton";
 import { muiTableBorder } from "../util";
-import FullScreenDialog from "../util/FullScreenDialog";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import SavingButton from "../Buttons/SavingButton";
 
 const useStyles = makeStyles(theme => ({
   userProfile: {
@@ -57,71 +57,88 @@ const useStyles = makeStyles(theme => ({
 }));
 
 /** Dialog page to edit user data, looks like Profile but is editable */
-const EditProfile = (props) => {
+const EditProfile = () => {
   const classes = useStyles();
   const { t } = useTranslation();
-  const { userData, onUpdateUser, isSecondary, open, closeDialog } = props;
+  let { state } = useLocation();
+  const navigate = useNavigate();
 
-  const colorA = isSecondary ? "primary" : "secondary";
-  // const colorB = isSecondary ? "secondary" : "primary";
-
-  const {
-    user_metadata: metadata,
-    user_id: userId,
-    name: userName,
-    email: userEmail,
-  } = userData;
+  let {
+    userData,
+    userData: {
+      user_metadata: metadata,
+      user_id: userId,
+      name: userName,
+      email: userEmail,
+    }
+  } = state;
 
   const [profileImage, setProfileImage] = useState(metadata.picture || userData.picture);
-  const [nickname, setNickname] = useState(metadata.nickname);
+  const [showReset, setShowReset] = useState(!!metadata.picture);
+  const [username, setUsername] = useState(metadata.username);
   const [name, setName] = useState(userName);
   const [email, setEmail] = useState(userEmail);
-  const [usingOAuth, setUsingOAuth] = useState(false);
   const [infoCollapsed, setInfoCollapsed] = useState(false);
-  const [foreignAccountProvider, setForeignAccountProvider] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    setUsingOAuth(userId.includes("oauth"));
-    if (userId.includes("google")) {
-      setForeignAccountProvider('Google');
+  const usingOAuth = userId.includes("oauth");
+  const foreignAccountProvider = userId.includes("google") ? 'Google' : '';
+
+  const editAndClose = (event) => {
+    event.preventDefault();
+    setIsSaving(true);
+
+    const newMetadata = {
+      ...metadata,
+      username: username,
     }
-  }, [userId]);
 
-  const updateUserData = () => {
-    const newUserData = usingOAuth ? { nickname } : {
-      name, email, nickname
-    };
-    updateUserMetadata(userId, { nickname }, onUpdateUser);
-    updateUser(userId, newUserData, onUpdateUser);
+    // @todo saving is only waiting for metadata for now because in Emilia there is only google login, not email/password
+    updateUserMetadata(userId, newMetadata, onSave);
+    if (!usingOAuth) {
+      const newUserData = {
+        name, email, nickname: username
+      };
+      updateUser(userId, newUserData, null);
+    }
   }
+
+  const onSave = () => {
+    setIsSaving(false);
+    goToSettings();
+  };
 
   const updateProfileImage = (image) => {
     const imageSrc = image.url;
-    console.log('set uploaded source', imageSrc);
+    // console.log('set uploaded source', imageSrc);
     setProfileImage(imageSrc);
     updateProfileImageInMetadata(imageSrc);
   }
 
   const updateProfileImageInMetadata = (imageSrc) => {
-    updateUserMetadata(userId, {
+    const newMetadata = {
+      ...metadata,
       picture: imageSrc,
-    }, onUpdateUser);
+    }
+
+    updateUserMetadata(userId, newMetadata, (newUserData) => {
+      setProfileImage(newUserData.user_metadata.picture || newUserData.picture);
+      setShowReset(!!newUserData.user_metadata.picture);
+    });
   }
 
   const deleteProfileImage = () => {
     updateProfileImageInMetadata(null);
-    setProfileImage(userData.picture);
   }
 
-  const editAndClose = (event) => {
-    event.preventDefault();
-    updateUserData();
-    closeDialog();
+  const goToSettings = () => {
+    // send state to make Profile reload new data
+    navigate('../', { state: { newUsername: username } });
   }
 
   return (
-    <FullScreenDialog open={open} onClose={closeDialog}>
-      <Navbar pageTitle={t('Edit Profile')} leftSideComponent={<BackButton onClick={closeDialog} />} secondary={isSecondary} />
+    <>
+      <Navbar pageTitle={t('Edit Profile')} leftSideComponent={<BackButton onClick={goToSettings} />} />
       <Box className={classes.userProfile}>
         <ImageUpload uploadedImages={[profileImage]}
                      imageName={t('profile picture of {{name}}', { name })}
@@ -129,7 +146,7 @@ const EditProfile = (props) => {
                      categoryId={userId}
                      onChangeUploadedImages={updateProfileImage}
                      useSingleUploadOverlay />
-        {metadata.picture && <Button disableRipple className={classes.deleteImage} onClick={deleteProfileImage}>{t('Reset Image')}</Button>}
+        {showReset && <Button disableRipple className={classes.deleteImage} onClick={deleteProfileImage}>{t('Reset Image')}</Button>}
 
         {usingOAuth && <Card style={{ marginTop: '1rem' }}>
           <CardHeader avatar={<InfoTwoTone />}
@@ -143,7 +160,7 @@ const EditProfile = (props) => {
                 {t(`Since you are logged in via your {{provider}} account, you cannot change your data here. You can change the data directly in your {{provider}} account and it will be adopted on the next login.`, { provider: foreignAccountProvider })}
               </Typography>
               <Typography variant="body2" color="textSecondary" component="p">
-                {t('You can, however, set a custom profile picture and nickname.')}
+                {t('You can, however, set a custom profile picture and username.')}
               </Typography>
             </CardContent>
           </Collapse>
@@ -160,46 +177,43 @@ const EditProfile = (props) => {
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Nickname')}</Typography></TableCell>
+                  <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Username')}</Typography></TableCell>
                   <TableCell className={classes.tableCell}>
-                    <InputBase value={nickname} name="nickname" onChange={e => setNickname(e.target.value)} label={t('Nickname')} />
+                    <InputBase value={username} name="username" onChange={e => setUsername(e.target.value)} label={t('Username')} />
                   </TableCell>
                 </TableRow>
                 <TableRow>
                   <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Email address')}</Typography></TableCell>
                   <TableCell className={classes.tableCell}>
-                    <InputBase prop value={email} name="email" type="email" onChange={e => setEmail(e.target.value)} label={t('example@company.com')} disabled={usingOAuth} />
+                    <InputBase value={email} name="email" type="email" onChange={e => setEmail(e.target.value)} label={t('example@company.com')} disabled={usingOAuth} />
                   </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
 
-          <Button color={colorA} type="submit" variant="contained" size="large" className={classes.submitButton}>
+          <SavingButton isSaving={isSaving} color="primary" type="submit" variant="contained" size="large" className={classes.submitButton}>
             {t('Save Changes')}
-          </Button>
+          </SavingButton>
         </form>
       </Box>
-    </FullScreenDialog>
+    </>
   );
 };
 
-EditProfile.propTypes = {
-  /** initial user data to be edited */
-  userData: shape({}).isRequired,
-  /** callback to be executed after user is updated (receives no parameters) */
-  onUpdateUser: func.isRequired,
-  /** whether to use primary or secondary color scheme */
-  isSecondary: bool,
-  /** is component visible? */
-  open: bool,
-  /** function that closes Dialog / sets open to false */
-  closeDialog: func.isRequired,
+/**
+ * This is a security Wrapper for the component EditProfile to make sure that it receives the state ot needs, which is always the case if coming from settings.
+ * The only scenario where this becomes important, is, if someone goes on the link to directly edit, without having the state. (hard refresh etc.)
+ * @returns {JSX.Element} either a redirect or if state exists, EditProfile
+ * @constructor
+ */
+const EditProfileWrapper = () => {
+  let { state } = useLocation();
+
+  if (!state || !state.userData) {
+    return <Navigate to="/settings" replace />;
+  }
+  return <EditProfile />;
 }
 
-EditProfile.defaultProps = {
-  isSecondary: false,
-  open: false,
-}
-
-export default withAuthenticationRequired(EditProfile);
+export default withAuthenticationRequired(EditProfileWrapper);

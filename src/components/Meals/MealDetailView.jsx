@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Grid, Link, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { arrayOf, bool, func, shape, string } from "prop-types";
-import EditMeal from "./EditMeal";
 import Navbar from "../Navbar";
 import BackButton from "../Buttons/BackButton";
 import ImageGrid from "../Images/ImageGrid";
 import { useTranslation } from "react-i18next";
 import EditButton from "../Buttons/EditButton";
-import FullScreenDialog from "../util/FullScreenDialog";
 import { fetchAndUpdateMeal } from "./meals.util";
 import ShareButton from "../util/ShareButton";
 import { useAuth0 } from "@auth0/auth0-react";
 import MealImportButton from "./MealImportButton";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PlanMealButton from "../util/PlanMealButton";
+import { getUserById } from "../Settings/settings.util";
+
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -32,58 +31,52 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-/** Dialog page that displays Meal Details and optionally opens Edit Dialog */
-const MealDetailView = (props) => {
+/** todo updated description */
+const MealDetailView = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { user, isAuthenticated } = useAuth0();
-  let { path } = useRouteMatch();
-  let history = useHistory();
+  let { state } = useLocation();
+  let navigate = useNavigate();
+  let { mealId } = useParams();
 
-  const { meal: initialMeal, open, closeDialog, allowEditing } = props;
-
-  const [own, setOwn] = useState(false);
-  const [meal, setMeal] = useState(initialMeal);
-  // const [/*mealUser*/, setMealUser] = useState(null);
-
-  /*  useEffect(() => {
-      if (meal) {
-        getUserById(meal.userId, setMealUser);
-      }
-    }, [meal]);*/
+  const [own, setOwn] = useState(undefined);
+  const [meal, setMeal] = useState();
+  const [nameOfOtherUser, setNameOfOtherUser] = useState(null);
 
   useEffect(() => {
     if (user && meal) {
-      setOwn(user.sub === meal.userId);
-    } else {
-      setOwn(false);
+      const own = user.sub === meal.userId;
+      setOwn(own);
+      if (!own && meal.userId) { // meal is loaded but it is other user's meal -> load other user's name for NavBar title
+        getUserById(meal.userId, (user) => {
+          setNameOfOtherUser(user && user.user_metadata && user.user_metadata.username ? user.user_metadata.username : user.given_name);
+        });
+      }
     }
-  }, [user, meal]);
+  }, [user, meal]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // set the meal that is given in state as a temporary option while the one from the server is loaded
+  if (!meal && state && state.meal) setMeal(state.meal);
 
   useEffect(() => {
-    setMeal(initialMeal);
-  }, [initialMeal]);
-
-  const fetchMeal = () => {
-    if (meal && meal._id) {
-      fetchAndUpdateMeal(meal._id, setMeal);
-    }
-  }
+    fetchAndUpdateMeal(mealId, setMeal);
+  }, [mealId]);
 
   const openEditItemDialog = () => {
-    if (allowEditing) {
-      history.push('/meals/edit/' + meal._id);
+    if (own) {
+      navigate('../edit/' + meal._id, { state: { meal } });
     }
   }
 
-  const closeEditItemDialog = () => {
-    history.goBack();
+  const goBack = () => {
+    navigate(-1);
   }
 
   const rightSideComponent = () => {
     if (isAuthenticated) {
       if (own) {
-        if (allowEditing) return <EditButton onClick={() => {openEditItemDialog(meal)}} />;
+        return <EditButton onClick={() => {openEditItemDialog(meal)}} />;
       } else {
         return <MealImportButton meal={meal} />;
       }
@@ -92,17 +85,19 @@ const MealDetailView = (props) => {
   }
 
   return (
-    <>
-      {meal ?
-        <FullScreenDialog open={open} onClose={closeDialog}>
-          <Navbar pageTitle={t('Meal')} rightSideComponent={rightSideComponent()} leftSideComponent={isAuthenticated && <BackButton onClick={closeDialog} />} />
+      meal ?
+        <>
+          <Navbar secondary={!own}
+                  pageTitle={own || !nameOfOtherUser ? t('Meal') : t('Meal of {{name}}', { name: nameOfOtherUser })}
+                  rightSideComponent={rightSideComponent()}
+                  leftSideComponent={isAuthenticated && <BackButton onClick={goBack} />} />
           <Box className={classes.content}>
-            <Grid container spacing={0} justify="space-between" alignItems="flex-start" wrap="nowrap">
+            <Grid container spacing={0} justifyContent="space-between" alignItems="flex-start" wrap="nowrap">
               <Grid item xs className={classes.mealTitle}>
                 <Typography variant="h4">{meal.title}</Typography>
               </Grid>
               <Grid item xs>
-                <ShareButton link={window.location.origin + '/meals/view/' + meal._id} title={meal.title} text={t('Check out the following meal: {{mealTitle}}', meal.title)} />
+                <ShareButton link={window.location.origin + '/meals/detail/' + meal._id} title={meal.title} text={t('Check out the following meal: {{mealTitle}}', meal.title)} />
               </Grid>
             </Grid>
             {meal.recipeLink ? <Typography><Link href={meal.recipeLink} target="_blank">{meal.recipeLink}</Link></Typography> : ''}
@@ -110,46 +105,10 @@ const MealDetailView = (props) => {
             {meal.images && meal.images.length > 0 ? <ImageGrid images={meal.images} allowChoosingMain={false} /> : ''}
           </Box>
 
-          {own ? <PlanMealButton meal={meal} /> : ''}
-        </FullScreenDialog>
-        : ''}
-
-      {isAuthenticated &&
-        <EditMeal open={allowEditing && own && path.includes('edit')} meal={meal} closeDialog={closeEditItemDialog} onDoneEditing={fetchMeal} onDoneDelete={() => {
-          fetchMeal();
-          closeEditItemDialog();
-          closeDialog();
-        }} />}
-    </>
+          {(own && !(state?.mealContext === 'plans')) && <PlanMealButton meal={meal} />}
+        </>
+        : ''
   );
-}
-
-MealDetailView.propTypes = {
-  /** meal to be viewed */
-  meal: shape({
-    _id: string,
-    title: string,
-    images: arrayOf(shape({
-      name: string,
-      url: string,
-    })),
-    recipeLink: string,
-    comment: string,
-    category: string,
-    tags: arrayOf(string),
-  }),
-  /** is component visible? */
-  open: bool,
-  /** function that sets open to false */
-  closeDialog: func.isRequired,
-  /** allow opening edit page? (To be false if not one's own meal) */
-  allowEditing: bool,
-}
-
-MealDetailView.defaultProps = {
-  meal: null,
-  open: true,
-  allowEditing: false,
 }
 
 export default MealDetailView;

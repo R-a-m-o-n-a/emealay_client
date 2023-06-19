@@ -63,7 +63,7 @@ const EditMealTags = (props) => {
 
   return (
     <ChipInput fullWidth
-               placeholder={t('placeholder tag')}
+               placeholder={t('PLACEHOLDER_TAG')}
                variant="outlined"
                value={tags}
                onAdd={addTag}

@@ -2,7 +2,7 @@ import React from 'react';
 import { AppBar, Box, Toolbar, Typography, useTheme } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { any, bool, func, string } from "prop-types";
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const useStyles = makeStyles((theme) => ({
   topNav: props => ({
@@ -16,8 +16,9 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
   },
   headline: {
-    fontSize: '25px',
+    fontSize: '29px',
     lineHeight: '32px',
+    fontWeight: 400,
     whiteSpace: 'nowrap',
     overflow: "hidden",
     textOverflow: "ellipsis",
@@ -26,6 +27,7 @@ const useStyles = makeStyles((theme) => ({
   },
   logo: {
     marginRight: '1rem',
+    cursor: "pointer",
   },
 }));
 /**
@@ -35,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
 const Navbar = (props) => {
   const classes = useStyles(props);
   const { pageTitle, rightSideComponent, leftSideComponent, titleOnClick } = props;
-  let history = useHistory();
+  let navigate = useNavigate();
   const { palette } = useTheme();
 
   return (
@@ -48,9 +50,9 @@ const Navbar = (props) => {
                alt="Emealay Logo"
                height="32"
                width="28"
-               onClick={() => {history.push('/');}} />
+               onClick={() => {navigate('/');}} />
           }
-          <Typography onClick={titleOnClick} variant='h4' className={classes.headline}>{pageTitle}</Typography>
+          <Typography onClick={titleOnClick} className={classes.headline}>{pageTitle}</Typography>
           {rightSideComponent &&
           <Box className={classes.rightSide}>
             {rightSideComponent}

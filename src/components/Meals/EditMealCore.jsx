@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { arrayOf, bool, func, shape, string } from "prop-types";
+import { arrayOf, bool, func, number, shape, string } from "prop-types";
 import { useTranslation } from "react-i18next";
 import ImageUpload from "../Images/ImageUpload";
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
@@ -29,16 +29,17 @@ const EditMealCore = (props) => {
     isSecondary,
     autoFocusFirstInput,
     setImagesLoading,
+    setLoadingImagesTakesLong,
+    loadingImagesTakesLongAfter,
   } = props;
 
   const [placeholder, setPlaceholder] = useState(t('Recipe, instructions, comments, etc.'));
-  const [, updateState] = useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
+
+  const [loadingImagesTakesLongTimeout, setLoadingImagesTakesLongTimeout] = useState(0);
 
   const onChangeUploadedImages = (newUploadedImages) => {
-    console.log('updated uploadedImages', newUploadedImages);
-    updateMeal('images', newUploadedImages);
-    forceUpdate(); // I don't know why the component does not rerender on state change but this solution fixes it. Source: https://stackoverflow.com/questions/53215285/how-can-i-force-component-to-re-render-with-hooks-in-react
+    // console.log('updated uploadedImages', newUploadedImages);
+    updateMeal('images', Array.from(newUploadedImages));
   }
 
   useEffect(() => {
@@ -49,6 +50,22 @@ const EditMealCore = (props) => {
     }
     // eslint-disable-next-line
   }, [user]);
+
+  const setLoadingAndStartTimeout = (value) => {
+    if(setImagesLoading) setImagesLoading(value);
+    if(setLoadingImagesTakesLong) {
+      if (value === true) {
+        setLoadingImagesTakesLongTimeout(setTimeout(() => {
+          setLoadingImagesTakesLong(true);
+        }, loadingImagesTakesLongAfter));
+      }
+      if (value === false) {
+        clearTimeout(loadingImagesTakesLongTimeout);
+        setLoadingImagesTakesLongTimeout(0);
+        setLoadingImagesTakesLong(false);
+      }
+    }
+  };
 
   return (
     <>
@@ -61,8 +78,8 @@ const EditMealCore = (props) => {
                          required />
       <OutlinedTextField name="recipeLink" value={recipeLink} label={t('Link to Recipe')} onChange={e => updateMeal('recipeLink', e.target.value)} isSecondary={isSecondary} />
       <OutlinedTextField multiline
-                         rowsMax={10}
-                         rows={1}
+                         maxRows={10}
+                         minRows={1}
                          name="comment"
                          placeholder={placeholder}
                          value={comment}
@@ -71,7 +88,7 @@ const EditMealCore = (props) => {
 
       <SelectMealCategory currentCategory={category} updateMeal={updateMeal} />
 
-      <SelectMealTags currentTags={tags} updateTags={(newTags) => {updateMeal('tags', newTags)}} allowCreate />
+      <SelectMealTags own currentTags={tags} updateTags={(newTags) => {updateMeal('tags', newTags)}} allowCreate />
 
       <ImageUpload multiple
                    uploadedImages={images}
@@ -80,7 +97,7 @@ const EditMealCore = (props) => {
                    onChangeUploadedImages={onChangeUploadedImages}
                    imageName={title}
                    tags={tags}
-                   setLoading={setImagesLoading} />
+                   setLoading={setLoadingAndStartTimeout} />
     </>
   );
 }
@@ -108,12 +125,18 @@ EditMealCore.propTypes = {
   autoFocusFirstInput: bool,
   /** this is a function to update the state of the calling component. It will receive false, if all images of the meal have been uploaded, and true otherwise */
   setImagesLoading: func,
+  /** this is a function to update the state of the calling component. It will receive true, if all images have not loaded after the specified interval */
+  setLoadingImagesTakesLong: func,
+  /** interval for setLoadingImagesTakesLong  */
+  loadingImagesTakesLongAfter: number,
 }
 
 EditMealCore.defaultProps = {
   isSecondary: false,
   autoFocusFirstInput: false,
   setImagesLoading: undefined,
+  setLoadingImagesTakesLong: undefined,
+  loadingImagesTakesLongAfter: process.env.REACT_APP_LOADING_TAKES_LONG_AFTER || 8000,
 }
 
 export default withAuthenticationRequired(EditMealCore, {

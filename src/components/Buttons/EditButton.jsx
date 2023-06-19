@@ -9,9 +9,12 @@ const useStyles = makeStyles(theme => ({
     border: 'none',
     background: 'transparent',
     cursor: 'pointer',
-    fontSize: '1.5rem',
+    fontSize: '2rem',
     color: theme.palette.background.default,
     padding: 0,
+  },
+  editIcon: {
+    fontSize: '1.8rem',
   }
 }));
 
@@ -21,7 +24,7 @@ const EditButton = (props) => {
   const { onClick } = props;
 
   return (
-    <IconButton className={classes.editButton} onClick={onClick}><Edit /></IconButton>
+    <IconButton className={classes.editButton} onClick={onClick}><Edit className={classes.editIcon} /></IconButton>
   );
 }
 

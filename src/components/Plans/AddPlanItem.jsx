@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import Navbar from "../Navbar";
-import { useHistory } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BackButton from "../Buttons/BackButton";
 import { useTranslation } from "react-i18next";
 import EditPlanItemCore from "./EditPlanItemCore";
@@ -11,11 +10,11 @@ import { withLoginRequired } from "../util";
 import { any, array, arrayOf, bool, func, shape, string } from "prop-types";
 import DoneButton from "../Buttons/DoneButton";
 import { addPlan } from "./plans.util";
+import SavingButton from "../Buttons/SavingButton";
 
 const useStyles = makeStyles(theme => ({
   form: {
-    padding: '1em 2.5em',
-    maxHeight: `calc(100% - 2rem - ${process.env.REACT_APP_NAV_TOP_HEIGHT}px)`,
+    padding: '1.5em 2.5em',
     overflowY: 'auto',
   },
   submitButton: {
@@ -27,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 /** page that allows adding a plan */
 const AddPlanItem = (props) => {
   const classes = useStyles();
-  let history = useHistory();
+  let navigate = useNavigate();
   const { t } = useTranslation();
   const { user } = useAuth0();
 
@@ -43,6 +42,7 @@ const AddPlanItem = (props) => {
   };
 
   const [planItem, setPlanItem] = useState(presetPlanItem || emptyPlanItem);
+  const [isSaving, setIsSaving] = useState(false);
 
   const updatePlanItem = (key, value) => {
     setPlanItem(prevState => ({
@@ -53,7 +53,7 @@ const AddPlanItem = (props) => {
 
   const addNewPlan = (event) => {
     event.preventDefault();
-    console.log('adding ' + planItem.title + ' with connected planItem', planItem.connectedMeal);
+    // console.log('adding ' + planItem.title + ' with connected planItem', planItem.connectedMeal);
     if (planItem.title && user) {
       const newPlan = {
         userId: user.sub,
@@ -65,7 +65,11 @@ const AddPlanItem = (props) => {
         connectedMealId: planItem.connectedMeal ? planItem.connectedMeal._id : null,
       }
 
-      addPlan(newPlan, onDoneAdding);
+      setIsSaving(true);
+      addPlan(newPlan, (addedPlan) => {
+        setIsSaving(false);
+        onDoneAdding();
+      });
     }
   }
 
@@ -74,11 +78,11 @@ const AddPlanItem = (props) => {
   return (
     <>
       <Navbar pageTitle={t('New Plan')}
-              leftSideComponent={<BackButton onClick={backFunction ? backFunction : () => {history.goBack()}} />}
+              leftSideComponent={<BackButton onClick={backFunction ? backFunction : () => {navigate(-1)}} />}
               rightSideComponent={planItem.title ? <DoneButton label={t('Done')} onClick={addNewPlan} /> : null} />
       <form noValidate onSubmit={addNewPlan} className={classes.form}>
         <EditPlanItemCore updatePlanItem={updatePlanItem} planItem={planItem} autoFocusFirstInput={autoFocusTitle} />
-        <Button type="submit" disabled={!planItem.title} className={classes.submitButton} variant='contained' color='primary'>{t('Add Plan')}</Button>
+        <SavingButton isSaving={isSaving} type="submit" disabled={!planItem.title} className={classes.submitButton} variant='contained' size="large" color='primary'>{t('Add Plan')}</SavingButton>
       </form>
     </>
   );

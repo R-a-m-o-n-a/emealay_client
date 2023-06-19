@@ -2,23 +2,17 @@ import React, { useEffect, useState } from 'react';
 import Navbar from "../Navbar";
 import { useTranslation } from "react-i18next";
 import Profile from "./Profile";
-import { Box, Checkbox, InputBase, MenuItem, Select, Table, TableBody, TableCell, TableRow, Typography, useTheme } from '@material-ui/core';
+import { Box, InputBase, MenuItem, Select, Table, TableBody, TableCell, TableRow, Typography } from '@material-ui/core';
 import { useAuth0 } from "@auth0/auth0-react";
-import { getSettingsOfUser, getUserById, updateUserMetadata, updateUserSettingsForCategory } from "./settings.util";
+import { getSettingsOfUser, getUserById, updateUserSettingsForCategory } from "./settings.util";
 import { makeStyles } from "@material-ui/styles";
 import { allLanguages } from "../../i18n";
 import { muiTableBorder, withLoginRequired } from "../util";
 import LogoutButton from "../Buttons/LogoutButton";
 import EditButton from "../Buttons/EditButton";
-import EditProfile from "./EditProfile";
 import ProfilePlaceholder from "./ProfilePlaceholder";
-import { func } from "prop-types";
-import EditMealTags from "./EditMealTags";
-import EditMealCategories from "./EditMealCategories";
-import DoneButton from "../Buttons/DoneButton";
-import SwitchSelector from "react-switch-selector";
-import { useHistory } from "react-router-dom";
-import DeleteAccountButton from "../Buttons/DeleteAccountButton";
+import { useLocation, useNavigate } from "react-router-dom";
+import { ArrowForwardIos } from "@material-ui/icons";
 
 const useStyles = makeStyles(theme => ({
   settings: {
@@ -28,7 +22,7 @@ const useStyles = makeStyles(theme => ({
   },
   table: {
     borderTop: muiTableBorder(theme),
-    margin: '1rem 0',
+    margin: '0',
     overflowY: "visible",
   },
   tableCell: {
@@ -37,9 +31,21 @@ const useStyles = makeStyles(theme => ({
       width: '25%',
     }
   },
+  buttonTableCell: {
+    padding: '15px',
+    cursor: 'pointer',
+  },
+  tableCellButton: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  tableCellButtonText: {
+    marginRight: '6px',
+  },
   label: {
     color: theme.palette.secondary.light,
-    fontSize: '0.8rem',
+    fontSize: '0.9rem',
   },
   switchSelector: {
     height: '2rem',
@@ -55,64 +61,21 @@ const useStyles = makeStyles(theme => ({
  *    + manage meal categories
  *    + manage meal tags
  **/
-const Settings = (props) => {
+const Settings = () => {
   const classes = useStyles();
   const { t, i18n } = useTranslation();
   const { user } = useAuth0();
-  const theme = useTheme();
-  const { palette } = theme;
-  let history = useHistory();
-
-  const ownStartPageOptions = [
-    {
-      label: t('Meals'),
-      value: 0,
-      selectedBackgroundColor: palette.primary.main,
-      selectedFontColor: palette.primary.contrastText,
-    },
-    {
-      label: t('Plans'),
-      value: 1,
-      selectedBackgroundColor: palette.primary.main,
-      selectedFontColor: palette.primary.contrastText,
-    },
-  ]
-
-  const contactStartPageOptions = [
-    {
-      label: t('Meals'),
-      value: 0,
-      selectedBackgroundColor: palette.secondary.main,
-      selectedFontColor: palette.secondary.contrastText,
-    },
-    {
-      label: t('Plans'),
-      value: 1,
-      selectedBackgroundColor: palette.secondary.main,
-      selectedFontColor: palette.secondary.contrastText,
-    },
-  ]
+  const { state } = useLocation();
+  let navigate = useNavigate();
 
   const [userData, setUserData] = useState(null);
   const [/*settings*/, setSettings] = useState(null); // settings is not currently used because settings are fetched from other place but might be necessary in the future
-  const [ownStartPageIndex, setOwnStartPageIndex] = useState(1);
-  const [contactStartPageIndex, setContactStartPageIndex] = useState(1);
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-
-  useEffect(() => {
-    getUser();
-    // eslint-disable-next-line
-  }, [user]);
 
   const getUser = () => {
     if (user) {
       const userId = user.sub;
       getUserById(userId, (user) => {
         setUserData(user);
-        const metadata = user.user_metadata;
-        if (metadata && metadata.language) {
-          if (metadata.language !== i18n.language) i18n.changeLanguage(metadata.language);
-        }
       });
     }
   }
@@ -122,53 +85,32 @@ const Settings = (props) => {
       const userId = user.sub;
       getSettingsOfUser(userId, (settings) => {
         setSettings(settings);
-        setOwnStartPageIndex(settings.ownStartPageIndex);
-        setContactStartPageIndex(settings.contactStartPageIndex);
       });
     }
   }
 
-  useEffect(getSettings, [user]);
+  useEffect(() => {
+    // the auth0 user has a limited amount of info (for example no metadata). So we need to get the complete user
+    getUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, state]); // state listens to changes done in EditProfile
 
-  function updateLanguageInUserMetadata(lng) {
-    if (user) {
-      const newMetadata = { language: lng };
-      updateUserMetadata(user.sub, newMetadata, getUser);
-    }
-  }
+  useEffect(() => {
+    getSettings();
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function updateLanguageInSettings(lng) {
     if (user) {
-      updateUserSettingsForCategory(user.sub, 'language', lng, getSettings);
-    }
-  }
-
-  function updateDarkModePreference(newValue) {
-    if (user) {
-      updateUserSettingsForCategory(user.sub, 'prefersDarkMode', newValue, getSettings);
-    }
-    props.setDarkModeInAppLevel(newValue);
-  }
-
-  function updateOwnStartPage(newValue) {
-    setOwnStartPageIndex(newValue);
-    console.log(newValue);
-    if (user) {
-      updateUserSettingsForCategory(user.sub, 'ownStartPageIndex', newValue, getSettings);
-    }
-  }
-
-  function updateContactStartPage(newValue) {
-    setContactStartPageIndex(newValue);
-    console.log(newValue);
-    if (user) {
-      updateUserSettingsForCategory(user.sub, 'contactStartPageIndex', newValue, getSettings);
+      updateUserSettingsForCategory(user.sub, 'language', lng, (newSettings) => {
+        getSettings();
+        // send settings changed to trigger reloading settings in App.jsx every time they get updated
+        navigate(window.location, { replace: true, state: { settingsChanged: true } });
+      });
     }
   }
 
   const changeLanguage = (lng) => {
-    i18n.changeLanguage(lng).then(r => {console.log('changed language to ', r)});
-    updateLanguageInUserMetadata(lng);
+    i18n.changeLanguage(lng).then(() => {console.log('changed language to ', lng)});
     updateLanguageInSettings(lng);
   }
 
@@ -176,24 +118,15 @@ const Settings = (props) => {
     return allLanguages.map(lang => <MenuItem key={lang.key} value={lang.key}>{lang.description}</MenuItem>);
   }
 
-  const closeEditProfileDialog = () => {
-    setEditDialogOpen(false);
-    history.push('/settings');
-  }
-
-  const openEditProfileDialog = () => {
-    setEditDialogOpen(true);
-    history.push('/settings/editProfile');
-  }
+  const goToEditProfile = () => {navigate('editProfile', { state: { userData } });};
+  const goToAdvancedSettings = () => {navigate('advanced');};
 
   return (
     <>
-      <Navbar pageTitle={t('Settings')} rightSideComponent={editDialogOpen ?
-        <DoneButton onClick={closeEditProfileDialog} />
-        : <EditButton onClick={openEditProfileDialog} />} />
+      <Navbar pageTitle={t('Settings')} rightSideComponent={<EditButton onClick={goToEditProfile} />} />
       <Box className={classes.settings}>
-        {userData && !editDialogOpen ? <Profile userData={userData} /> : <ProfilePlaceholder />}
-        <Table aria-label="profile data" size="small" className={classes.table}>
+        {userData ? <Profile userData={userData} /> : <ProfilePlaceholder />}
+        <Table aria-label="profile data" size="medium" className={classes.table}>
           <TableBody>
             <TableRow>
               <TableCell className={classes.tableCell}><Typography className={classes.label} id="language-select-label">{t('Language')}</Typography></TableCell>
@@ -203,67 +136,20 @@ const Settings = (props) => {
                 </Select>
               </TableCell>
             </TableRow>
-            {palette && props.setDarkModeInAppLevel && <TableRow>
-              <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Use dark mode?')}</Typography></TableCell>
-              <TableCell className={classes.tableCell}>
-                <Checkbox checked={palette.type === 'dark'}
-                          onChange={event => updateDarkModePreference(event.target.checked)}
-                          inputProps={{ 'aria-label': 'use dark mode checkbox' }} />
-              </TableCell>
-            </TableRow>}
             <TableRow>
-              <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Own start view')}</Typography></TableCell>
-              <TableCell className={classes.tableCell}>
-                <Box className={classes.switchSelector}>
-                  <SwitchSelector onChange={updateOwnStartPage}
-                                  options={ownStartPageOptions}
-                                  forcedSelectedIndex={ownStartPageIndex}
-                                  backgroundColor={palette.background.paper}
-                                  fontColor={palette.text.disabled}
-                                  fontSize={theme.typography.body1.fontSize} />
-                </Box>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Contact start view')}</Typography></TableCell>
-              <TableCell className={classes.tableCell}>
-                <Box className={classes.switchSelector}>
-                  <SwitchSelector onChange={updateContactStartPage}
-                                  options={contactStartPageOptions}
-                                  forcedSelectedIndex={contactStartPageIndex}
-                                  backgroundColor={palette.background.paper}
-                                  fontColor={palette.text.disabled}
-                                  fontSize={theme.typography.body1.fontSize} />
+              <TableCell className={classes.buttonTableCell} colSpan={2} onClick={goToAdvancedSettings}>
+                <Box className={classes.tableCellButton}>
+                  <Typography className={classes.tableCellButtonText}>{t('Advanced Settings')}</Typography>
+                  <ArrowForwardIos color="primary" fontSize="small" />
                 </Box>
               </TableCell>
             </TableRow>
           </TableBody>
         </Table>
-        <EditMealCategories onUpdateSettings={getSettings} />
-        <br />
-        <br />
-        <EditMealTags onUpdateSettings={getSettings} />
-        <br />
         <LogoutButton />
-        <br />
-        <br />
-        <br />
-        <br />
-        <br />
-        <DeleteAccountButton />
       </Box>
-
-
-      {userData &&
-      <EditProfile userData={userData} onUpdateUser={getUser} open={editDialogOpen} closeDialog={closeEditProfileDialog} isSecondary />
-      }
     </>
   );
-}
-
-Settings.propTypes = {
-  /** needs to receive a function that can toggle dark mode directly from the App.jsx component */
-  setDarkModeInAppLevel: func.isRequired,
 }
 
 export default withLoginRequired(Settings);

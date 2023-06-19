@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Avatar, Box, Collapse, Divider, InputBase, List, ListItem, ListItemAvatar, ListItemSecondaryAction, ListItemText, Toolbar, Typography } from '@material-ui/core';
+import { AppBar, Box, Collapse, InputBase, List, Toolbar, Typography } from '@material-ui/core';
 import axios from 'axios';
 import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import { makeStyles } from '@material-ui/styles';
-import Loading from "../Loading";
+import Loading, { LoadingBody } from "../Loading";
 import { useTranslation } from "react-i18next";
 import SimpleCloseX from "../Buttons/SimpleCloseX";
-import { arrayOf, bool, func, shape } from "prop-types";
-import FriendOrUnfriendButton from "./FriendOrUnfriendButton";
-import { getContactName, getContactPicture } from "./social.util";
+import { arrayOf, bool, func, instanceOf, shape } from "prop-types";
+import UserList from "./UserList";
 
 const useStyles = makeStyles(theme => ({
   userSearchBox: {
@@ -20,19 +19,16 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     height: 'calc(100% - ' + process.env.REACT_APP_NAV_BOTTOM_HEIGHT + 'px)',
   },
-  navBarTextInput: {
-    backgroundColor: theme.palette.primary.main,
-  },
   infoText: {
     textAlign: "center",
     margin: "3rem 2rem",
     fontFamily: "Cookie",
-    fontSize: "1.5rem",
-    lineHeight: "1.6rem",
+    fontSize: "1.3rem",
+    lineHeight: "1.4rem",
   },
   topNav: props => ({
-    height: props.height,
-    minHeight: props.height,
+    height: process.env.REACT_APP_NAV_TOP_HEIGHT + 'px',
+    minHeight: process.env.REACT_APP_NAV_TOP_HEIGHT + 'px',
     color: theme.palette.background.default,
     justifyContent: 'space-between',
     backgroundColor: props.secondary ? theme.palette.secondary.main : theme.palette.primary.main,
@@ -41,13 +37,6 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
   },
-  headline: {
-    fontSize: '30px',
-    lineHeight: '35px'
-  },
-  logo: {
-    marginRight: '1rem',
-  },
   flexdiv: {
     display: 'flex',
     alignItems: 'center',
@@ -55,13 +44,16 @@ const useStyles = makeStyles(theme => ({
   searchInput: {
     color: theme.palette.background.default,
   },
-  listItemText: {
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    paddingRight: '0.5rem',
+  resultListCollapse: {
+    height: 'calc(100vh - ' + process.env.REACT_APP_NAV_BOTTOM_HEIGHT + 'px - ' + process.env.REACT_APP_NAV_TOP_HEIGHT + 'px)',
+
+    '& .MuiCollapse-wrapper, MuiCollapse-wrapperInner': {
+      maxHeight: '100%',
+    },
   },
   resultList: {
-    height: 'calc(100% - ' + process.env.REACT_APP_NAV_BOTTOM_HEIGHT + 'px)',
+    maxHeight: '100%',
+    overflow: "auto",
   }
 }));
 
@@ -77,19 +69,18 @@ const UserSearch = (props) => {
   const { user } = useAuth0();
   const { t } = useTranslation();
 
-  const [userList, setUserList] = useState([]);
-  const [query, setQuery] = useState('');
+  const { numberOfMealsByUser, numberOfPlansByUser, closeSearch, open, contacts, afterUpdateContacts } = props;
 
-  const { closeSearch, open, contacts, afterUpdateContacts, openContact } = props;
+  const [userList, setUserList] = useState(undefined);
+  const [query, setQuery] = useState('');
 
   const getUsers = () => {
     if (query) {
       axios.get(serverURL + '/users/fromQuery/' + query)
            .then(res => {
-             console.log('result', res);
              let usersFound = res.data;
              usersFound = usersFound.filter(u => u.user_id !== user.sub);
-             setUserList(usersFound);
+             setUserList(usersFound.sort(orderByNoOfMealsDesc));
            })
            .catch(err => {
              console.log(err.message);
@@ -97,10 +88,9 @@ const UserSearch = (props) => {
     } else {
       axios.get(serverURL + '/users/all/')
            .then(res => {
-             console.log('result', res);
              let usersFound = res.data;
              usersFound = usersFound.filter(u => u.user_id !== user.sub);
-             setUserList(usersFound);
+             setUserList(usersFound.sort(orderByNoOfMealsDesc));
            })
            .catch(err => {
              console.log(err.message);
@@ -108,55 +98,63 @@ const UserSearch = (props) => {
     }
   }
 
-  useEffect(() => {
-    getUsers();
-    // eslint-disable-next-line
-  }, [query]);
-
-  const getListItems = () => {
-    return userList.map(u => {
-      const userId = u.user_id;
-      return (
-        <Box key={userId}>
-          <ListItem button onClick={() => {if (openContact) openContact(userId)}}>
-            <ListItemAvatar>
-              <Avatar alt={getContactName(u)} src={getContactPicture(u)} />
-            </ListItemAvatar>
-            <ListItemText primary={getContactName(u)} primaryTypographyProps={{ className: classes.listItemText }} />
-            <ListItemSecondaryAction>
-              <FriendOrUnfriendButton otherUser={u} contacts={contacts} afterUpdateContacts={afterUpdateContacts} />
-            </ListItemSecondaryAction>
-          </ListItem>
-          <Divider />
-        </Box>
-      );
-    });
+  function orderByNoOfMealsDesc(a, b) {
+    const mealsOfA = numberOfMealsByUser.get(a.user_id) ?? 0;
+    const mealsOfB = numberOfMealsByUser.get(b.user_id) ?? 0;
+    const plansOfA = numberOfPlansByUser.get(a.user_id) ?? 0;
+    const plansOfB = numberOfPlansByUser.get(b.user_id) ?? 0;
+    if (mealsOfB - mealsOfA === 0) return plansOfB - plansOfA;
+    return mealsOfB - mealsOfA;
   }
 
-  return (
-    <Box className={classes.userSearchBox}>
-      <Toolbar className={classes.topNav} variant="dense">
-        <Box className={classes.flexdiv}>
-          <InputBase placeholder={t('Search for users')} value={query} name="query" className={classes.searchInput} onChange={e => setQuery(e.target.value)} label="Query" autoFocus />
-        </Box>
-        <Box className={classes.rightSide}>
-          <SimpleCloseX onClick={closeSearch} />
-        </Box>
-      </Toolbar>
+  if (userList) userList.sort(orderByNoOfMealsDesc);
 
-      <Collapse in={open && userList} className={classes.resultList}>
-        {userList.length === 0 ? <Typography className={classes.infoText}>{query ? t("No results") : ''} </Typography> :
-          <List component="nav" className={classes.root} aria-label="u list">
-            {getListItems()}
-            <Box />
-          </List>
-        }
-      </Collapse>
-    </Box>
+  useEffect(() => {
+    getUsers();
+  }, [query]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <>
+      <Box className={classes.userSearchBox}>
+        <AppBar position="sticky" style={{ maxWidth: '100%' }}>
+          <Toolbar className={classes.topNav} variant="dense">
+            <Box className={classes.flexdiv}>
+              <InputBase placeholder={t('Search for users')}
+                         value={query}
+                         name="query"
+                         className={classes.searchInput}
+                         onChange={e => setQuery(e.target.value)}
+                         label="Query"
+                         autoFocus />
+            </Box>
+            <Box className={classes.rightSide}>
+              <SimpleCloseX onClick={closeSearch} />
+            </Box>
+          </Toolbar>
+        </AppBar>
+        <Collapse in={open} className={classes.resultListCollapse}>
+          {userList === undefined ? <LoadingBody /> :
+            (userList.length === 0 ? <Typography className={classes.infoText}>{t("No results")}</Typography> :
+                <List component="nav" aria-label="u list" className={classes.resultList}>
+                  <UserList userList={userList}
+                            numberOfMealsByUser={numberOfMealsByUser}
+                            numberOfPlansByUser={numberOfPlansByUser}
+                            contacts={contacts}
+                            afterUpdateContacts={afterUpdateContacts} />
+                  <Box />
+                </List>
+            )}
+        </Collapse>
+      </Box>
+    </>
   );
 }
 
 UserSearch.propTypes = {
+  /** Map (key: userId, value: number of meals */
+  numberOfMealsByUser: instanceOf(Map).isRequired,
+  /** Map (key: userId, value: number of plans */
+  numberOfPlansByUser: instanceOf(Map).isRequired,
   /** function that closes Dialog / sets open to false */
   closeSearch: func.isRequired,
   /** is component visible? */
@@ -165,8 +163,6 @@ UserSearch.propTypes = {
   contacts: arrayOf(shape({})).isRequired,
   /** function to be executed after friend or unfriend action. *Must* update the contacts prop. */
   afterUpdateContacts: func.isRequired,
-  /** function that will open the contact's page */
-  openContact: func,
 }
 
 export default withAuthenticationRequired(UserSearch, {

@@ -5,13 +5,13 @@ import { Box, Dialog, Tab, Tabs } from '@material-ui/core';
 import Meals from "../Meals/Meals";
 import Navbar from "../Navbar";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useHistory, useParams, useRouteMatch } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getUserById } from "../Settings/settings.util";
 import BackButton from "../Buttons/BackButton";
 import { useTranslation } from "react-i18next";
 import { LoadingBody } from "../Loading";
 import Plans from "../Plans/Plans";
-import { getContactName, getContactPicture } from "./social.util";
+import { ContactAvatar, getContactName, getContactPicture } from "./social.util";
 
 const useStyles = makeStyles((theme) => ({
   contactsContent: {
@@ -28,12 +28,6 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: '100%',
     maxWidth: '100%',
   },
-  tabs: {
-    minHeight: `${process.env.REACT_APP_NAV_BOTTOM_HEIGHT}px`,
-  },
-  tab: {
-    minHeight: `${process.env.REACT_APP_NAV_BOTTOM_HEIGHT}px`,
-  }
 }));
 
 /**
@@ -49,11 +43,10 @@ const ContactsContent = () => {
   const { t } = useTranslation();
   const { user, isAuthenticated, isLoading } = useAuth0();
   let { userId, tab } = useParams();
-  let history = useHistory();
-  let { path, url } = useRouteMatch();
+  let navigate = useNavigate();
 
   const [otherUser, setOtherUser] = React.useState(null);
-  const [currentTab, setCurrentTab] = React.useState(1);
+  const [currentTab, setCurrentTab] = React.useState((tab === 'plans') ? 1 : 0);
   const [isContactProfileOpen, setIsContactProfileOpen] = React.useState(false);
 
   useEffect(() => {
@@ -67,7 +60,7 @@ const ContactsContent = () => {
 
   const leftSideComponent = () => {
     if (!isLoading && isAuthenticated && user) {
-      return <BackButton onClick={() => {history.goBack();}} />;
+      return <BackButton onClick={() => {navigate(-1);}} />;
     } else {
       return null;
     }
@@ -75,36 +68,35 @@ const ContactsContent = () => {
 
   const switchTab = (newIndex) => {
     setCurrentTab(newIndex);
-    const newPage = (newIndex === 0) ? 'meals' : 'plans';
-    let basicURL = url.slice(0, url.lastIndexOf('/'));
-    history.replace(basicURL + '/' + newPage);
   }
 
   const getTabs = () =>
-    <Tabs value={currentTab}
-          className={classes.tabs}
-          onChange={(event, newValue) => {switchTab(newValue);}}
-          indicatorColor="secondary"
-          textColor="secondary"
-          variant="fullWidth">
-      <Tab label={t('Meals')} className={classes.tab} />
-      <Tab label={t('Plans')} className={classes.tab} />
+    <Tabs value={currentTab} onChange={(event, newValue) => {switchTab(newValue);}} indicatorColor="secondary" textColor="secondary" variant="fullWidth">
+      <Tab label={t('Meals')} />
+      <Tab label={t('Plans')} />
     </Tabs>
   ;
 
-  console.log(url, path);
+  const openContactProfilePicture = () => {
+    setIsContactProfileOpen(true);
+  }
   return (
     <Box className={classes.contactsContent}>
       {otherUser ?
         <>
-          <Navbar pageTitle={getContactName(otherUser)} secondary titleOnClick={() => {setIsContactProfileOpen(true);}} leftSideComponent={leftSideComponent()} />
+          <Navbar pageTitle={getContactName(otherUser)}
+                  secondary
+                  titleOnClick={openContactProfilePicture}
+                  leftSideComponent={leftSideComponent()}
+                  rightSideComponent={getContactPicture(otherUser) ?
+                    <ContactAvatar src={getContactPicture(otherUser)} alt={getContactName(otherUser)} onClick={openContactProfilePicture} /> : null} />
 
           <Dialog open={isContactProfileOpen} onClose={() => setIsContactProfileOpen(false)}>
             <img src={getContactPicture(otherUser)} alt={getContactName(otherUser)} className={classes.dialogPicture} />
           </Dialog>
 
           {getTabs()}
-          <SwipeableViews style={{
+          <SwipeableViews containerStyle={{ minHeight: '100%' }} style={{
             height: `calc(100% - 2 * ${process.env.REACT_APP_NAV_TOP_HEIGHT}px)`,
             overflowY: 'auto',
           }} axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'} index={currentTab} onChangeIndex={switchTab}>

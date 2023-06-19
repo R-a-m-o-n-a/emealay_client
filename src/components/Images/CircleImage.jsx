@@ -29,7 +29,7 @@ const CircleImage = (props) => {
   return (
     <Box className={classes.imageCropper}>
       {loading ? <CircularProgress color="secondary" style={{ width: '110px', height: '110px', }} /> :
-        <img src={src} alt={altText} className={classes.image} />}
+        <img referrerPolicy="no-referrer" src={src} alt={altText} className={classes.image} />}
     </Box>
   );
 }

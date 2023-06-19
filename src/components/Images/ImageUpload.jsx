@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PhotoDropzone from './PhotoDropzone';
 import ImageGrid from './ImageGrid.jsx';
 import axios from "axios";
 import { array, arrayOf, bool, func, oneOfType, shape, string } from "prop-types";
 import { makeStyles } from "@material-ui/styles";
-import { Box, GridList, GridListTile, Snackbar } from "@material-ui/core";
+import { Box, ImageList as GridList, ImageListItem as GridListTile, Snackbar } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera, faCircle } from "@fortawesome/free-solid-svg-icons";
 import CircleImage from "./CircleImage";
 import CircularProgress from "@material-ui/core/CircularProgress";
+import { deleteSingleImage } from "./images.util";
 
 const serverURL = process.env.REACT_APP_SERVER_URL;
 
 const useStyles = makeStyles((theme) => ({
   photoDropzoneMultiple: {
-    height: 'calc(100% - 4px)',
+    height: 'calc(100%)',
     width: 'calc(100% - 4px)',
     border: '2px dashed ' + theme.palette.secondary.main,
     '&:hover': {
@@ -40,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '100%',
   },
   photoDropzoneSingleEmpty: {
-    height: 'calc(100% - 4px)',
+    height: 'calc(100%)',
     width: 'calc(100% - 4px)',
     border: '2px dashed ' + theme.palette.secondary.main,
     '&:hover': {
@@ -59,10 +60,10 @@ const useStyles = makeStyles((theme) => ({
     height: process.env.REACT_APP_GRID_LIST_ROW_HEIGHT + 4 + 'px',
   },
   placeholderTile: {
-    height: 'calc(100% - 4px)',
+    height: 'calc(100%)',
     width: 'calc(100% - 4px)',
-    border: '2px double ' + theme.myColors.white,
-    color: theme.myColors.white,
+    border: '2px double ' + theme.palette.text.primary,
+    color: theme.palette.text.primary,
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -124,14 +125,14 @@ const ImageUpload = (props) => {
     }
   };
 
-  useEffect(() => {
-    if (setLoading) setLoading(photosToUpload.length > 0);
-    // eslint-disable-next-line
-  }, [photosToUpload]);
+  const updatePhotosToUpload = (newPhotos) => {
+    setPhotosToUpload(newPhotos);
+    if (setLoading) setLoading(newPhotos.length > 0);
+  }
 
   const uploadImages = (imagesToUpload) => {
     console.log('trying to upload images', imagesToUpload, ' to ', serverURL);
-    setPhotosToUpload(imagesToUpload);
+    updatePhotosToUpload(imagesToUpload);
     Array.from(imagesToUpload).forEach((image, index) => {
       const data = new FormData();
       let folderParam = '';
@@ -145,13 +146,13 @@ const ImageUpload = (props) => {
       data.append('name', name);
       data.append('image', image);
 
-      onChangeUploadedImages(uploadedImages.filter(i => i !== image))
+      onChangeUploadedImages(uploadedImages.filter(i => i !== image));
 
       axios.post(serverURL + "/images/addImage/" + folderParam, data, {})
            .then(res => {
              console.log('result of adding image', res);
              const reducedPhotosToUpload = photosToUpload.filter(i => i !== image);
-             setPhotosToUpload(reducedPhotosToUpload);
+             updatePhotosToUpload(reducedPhotosToUpload);
              if (multiple) {
                const newUploadedImages = uploadedImages;
                newUploadedImages.push(res.data.Image);
@@ -162,25 +163,27 @@ const ImageUpload = (props) => {
              } else {
                onChangeUploadedImages(res.data.Image);
              }
-           }).catch(err => {console.log(err)});
+           })
+           .catch(err => {
+             console.log('upload failed', err);
+             updatePhotosToUpload([]);
+             setRejectMessages(Array.from(['upload of image ' + image.name + ' failed. Reason: ' + err]));
+             setRejectMessageVisible(true);
+           });
     })
   }
 
   const deleteImage = (image) => {
-    axios.post(serverURL + "/images/deleteImage", image)
-         .then(res => {
-           console.log('result of deleting planItem image', res);
-           const newUploadedImages = uploadedImages.filter(i => i !== image);
-           if (image.isMain && newUploadedImages.length > 0) {
-             newUploadedImages[0].isMain = true;
-           }
-           onChangeUploadedImages(newUploadedImages);
-         }).catch(err => {console.log(err)});
+    deleteSingleImage(image, () => {
+      const newUploadedImages = uploadedImages.filter(i => i !== image);
+      if (image.isMain && newUploadedImages.length > 0) {
+        newUploadedImages[0].isMain = true;
+      }
+      onChangeUploadedImages(newUploadedImages);
+    });
   }
 
   const chooseImageAsMain = (image) => {
-    console.log('trying to set image as main', image);
-
     const changedUploadedImages = uploadedImages.map(i => {
       i.isMain = i._id === image._id;
       return i;
@@ -213,7 +216,7 @@ const ImageUpload = (props) => {
   return (
     <>
       {multiple ?
-        <GridList cellHeight={160} className={classes.gridList} cols={3}>
+        <GridList rowHeight={160} className={classes.gridList} cols={3}>
           <ImageGrid images={uploadedImages} allowDelete allowChoosingMain onDelete={deleteImage} onChoosingMain={chooseImageAsMain} disableSurroundingGrid>
             <GridListTile key={-1} cols={1} className={classes.dropzoneTile}>
               <PhotoDropzone multiple

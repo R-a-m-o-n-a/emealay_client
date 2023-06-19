@@ -1,9 +1,9 @@
-import { Avatar } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUtensils } from "@fortawesome/free-solid-svg-icons";
 import { arrayOf, shape, string } from "prop-types";
 import React from "react";
 import { makeStyles } from "@material-ui/styles";
+import { ContactAvatar } from "../Social/social.util";
 
 const useStyles = makeStyles(theme => ({
   backgroundColor: {
@@ -29,9 +29,9 @@ const MealAvatar = (props) => {
 
   if (meal.images.length > 0) {
     const image = getMainImage(meal);
-    return <Avatar alt={image.name} src={image.url} />;
+    return <ContactAvatar alt={image.name} src={image.url} />;
   } else {
-     return <Avatar className={classes.backgroundColor}><FontAwesomeIcon icon={faUtensils} /></Avatar>;
+     return <ContactAvatar className={classes.backgroundColor}><FontAwesomeIcon icon={faUtensils} /></ContactAvatar>;
   }
 }
 
