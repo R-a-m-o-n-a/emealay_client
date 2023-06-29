@@ -9,7 +9,7 @@ import EditMealCore from "./EditMealCore";
 import { fetchAndUpdateMeal } from "./meals.util";
 import Navbar from "../Navbar";
 import BackButton from "../Buttons/BackButton";
-import { withAuthenticationRequired } from "@auth0/auth0-react";
+import { useAuth0, withAuthenticationRequired } from "@auth0/auth0-react";
 import Loading from "../Loading";
 import DoneButton from "../Buttons/DoneButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
@@ -53,6 +53,7 @@ const serverURL = process.env.REACT_APP_SERVER_URL;
 /** Dialog page that allows user to edit meal */
 const EditMeal = () => {
   const classes = useStyles();
+  const { user } = useAuth0();
   const { t } = useTranslation();
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -64,6 +65,13 @@ const EditMeal = () => {
   const [imagesLoading, setImagesLoading] = useState(false);
   const [loadingImagesTakesLong, setLoadingImagesTakesLong] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+
+  if (user && meal) {
+    if(user.sub !== meal.userId) {
+      console.log('not allowed, this is not your meal');
+      navigate('/meals/detail/' + meal._id, { state: { meal, mealContext: 'social' } });
+    }
+  }
 
   useEffect(() => {
     fetchAndUpdateMeal(mealId, (mealFromDB) => {
@@ -102,7 +110,7 @@ const EditMeal = () => {
   const editAndClose = (event) => {
     event.preventDefault();
     setIsSaving(true);
-    if (meal.title) {
+    if (meal.title && user.sub === meal.userId) {
       axios.post(serverURL + '/meals/edit/' + meal._id, meal).then((result) => {
         // console.log('edit request sent', result.data);
         setIsSaving(false);

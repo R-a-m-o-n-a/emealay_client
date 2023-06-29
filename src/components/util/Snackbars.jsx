@@ -32,7 +32,7 @@ const Snackbars = (props) => {
   const { category, deletedItem } = props;
   const { t } = useTranslation();
   let navigate = useNavigate();
-  const { state } = useLocation();
+  const { state, pathname } = useLocation();
 
   const [deleteMessageVisible, setDeleteMessageVisible] = useState(false);
   const [readdedMessageVisible, setReaddedMessageVisible] = useState(false);
@@ -49,7 +49,7 @@ const Snackbars = (props) => {
         }, 10000));
       }
     }
-    navigate(window.location, { replace: true, state: null });
+    navigate(pathname, { replace: true, state: null });
   }
 
   const showReaddedItemMessage = () => {
@@ -65,13 +65,13 @@ const Snackbars = (props) => {
         console.log('re-add request sent', result.data);
         showReaddedItemMessage();
         // refresh meal list
-        navigate(window.location, { replace: true, state: { ...state, refresh: true } });
+        navigate(pathname, { replace: true, state: { ...state, refresh: true } });
       });
     } else if (category === 'Plan') {
       addPlan(deletedItem, () => {
         showReaddedItemMessage();
         // refresh plans
-        navigate(window.location, { replace: true, state: { ...state, refresh: true } });
+        navigate(pathname, { replace: true, state: { ...state, refresh: true } });
       });
     }
   }

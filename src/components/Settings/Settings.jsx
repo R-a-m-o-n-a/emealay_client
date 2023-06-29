@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { lazy, useEffect, useMemo, useState } from 'react';
 import Navbar from "../Navbar";
 import { useTranslation } from "react-i18next";
 import Profile from "./Profile";
 import { Box, InputBase, MenuItem, Select, Table, TableBody, TableCell, TableRow, Typography } from '@material-ui/core';
 import { useAuth0 } from "@auth0/auth0-react";
-import { getSettingsOfUser, getUserById, updateUserSettingsForCategory } from "./settings.util";
+import { getSettingsOfUser, getUserById, updateUserMetadata, updateUserSettingsForCategory } from "./settings.util";
 import { makeStyles } from "@material-ui/styles";
 import { allLanguages } from "../../i18n";
 import { muiTableBorder, withLoginRequired } from "../util";
@@ -13,6 +13,11 @@ import EditButton from "../Buttons/EditButton";
 import ProfilePlaceholder from "./ProfilePlaceholder";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowForwardIos } from "@material-ui/icons";
+import SupportButton from "../Buttons/SupportButton";
+import importedCountryList from 'react-select-country-list';
+
+// Flag is a huge component (10MB unzipped, 1,24 after bundling and packing) so it must be lazy-loaded
+const Flag = lazy(() => import('react-world-flags'));
 
 const useStyles = makeStyles(theme => ({
   settings: {
@@ -49,6 +54,13 @@ const useStyles = makeStyles(theme => ({
   },
   switchSelector: {
     height: '2rem',
+  },
+  flag: {
+    flex: 1,
+    paddingRight: '10px',
+  },
+  countryName: {
+    flex: 8,
   }
 }));
 
@@ -61,15 +73,19 @@ const useStyles = makeStyles(theme => ({
  *    + manage meal categories
  *    + manage meal tags
  **/
+
 const Settings = () => {
   const classes = useStyles();
   const { t, i18n } = useTranslation();
   const { user } = useAuth0();
-  const { state } = useLocation();
+  const { state, pathname } = useLocation();
   let navigate = useNavigate();
 
   const [userData, setUserData] = useState(null);
   const [/*settings*/, setSettings] = useState(null); // settings is not currently used because settings are fetched from other place but might be necessary in the future
+
+  const country = userData?.user_metadata?.countryCode ?? '';
+  const countryList = useMemo(() => importedCountryList().getData(), []);
 
   const getUser = () => {
     if (user) {
@@ -104,7 +120,7 @@ const Settings = () => {
       updateUserSettingsForCategory(user.sub, 'language', lng, (newSettings) => {
         getSettings();
         // send settings changed to trigger reloading settings in App.jsx every time they get updated
-        navigate(window.location, { replace: true, state: { settingsChanged: true } });
+        navigate(pathname, { replace: true, state: { settingsChanged: true } });
       });
     }
   }
@@ -114,8 +130,29 @@ const Settings = () => {
     updateLanguageInSettings(lng);
   }
 
+  const changeCountry = (newCountryCode) => {
+    const newCountryName = countryList.find(c => c.value === newCountryCode)?.label;
+    if (user) {
+      const newMetadata = {
+        ...userData.user_metadata ?? {},
+        country: newCountryName,
+        countryCode: newCountryCode,
+      }
+
+      updateUserMetadata(user.sub, newMetadata, (newUserData) => {
+        setUserData(newUserData);
+      });
+    }
+  }
+
   function getLanguageMenuItems() {
     return allLanguages.map(lang => <MenuItem key={lang.key} value={lang.key}>{lang.description}</MenuItem>);
+  }
+
+  function getCountryMenuItems() {
+    return countryList.map(c => <MenuItem key={c.value} value={c.value} name={c.label}>
+      <Flag className={classes.flag} code={c.value} height={15} /><span className={classes.countryName}>{c.label}</span>
+    </MenuItem>);
   }
 
   const goToEditProfile = () => {navigate('editProfile', { state: { userData } });};
@@ -137,6 +174,14 @@ const Settings = () => {
               </TableCell>
             </TableRow>
             <TableRow>
+              <TableCell className={classes.tableCell}><Typography className={classes.label} id="country-select-label">{t('Country')}</Typography></TableCell>
+              <TableCell className={classes.tableCell}>
+                <Select input={<InputBase />} labelId="country-select-label" id="country-select" value={country} onChange={event => {changeCountry(event.target.value);}}>
+                  {getCountryMenuItems()}
+                </Select>
+              </TableCell>
+            </TableRow>
+            <TableRow>
               <TableCell className={classes.buttonTableCell} colSpan={2} onClick={goToAdvancedSettings}>
                 <Box className={classes.tableCellButton}>
                   <Typography className={classes.tableCellButtonText}>{t('Advanced Settings')}</Typography>
@@ -146,6 +191,7 @@ const Settings = () => {
             </TableRow>
           </TableBody>
         </Table>
+        <SupportButton />
         <LogoutButton />
       </Box>
     </>

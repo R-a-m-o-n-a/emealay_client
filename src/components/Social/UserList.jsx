@@ -11,7 +11,7 @@ import { faClipboardList, faUtensils } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 
-// Flags is a huge component (10MB unzipped, 1,24 after bundling and packing) so it must be lazy-loaded
+// Flag is a huge component (10MB unzipped, 1,24 after bundling and packing) so it must be lazy-loaded
 const Flag = lazy(() => import('react-world-flags'));
 
 const useStyles = makeStyles(theme => ({

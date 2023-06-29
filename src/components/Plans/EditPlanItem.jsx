@@ -65,7 +65,7 @@ const EditPlanItem = () => {
     axios.post(serverURL + '/plans/delete/' + planItem._id).then((result) => {
       //onDelete(planItem);
       console.log('delete request sent', result.data, planItem);
-      navigate('../', {
+      navigate('/plans', {
         state: {
           snackbar: {
             category: 'Plan', // capital letter is important here because of output in useSnackbars

@@ -41,7 +41,7 @@ const PlanMealButton = (props) => {
 
   const onDoneAdding = () => {
     closePlanMealDialog();
-    navigate('plans');
+    navigate('/plans');
   }
 
   const openPlanMealDialog = () => {

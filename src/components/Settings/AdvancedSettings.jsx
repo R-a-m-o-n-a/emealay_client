@@ -6,10 +6,9 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { getSettingsOfUser, updateUserSettingsForCategory } from "./settings.util";
 import { makeStyles } from "@material-ui/styles";
 import { muiTableBorder, withLoginRequired } from "../util";
-import { func } from "prop-types";
 import EditMealTags from "./EditMealTags";
 import EditMealCategories from "./EditMealCategories";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import DeleteAccountButton from "../Buttons/DeleteAccountButton";
 import BackButton from "../Buttons/BackButton";
 import SwitchSelector from "react-switch-selector";
@@ -64,6 +63,7 @@ const AdvancedSettings = (props) => {
   const theme = useTheme();
   const { palette } = theme;
   let navigate = useNavigate();
+  const { pathname } = useLocation();
 
   const ownStartPageOptions = [
     {
@@ -114,9 +114,10 @@ const AdvancedSettings = (props) => {
 
   function updateDarkModePreference(newValue) {
     if (user) {
-      updateUserSettingsForCategory(user.sub, 'prefersDarkMode', newValue, getSettings);
+      updateUserSettingsForCategory(user.sub, 'prefersDarkMode', newValue, (newSettings) => {
+        navigate(pathname, { replace: true, state: { settingsChanged: true } });
+      });
     }
-    props.setDarkModeInAppLevel(newValue);
   }
 
   function updateOwnStartPage(newValue) {
@@ -139,44 +140,45 @@ const AdvancedSettings = (props) => {
     <>
       <Navbar leftSideComponent={<BackButton onClick={() => {navigate(-1)}} />} pageTitle={t('Advanced Settings')} />
       <Box className={classes.settings}>
-        {palette && props.setDarkModeInAppLevel && <Table aria-label="profile data" size="medium" className={classes.table}>
-          <TableBody>
-            <TableRow>
-              <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Use dark mode?')}</Typography></TableCell>
-              <TableCell className={classes.tableCell}>
-                <Checkbox checked={palette.type === 'dark'}
-                          onChange={event => updateDarkModePreference(event.target.checked)}
-                          inputProps={{ 'aria-label': 'use dark mode checkbox' }} />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Own start view')}</Typography></TableCell>
-              <TableCell className={classes.tableCell}>
-                <Box className={classes.switchSelector}>
-                  <SwitchSelector onChange={updateOwnStartPage}
-                                  options={ownStartPageOptions}
-                                  forcedSelectedIndex={ownStartPageIndex}
-                                  backgroundColor={palette.background.paper}
-                                  fontColor={palette.text.disabled}
-                                  fontSize={theme.typography.body1.fontSize} />
-                </Box>
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Contact start view')}</Typography></TableCell>
-              <TableCell className={classes.tableCell}>
-                <Box className={classes.switchSelector}>
-                  <SwitchSelector onChange={updateContactStartPage}
-                                  options={contactStartPageOptions}
-                                  forcedSelectedIndex={contactStartPageIndex}
-                                  backgroundColor={palette.background.paper}
-                                  fontColor={palette.text.disabled}
-                                  fontSize={theme.typography.body1.fontSize} />
-                </Box>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>}
+        {palette ? <Table aria-label="dark-mode-settings" size="medium" className={classes.table}>
+            <TableBody>
+              <TableRow>
+                <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Use dark mode?')}</Typography></TableCell>
+                <TableCell className={classes.tableCell}>
+                  <Checkbox checked={palette.type === 'dark'}
+                            onChange={event => updateDarkModePreference(event.target.checked)}
+                            inputProps={{ 'aria-label': 'use dark mode checkbox' }} />
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Own start view')}</Typography></TableCell>
+                <TableCell className={classes.tableCell}>
+                  <Box className={classes.switchSelector}>
+                    <SwitchSelector onChange={updateOwnStartPage}
+                                    options={ownStartPageOptions}
+                                    forcedSelectedIndex={ownStartPageIndex}
+                                    backgroundColor={palette.background.paper}
+                                    fontColor={palette.text.disabled}
+                                    fontSize={theme.typography.body1.fontSize} />
+                  </Box>
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Contact start view')}</Typography></TableCell>
+                <TableCell className={classes.tableCell}>
+                  <Box className={classes.switchSelector}>
+                    <SwitchSelector onChange={updateContactStartPage}
+                                    options={contactStartPageOptions}
+                                    forcedSelectedIndex={contactStartPageIndex}
+                                    backgroundColor={palette.background.paper}
+                                    fontColor={palette.text.disabled}
+                                    fontSize={theme.typography.body1.fontSize} />
+                  </Box>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          : ''}
         <Box>
           <EditMealCategories onUpdateSettings={getSettings} />
           <br />
@@ -189,11 +191,6 @@ const AdvancedSettings = (props) => {
       </Box>
     </>
   );
-}
-
-AdvancedSettings.propTypes = {
-  /** needs to receive a function that can toggle dark mode directly from the App.jsx component */
-  setDarkModeInAppLevel: func.isRequired,
 }
 
 export default withLoginRequired(AdvancedSettings);

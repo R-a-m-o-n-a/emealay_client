@@ -35,6 +35,7 @@
     "react-router-dom": "^6.10.0",
     "react-scripts": "^5.0.1",
     "react-select": "^4.3.0",
+    "react-select-country-list": "^2.2.3",
     "react-swipeable-views": "^0.14.0",
     "react-switch-selector": "^1.2.1",
     "react-world-flags": "^1.5.1",

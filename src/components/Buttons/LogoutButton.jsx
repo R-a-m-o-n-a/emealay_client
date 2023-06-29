@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
 
 const logoutRedirect = process.env.REACT_APP_LOGOUT_REDIRECT;
 
-/** Login button including logout logic */
+/** Logout button including logout logic */
 const LogoutButton = () => {
   const classes = useStyles();
   const { logout } = useAuth0();

@@ -115,5 +115,7 @@
   "Save without new images": "Ohne neue Bilder speichern",
   "Meal of {{name}}": "Gericht von {{name}}",
   "Translate": "Übersetzen",
-  "Original": "Original"
+  "Original": "Original",
+  "Country": "Land",
+  "Help": "Hilfe"
 }

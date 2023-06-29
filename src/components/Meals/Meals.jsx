@@ -96,7 +96,7 @@ const Meals = (props) => {
   if (state?.refresh === true) { // force reload meals after undoing deletion and then remove refresh from state
     fetchAndUpdateMeals();
     delete state.refresh;
-    navigate(window.location, { replace: true, state: { ...state } });
+    navigate(pathname, { replace: true, state: { ...state } });
   }
 
   // filter meals according to set filters

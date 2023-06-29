@@ -114,5 +114,7 @@
   "Save without new images": "新規画像なしで保存する",
   "Meal of {{name}}": "{{name}}のレシピ",
   "Translate": "訳す",
-  "Original": "原典"
+  "Original": "原典",
+  "Country": "国",
+  "Help": "支援"
 }

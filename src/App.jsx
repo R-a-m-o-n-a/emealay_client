@@ -16,7 +16,7 @@ import i18n, { allLanguages } from "./i18n";
 const App = () => {
   const navigate = useNavigate();
   const { lang: paramLanguage } = useParams();
-  const { state } = useLocation();
+  const { state, pathname } = useLocation();
 
   const { user } = useAuth0();
 
@@ -26,9 +26,9 @@ const App = () => {
 
   const getSettings = () => {
     if (user) {
-      console.log('gettings settings on App level');
+      console.log('getting settings on App level');
       getSettingsOfUser(user.sub, (settings) => {
-        if (settings.prefersDarkMode) {
+        if (settings.prefersDarkMode != null) {
           setPrefersDarkMode(settings.prefersDarkMode);
         } else if (settings.prefersDarkMode === undefined) {
           updateUserSettingsForCategory(user.sub, 'prefersDarkMode', prefersDarkModeInitially, () => {
@@ -51,7 +51,7 @@ const App = () => {
     if (state && state.settingsChanged === true) {
       getSettings();
       // reset settingsChanged State to be ready for new change
-      navigate(window.location, { replace: true, state: { ...state, settingsChanged: undefined } }); // could pass other state props but make sure settingsChanged is not present
+      navigate(pathname, { replace: true, state: { ...state, settingsChanged: undefined } }); // could pass other state props but make sure settingsChanged is not present
     }
   }, [state, navigate]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -104,8 +104,7 @@ const App = () => {
     <>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-            <ContentWrapper setDarkMode={setPrefersDarkMode} />
-
+        <ContentWrapper setDarkMode={setPrefersDarkMode} />
       </ThemeProvider>
     </>
   );
