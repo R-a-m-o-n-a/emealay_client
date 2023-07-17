@@ -12,6 +12,8 @@ import UserList from "./UserList";
 import { getNumberOfMealsOfUsers } from "../Meals/meals.util";
 import { getNumberOfPlansOfUsers } from "../Plans/plans.util";
 import { useMap } from "../util/useMap";
+import { useTracking } from "react-tracking";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles({
   infoText: {
@@ -31,8 +33,10 @@ const Social = () => {
   const classes = useStyles();
   const { user } = useAuth0();
   const { t } = useTranslation();
+  let navigate = useNavigate();
+  const { state, pathname } = useLocation();
 
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(state?.searchOpen ?? false);
   const [contacts, setContacts] = useState([]);
   const [noContactsFound, setNoContactsFound] = useState(false);
   const [numberOfMealsByUser, addToNumberOfMealsByUser] = useMap();
@@ -67,6 +71,16 @@ const Social = () => {
     }
   }
 
+  const closeSearch = () => {
+    setSearchOpen(false);
+    navigate(pathname, { replace: true, state: { ...state, searchOpen: false } });
+  }
+
+  const openSearch = () => {
+    setSearchOpen(true);
+    navigate(pathname, { replace: true, state: { ...state, searchOpen: true } });
+  }
+
   useEffect(() => {
     fetchContacts(true);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -74,12 +88,12 @@ const Social = () => {
   return (
     <>
       {searchOpen ? <UserSearch open={searchOpen}
-                                closeSearch={() => {setSearchOpen(false)}}
+                                closeSearch={closeSearch}
                                 contacts={contacts}
                                 afterUpdateContacts={fetchContacts}
                                 numberOfMealsByUser={numberOfMealsByUser}
                                 numberOfPlansByUser={numberOfPlansByUser} />
-        : <Navbar pageTitle={t('Contacts')} rightSideComponent={<SearchButton onClick={() => {setSearchOpen(true)}} />} />}
+        : <Navbar pageTitle={t('Contacts')} rightSideComponent={<SearchButton onClick={openSearch} />} />}
 
       {contacts.length === 0
         ? <Typography className={classes.infoText}>

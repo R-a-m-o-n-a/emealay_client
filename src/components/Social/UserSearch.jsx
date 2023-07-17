@@ -8,6 +8,8 @@ import { useTranslation } from "react-i18next";
 import SimpleCloseX from "../Buttons/SimpleCloseX";
 import { arrayOf, bool, func, instanceOf, shape } from "prop-types";
 import UserList from "./UserList";
+import { useTracking } from "react-tracking";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
   userSearchBox: {
@@ -68,34 +70,28 @@ const UserSearch = (props) => {
   const classes = useStyles();
   const { user } = useAuth0();
   const { t } = useTranslation();
+  let navigate = useNavigate();
+  const { state, pathname } = useLocation();
 
   const { numberOfMealsByUser, numberOfPlansByUser, closeSearch, open, contacts, afterUpdateContacts } = props;
 
-  const [userList, setUserList] = useState(undefined);
-  const [query, setQuery] = useState('');
+  const [userList, setUserList] = useState(state?.userList ?? undefined);
+  const [query, setQuery] = useState(state?.query ?? '');
 
   const getUsers = () => {
-    if (query) {
-      axios.get(serverURL + '/users/fromQuery/' + query)
-           .then(res => {
-             let usersFound = res.data;
-             usersFound = usersFound.filter(u => u.user_id !== user.sub);
-             setUserList(usersFound.sort(orderByNoOfMealsDesc));
-           })
-           .catch(err => {
-             console.log(err.message);
-           });
-    } else {
-      axios.get(serverURL + '/users/all/')
-           .then(res => {
-             let usersFound = res.data;
-             usersFound = usersFound.filter(u => u.user_id !== user.sub);
-             setUserList(usersFound.sort(orderByNoOfMealsDesc));
-           })
-           .catch(err => {
-             console.log(err.message);
-           });
-    }
+    if(query && (!state?.query || query !== state?.query)) setUserList(undefined);
+    const request = query ? '/users/fromQuery/' + query : '/users/all/';
+    axios.get(serverURL + request)
+         .then(res => {
+           let usersFound = res.data;
+           usersFound = usersFound.filter(u => u.user_id !== user.sub);
+           usersFound.sort(orderByNoOfMealsDesc);
+           setUserList(usersFound);
+           navigate(pathname, { replace: true, state: { ...state, query: query, userList: usersFound } });
+         })
+         .catch(err => {
+           console.log(err.message);
+         });
   }
 
   function orderByNoOfMealsDesc(a, b) {
@@ -103,8 +99,9 @@ const UserSearch = (props) => {
     const mealsOfB = numberOfMealsByUser.get(b.user_id) ?? 0;
     const plansOfA = numberOfPlansByUser.get(a.user_id) ?? 0;
     const plansOfB = numberOfPlansByUser.get(b.user_id) ?? 0;
-    if (mealsOfB - mealsOfA === 0) return plansOfB - plansOfA;
-    return mealsOfB - mealsOfA;
+    if (mealsOfB - mealsOfA !== 0) return mealsOfB - mealsOfA;
+    if (plansOfB - plansOfA !== 0) return plansOfB - plansOfA;
+    return a.user_id - b.user_id;
   }
 
   if (userList) userList.sort(orderByNoOfMealsDesc);
