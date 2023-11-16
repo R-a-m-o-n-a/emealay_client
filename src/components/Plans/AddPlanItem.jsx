@@ -68,7 +68,11 @@ const AddPlanItem = (props) => {
       setIsSaving(true);
       addPlan(newPlan, (addedPlan) => {
         setIsSaving(false);
-        onDoneAdding();
+        if (onDoneAdding) {
+          onDoneAdding();
+        } else {
+          navigate('/plans');
+        }
       });
     }
   }

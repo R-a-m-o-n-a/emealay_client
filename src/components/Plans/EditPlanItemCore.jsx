@@ -143,8 +143,8 @@ const EditPlanItemCore = (props) => {
 
   return (
     <>
-      <Autocomplete id="planTitle" freeSolo clearOnBlur={false} clearOnEscape={false} value={connectedMeal} onChange={(event, newValue) => {
-        updatePlanItem('connectedMeal', newValue);
+      <Autocomplete id="planTitle" freeSolo clearOnBlur={false} clearOnEscape={false} value={connectedMeal} onChange={(event, newValue, reason) => {
+        updatePlanItem('connectedMeal', reason !== 'create-option' ? newValue : null);
       }} inputValue={title} onInputChange={(event, newInputValue) => {
         if (inputValueUpdateAllowed) {
           updatePlanItem('title', newInputValue);
@@ -154,6 +154,7 @@ const EditPlanItemCore = (props) => {
       }} onClose={(event, reason) => {
         if (reason === 'create-option' && event.key === 'Enter') {
           setInputValueUpdateAllowed(false);
+          updatePlanItem('title', title);
         }
       }} options={meals} getOptionLabel={(option) => option.title || ''} renderInput={(params) => (
         <TextField {...params} color={colorB} className={classes.textField} label={t('Title')} variant="outlined" autoFocus={autoFocusFirstInput} required />

@@ -8,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import SimpleCloseX from "../Buttons/SimpleCloseX";
 import { arrayOf, bool, func, instanceOf, shape } from "prop-types";
 import UserList from "./UserList";
-import { useTracking } from "react-tracking";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({

@@ -12,7 +12,6 @@ import UserList from "./UserList";
 import { getNumberOfMealsOfUsers } from "../Meals/meals.util";
 import { getNumberOfPlansOfUsers } from "../Plans/plans.util";
 import { useMap } from "../util/useMap";
-import { useTracking } from "react-tracking";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles({
