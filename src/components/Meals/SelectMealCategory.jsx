@@ -114,6 +114,11 @@ const SelectMealCategory = (props) => {
       ...provided,
       fontSize: typography.body1.fontSize,
     }),
+    noOptionsMessage: (provided, state) => ({
+      ...provided,
+      fontSize: 'calc(' + typography.body1.fontSize + ' - 0.1rem)',
+      color: 'rgba(0, 0, 0, 0.87)',
+    }),
   }
 
   const closeIconSelect = () => {

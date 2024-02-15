@@ -74,7 +74,8 @@ const SelectMealTags = (props) => {
     }),
     noOptionsMessage: (provided, state) => ({
       ...provided,
-      fontSize: typography.body1.fontSize,
+      fontSize: 'calc(' + typography.body1.fontSize + ' - 0.1rem)',
+      color: 'rgba(0, 0, 0, 0.87)',
     }),
     placeholder: (provided, state) => ({
       ...provided,
