@@ -47,9 +47,10 @@ export const fetchAndUpdateMeal = (mealId, updateMeal) => {
 
 export const addMeal = (meal, callback) => {
   if (meal.title) {
+    console.log('meal to add', meal);
     axios.post(serverURL + '/meals/add', meal, {})
          .then(res => {
-           // console.log('added meal', res);
+           console.log('added meal', res);
            if (callback) callback(res.data.meal);
          }).catch(err => {console.log(err)});
   }

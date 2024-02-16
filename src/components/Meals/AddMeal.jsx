@@ -54,6 +54,7 @@ const AddMeal = () => {
     images: [],
     recipeLink: '',
     comment: '',
+    isToTry: false,
     category: '',
     tags: [],
   };

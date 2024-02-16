@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Fab } from '@material-ui/core';
-import { arrayOf, shape, string } from "prop-types";
+import { arrayOf, bool, shape, string } from "prop-types";
 import { useTranslation } from "react-i18next";
 import FullScreenDialog from "./FullScreenDialog";
 import AddPlanItem from "../Plans/AddPlanItem";
@@ -75,6 +75,7 @@ PlanMealButton.propTypes = {
     recipeLink: string,
     comment: string,
     category: string,
+    isToTry: bool,
     tags: arrayOf(string),
   }),
 }

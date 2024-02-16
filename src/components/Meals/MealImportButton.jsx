@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useTranslation } from "react-i18next";
 import { useAuth0 } from "@auth0/auth0-react";
 import { withLoginRequired } from "../util";
-import { arrayOf, shape, string } from "prop-types";
+import { arrayOf, bool, shape, string } from "prop-types";
 import { makeStyles } from "@material-ui/styles";
 import { faChevronRight, faFileImport } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -66,6 +66,7 @@ const MealImportButton = (props) => {
         recipeLink,
         comment,
         category: null,
+        isToTry: true,
         tags: [],
       };
 
@@ -166,6 +167,7 @@ MealImportButton.propTypes = {
     recipeLink: string,
     comment: string,
     category: string,
+    isToTry: bool,
     tags: arrayOf(string),
   }).isRequired,
 }

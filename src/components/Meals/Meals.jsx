@@ -99,7 +99,7 @@ const Meals = (props) => {
     navigate(pathname, { replace: true, state: { ...state } });
   }
 
-  // filter meals according to set filters
+  // filter meals according to tag filter
   let filteredMeals = useMemo(() => {
     if (filterTags.length > 0) {
       return meals.filter(meal => {

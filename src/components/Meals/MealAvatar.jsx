@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUtensils } from "@fortawesome/free-solid-svg-icons";
-import { arrayOf, shape, string } from "prop-types";
+import { arrayOf, bool, shape, string } from "prop-types";
 import React from "react";
 import { makeStyles } from "@material-ui/styles";
 import { ContactAvatar } from "../Social/social.util";
@@ -47,6 +47,7 @@ MealAvatar.propTypes = {
     recipeLink: string,
     comment: string,
     category: string,
+    isToTry: bool,
     tags: arrayOf(string),
   }).isRequired,
 }

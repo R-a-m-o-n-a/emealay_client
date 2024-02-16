@@ -8,6 +8,7 @@ import SelectMealCategory from "./SelectMealCategory";
 import SelectMealTags from "./SelectMealTags";
 import OutlinedTextField from "../util/OutlinedTextField";
 import { fetchAndUpdateMealsFromUser } from "./meals.util";
+import { Checkbox, FormControlLabel } from "@material-ui/core";
 
 /** component is used by AddMeal and EditMeal and provides their shared core elements: text and photo input as well as choosing a category and adding tags.
  *  Does not handle communication to server. */
@@ -23,8 +24,9 @@ const EditMealCore = (props) => {
       recipeLink,
       comment,
       images,
-      tags,
       category,
+      isToTry,
+      tags,
     },
     isSecondary,
     autoFocusFirstInput,
@@ -85,6 +87,10 @@ const EditMealCore = (props) => {
                          value={comment}
                          onChange={e => updateMeal('comment', e.target.value)}
                          isSecondary={isSecondary} />
+
+      <FormControlLabel label={t('To Try?')} control={
+        <Checkbox checked={isToTry ?? false} onChange={e => updateMeal('isToTry', e.target.checked)} color={"primary"} />
+      } />
 
       <SelectMealCategory currentCategory={category} updateMeal={updateMeal} />
 
