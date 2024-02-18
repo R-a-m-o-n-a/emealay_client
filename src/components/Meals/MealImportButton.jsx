@@ -66,8 +66,9 @@ const MealImportButton = (props) => {
         recipeLink,
         comment,
         category: null,
-        isToTry: true,
         tags: [],
+        isPrivate: true,
+        isToTry: true,
       };
 
       copyMealImages(meal._id, mealCopy._id, (newImages) => {
@@ -167,8 +168,9 @@ MealImportButton.propTypes = {
     recipeLink: string,
     comment: string,
     category: string,
-    isToTry: bool,
     tags: arrayOf(string),
+    isPrivate: bool,
+    isToTry: bool,
   }).isRequired,
 }
 

@@ -54,9 +54,10 @@ const AddMeal = () => {
     images: [],
     recipeLink: '',
     comment: '',
-    isToTry: false,
     category: '',
     tags: [],
+    isPrivate: false,
+    isToTry: false,
   };
 
   useEffect(() => {

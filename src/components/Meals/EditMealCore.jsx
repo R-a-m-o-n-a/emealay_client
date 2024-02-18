@@ -8,7 +8,10 @@ import SelectMealCategory from "./SelectMealCategory";
 import SelectMealTags from "./SelectMealTags";
 import OutlinedTextField from "../util/OutlinedTextField";
 import { fetchAndUpdateMealsFromUser } from "./meals.util";
-import { Checkbox, FormControlLabel } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
+import { faHourglassEnd, faHourglassStart, faLock, faUnlock } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import IconSwitch from "../util/IconSwitch";
 
 /** component is used by AddMeal and EditMeal and provides their shared core elements: text and photo input as well as choosing a category and adding tags.
  *  Does not handle communication to server. */
@@ -25,8 +28,9 @@ const EditMealCore = (props) => {
       comment,
       images,
       category,
-      isToTry,
       tags,
+      isPrivate,
+      isToTry,
     },
     isSecondary,
     autoFocusFirstInput,
@@ -54,8 +58,8 @@ const EditMealCore = (props) => {
   }, [user]);
 
   const setLoadingAndStartTimeout = (value) => {
-    if(setImagesLoading) setImagesLoading(value);
-    if(setLoadingImagesTakesLong) {
+    if (setImagesLoading) setImagesLoading(value);
+    if (setLoadingImagesTakesLong) {
       if (value === true) {
         setLoadingImagesTakesLongTimeout(setTimeout(() => {
           setLoadingImagesTakesLong(true);
@@ -71,14 +75,29 @@ const EditMealCore = (props) => {
 
   return (
     <>
-      <OutlinedTextField name="title"
-                         value={title}
-                         label={t('Meal Title')}
-                         onChange={e => updateMeal('title', e.target.value)}
-                         isSecondary={isSecondary}
-                         autoFocus={autoFocusFirstInput}
-                         required />
+      <Grid container justifyContent="space-between" alignItems="center" style={{ marginBottom: "0.5rem" }}>
+        <Grid item style={{ width: "calc(100% - 65px)" }}>
+          <OutlinedTextField name="title"
+                             value={title}
+                             label={t('Meal Title')}
+                             onChange={e => updateMeal('title', e.target.value)}
+                             isSecondary={isSecondary}
+                             autoFocus={autoFocusFirstInput}
+                             required />
+        </Grid>
+        <Grid item style={{ width: "58px" }}>
+          <IconSwitch IconOn={FontAwesomeIcon}
+                      IconOff={FontAwesomeIcon}
+                      iconOnProps={{ icon: faLock }}
+                      iconOffProps={{ icon: faUnlock }}
+                      checked={isPrivate ?? false}
+                      onChange={e => updateMeal('isPrivate', e.target.checked)}
+                      color={"secondary"} />
+        </Grid>
+      </Grid>
+
       <OutlinedTextField name="recipeLink" value={recipeLink} label={t('Link to Recipe')} onChange={e => updateMeal('recipeLink', e.target.value)} isSecondary={isSecondary} />
+
       <OutlinedTextField multiline
                          maxRows={10}
                          minRows={1}
@@ -88,11 +107,20 @@ const EditMealCore = (props) => {
                          onChange={e => updateMeal('comment', e.target.value)}
                          isSecondary={isSecondary} />
 
-      <FormControlLabel label={t('To Try?')} control={
-        <Checkbox checked={isToTry ?? false} onChange={e => updateMeal('isToTry', e.target.checked)} color={"primary"} />
-      } />
-
-      <SelectMealCategory currentCategory={category} updateMeal={updateMeal} />
+      <Grid container justifyContent="space-between" alignItems="center" style={{ marginBottom: "0.5rem" }}>
+        <Grid item style={{ width: "calc(100% - 65px)" }}>
+          <SelectMealCategory currentCategory={category} updateMeal={updateMeal} />
+        </Grid>
+        <Grid item style={{ width: "58px" }}>
+          <IconSwitch IconOn={FontAwesomeIcon}
+                      IconOff={FontAwesomeIcon}
+                      iconOnProps={{ icon: faHourglassStart }}
+                      iconOffProps={{ icon: faHourglassEnd }}
+                      checked={isToTry ?? false}
+                      onChange={e => updateMeal('isToTry', e.target.checked)}
+                      color={"primary"} />
+        </Grid>
+      </Grid>
 
       <SelectMealTags own currentTags={tags} updateTags={(newTags) => {updateMeal('tags', newTags)}} allowCreate />
 

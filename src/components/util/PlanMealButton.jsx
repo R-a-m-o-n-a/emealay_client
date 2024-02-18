@@ -75,8 +75,9 @@ PlanMealButton.propTypes = {
     recipeLink: string,
     comment: string,
     category: string,
-    isToTry: bool,
     tags: arrayOf(string),
+    isPrivate: bool,
+    isToTry: bool,
   }),
 }
 
