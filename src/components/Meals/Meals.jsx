@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { makeStyles } from "@material-ui/styles";
-import { alpha, Box, Button, Collapse, Divider, List, ListItem, ListItemAvatar, ListItemIcon, ListItemText, Typography } from "@material-ui/core";
+import { alpha, Box, Button, Collapse, Divider, Grid, List, ListItem, ListItemAvatar, ListItemIcon, ListItemText, Typography } from "@material-ui/core";
 import { ExpandLess, ExpandMore, UnfoldLess, UnfoldMore } from "@material-ui/icons";
 import { useTranslation } from "react-i18next";
 import { fetchAndUpdateMealsFromUser } from "./meals.util";
@@ -11,6 +11,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import SelectMealTags from "./SelectMealTags";
 import { useLocation, useNavigate } from "react-router-dom";
 import { LoadingBody } from "../Loading";
+import { faHourglass, faHourglassEnd, faHourglassStart } from "@fortawesome/free-solid-svg-icons";
+import TriStateIconSwitch from "../util/TriStateIconSwitch";
 
 const useStyles = makeStyles(theme => ({
   infoText: {
@@ -34,6 +36,14 @@ const useStyles = makeStyles(theme => ({
   nestedListItem: {
     paddingLeft: theme.spacing(4),
   },
+  isToTryDot: props => ({
+    //backgroundColor: alpha(props.own ? theme.palette.primary.main : theme.palette.secondary.main, 0.5),
+    color: alpha(props.own ? theme.palette.primary.main : theme.palette.secondary.main, 0.5),
+    fontSize: "0.6rem",
+    position: "absolute",
+    left: "16px",
+    transform: "translate(-50%)",
+  }),
   controlBox: {
     height: '50px',
     padding: '5px',
@@ -62,11 +72,11 @@ const Meals = (props) => {
   const { t } = useTranslation();
   let navigate = useNavigate();
 
-
   const { pathname, state } = useLocation();
 
   const [isFilterOpen, setIsFilterOpen] = useState(state?.activeMealFilter?.isFilterOpen ?? false);
   const [filterTags, setFilterTags] = useState(state?.activeMealFilter?.filterTags ?? []);
+  const [filterForToTry, setFilterForToTry] = useState(state?.activeMealFilter?.filterForToTry ?? 0);
   const [meals, setMeals] = useState(state?.activeMealFilter?.filteredMeals ?? []); // take state-cached meals while loading takes place in background -> no apparent loading for user
   const [isCategoryOpen, setIsCategoryOpen] = useState({});
   const [categoryIcons, fireIconReload] = useCategoryIcons(userId);
@@ -101,15 +111,20 @@ const Meals = (props) => {
 
   // filter meals according to tag filter
   let filteredMeals = useMemo(() => {
-    if (filterTags.length > 0) {
-      return meals.filter(meal => {
+    let returnMeals = meals;
+    if (filterTags.length > 0) { // filter by tags
+      returnMeals = meals.filter(meal => {
         if (!meal.tags || meal.tags.length === 0) return false; // do not include meals without tags -> they cannot correspond with any set filter
         return filterTags.every(tag => meal.tags.includes(tag));
       });
-    } else {
-      return meals;
     }
-  }, [meals, filterTags]);
+    if (filterForToTry === 1) {
+      returnMeals = returnMeals.filter(meal => meal.isToTry === true);
+    } else if (filterForToTry === -1) {
+      returnMeals = returnMeals.filter(meal => meal.isToTry !== true);
+    }
+    return returnMeals;
+  }, [meals, filterTags, filterForToTry]);
 
   const sortedCategories = useMemo(() => {
     // sort categories alphabetically
@@ -194,6 +209,7 @@ const Meals = (props) => {
         meals.forEach(meal => {
           listItemsForCategory.push(
             <ListItem key={meal._id} className={classes.nestedListItem} button onClick={() => {openMealDetailView(meal); }}>
+              {meal.isToTry ? <Box className={classes.isToTryDot}><FontAwesomeIcon icon={faHourglassStart} /></Box> : ''}
               <ListItemAvatar>
                 <MealAvatar meal={meal} />
               </ListItemAvatar>
@@ -248,13 +264,29 @@ const Meals = (props) => {
           </Button>
         </Box>
         {isFilterOpen && <Box className={classes.filterBox}>
-          <SelectMealTags currentTags={filterTags}
-                          own={own}
-                          otherUserId={userId}
-                          updateTags={updateFilterTags}
-                          placeholderText={t('Filter by Tags')}
-                          className={classes.filterTags}
-                          customControlStyles={{ borderRadius: 0 }} />
+
+          <Grid container justifyContent="space-between" alignItems="center" style={{ marginBottom: "0.5rem" }}>
+            <Grid item style={{ width: "calc(100% - 72px)" }}>
+              <SelectMealTags currentTags={filterTags}
+                              own={own}
+                              otherUserId={userId}
+                              updateTags={updateFilterTags}
+                              placeholderText={t('Filter by Tags')}
+                              className={classes.filterTags}
+                              customControlStyles={{ borderRadius: 0 }} />
+            </Grid>
+            <Grid item style={{ width: "65px" }}>
+              <TriStateIconSwitch IconLeft={FontAwesomeIcon}
+                                  IconMiddle={FontAwesomeIcon}
+                                  IconRight={FontAwesomeIcon}
+                                  iconLeftProps={{ icon: faHourglassEnd }}
+                                  iconMiddleProps={{ icon: faHourglass }}
+                                  iconRightProps={{ icon: faHourglassStart }}
+                                  value={filterForToTry}
+                                  setValue={setFilterForToTry}
+                                  color={"primary"} />
+            </Grid>
+          </Grid>
         </Box>
         }
         {filteredMeals.length === 0
