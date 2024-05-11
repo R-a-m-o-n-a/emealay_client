@@ -66,7 +66,7 @@ const AdvancedSettings = (props) => {
   const { pathname } = useLocation();
   const { trackEvent } = useTracking({ page: 'advanced-settings', event: 'opened-advanced-settings' }, { dispatchOnMount: true }); // eslint-disable-line
 
-  const ownStartPageOptions = [
+  /*const ownStartPageOptions = [
     {
       label: t('Meals'),
       value: 0,
@@ -94,19 +94,19 @@ const AdvancedSettings = (props) => {
       selectedBackgroundColor: palette.secondary.main,
       selectedFontColor: palette.secondary.contrastText,
     },
-  ];
+  ];*/
 
   const [/*settings*/, setSettings] = useState(null); // settings is not currently used because settings are fetched from other place but might be necessary in the future
-  const [ownStartPageIndex, setOwnStartPageIndex] = useState(1);
-  const [contactStartPageIndex, setContactStartPageIndex] = useState(1);
+  // const [ownStartPageIndex, setOwnStartPageIndex] = useState(1);
+  // const [contactStartPageIndex, setContactStartPageIndex] = useState(1);
 
   const getSettings = () => {
     if (user) {
       const userId = user.sub;
       getSettingsOfUser(userId, (settings) => {
         setSettings(settings);
-        setOwnStartPageIndex(settings.ownStartPageIndex);
-        setContactStartPageIndex(settings.contactStartPageIndex);
+        // setOwnStartPageIndex(settings.ownStartPageIndex);
+        // setContactStartPageIndex(settings.contactStartPageIndex);
       });
     }
   }
@@ -121,7 +121,7 @@ const AdvancedSettings = (props) => {
     }
   }
 
-  function updateOwnStartPage(newValue) {
+ /* function updateOwnStartPage(newValue) {
     setOwnStartPageIndex(newValue);
     console.log(newValue);
     if (user) {
@@ -135,7 +135,7 @@ const AdvancedSettings = (props) => {
     if (user) {
       updateUserSettingsForCategory(user.sub, 'contactStartPageIndex', newValue, getSettings);
     }
-  }
+  }*/
 
   return (
     <>
