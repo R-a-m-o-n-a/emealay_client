@@ -3,6 +3,7 @@ import { Button, Dialog, DialogTitle, Grid, IconButton, InputAdornment, TextFiel
 import { AssignmentTurnedInRounded, FileCopy, Link, Share } from '@material-ui/icons';
 import { string } from "prop-types";
 import { useTranslation } from "react-i18next";
+import { useTracking } from "react-tracking";
 
 /** Button that opens native share API on the devices or provides the link if API is not supported */
 const ShareButton = (props) => {
@@ -10,14 +11,17 @@ const ShareButton = (props) => {
   const { t } = useTranslation();
   const [isCopyLinkOpen, setIsCopyLinkOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const { trackEvent } = useTracking();
 
   const share = () => {
+    trackEvent({ event: 'open-share-dialog' });
     if (navigator.share) {
       navigator.share({
         title,
         text,
         url: link,
       }).then(() => {
+        trackEvent({ event: 'share-meal' });
         console.log('Thanks for sharing!');
       }).catch(console.error);
     } else {
@@ -26,6 +30,8 @@ const ShareButton = (props) => {
   }
 
   const copyToClipboard = () => {
+    trackEvent({ event: 'share-meal-copy' });
+
     // logic from https://www.w3schools.com/howto/howto_js_copy_clipboard.asp
     /* Get the text field */
     const copyText = document.getElementById("link-input");

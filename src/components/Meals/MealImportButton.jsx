@@ -17,6 +17,7 @@ import BackButton from "../Buttons/BackButton";
 import { addMeal, copyMealImages, deleteAllImagesFromMeal } from "./meals.util";
 import Alert from "@material-ui/lab/Alert";
 import { useNavigate } from "react-router-dom";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles(theme => ({
   importButton: {
@@ -49,6 +50,7 @@ const MealImportButton = (props) => {
   const classes = useStyles();
   const { meal } = props;
   let navigate = useNavigate();
+  const { trackEvent } = useTracking({ module: 'import-meal-button' });
 
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [newMeal, setNewMeal] = useState(meal);
@@ -89,6 +91,7 @@ const MealImportButton = (props) => {
 
   const submitImport = (event) => {
     event.preventDefault();
+    trackEvent({ event: 'meal-imported' });
     addMeal(newMeal, () => {
       setSuccessMessageOpen(true);
       closeDialog();
@@ -108,6 +111,7 @@ const MealImportButton = (props) => {
   const goToMeals = () => {navigate('/meals');};
 
   const cancel = () => {
+    trackEvent({ event: 'import-cancelled' });
     if(newMeal.images.length > 0) deleteAllImagesFromMeal(newMeal._id);
     closeDialog();
   }

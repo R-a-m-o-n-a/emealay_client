@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { faClipboardList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { makeStyles } from "@material-ui/styles";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles({
   fab: {
@@ -27,6 +28,7 @@ const PlanMealButton = (props) => {
   const { meal } = props;
   const { t } = useTranslation();
   const [isPlanMealDialogOpen, setIsPlanMealDialogOpen] = useState(false);
+  const { trackEvent } = useTracking({ module: 'plan-meal-button' });
 
   let navigate = useNavigate();
 
@@ -40,11 +42,13 @@ const PlanMealButton = (props) => {
   };
 
   const onDoneAdding = () => {
+    trackEvent({ event: 'planned-meal' });
     closePlanMealDialog();
     navigate('/plans');
   }
 
   const openPlanMealDialog = () => {
+    trackEvent({ event: 'opened-dialog' });
     setIsPlanMealDialogOpen(true);
   }
   const closePlanMealDialog = () => {

@@ -11,6 +11,7 @@ import BackButton from "../Buttons/BackButton";
 import { muiTableBorder } from "../util";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import SavingButton from "../Buttons/SavingButton";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles(theme => ({
   userProfile: {
@@ -62,6 +63,7 @@ const EditProfile = () => {
   const { t } = useTranslation();
   let { state } = useLocation();
   const navigate = useNavigate();
+  const { trackEvent } = useTracking();
 
   let {
     userData,
@@ -93,6 +95,7 @@ const EditProfile = () => {
       username: username,
     }
 
+    trackEvent({ event: 'update-user-metadata', newMetadata })
     // @todo saving is only waiting for metadata for now because in Emilia there is only google login, not email/password
     updateUserMetadata(userId, newMetadata, onSave);
     if (!usingOAuth) {
@@ -116,6 +119,7 @@ const EditProfile = () => {
   }
 
   const updateProfileImageInMetadata = (imageSrc) => {
+    trackEvent({ 'event': 'changeProfilePicture', image: imageSrc });
     const newMetadata = {
       ...metadata,
       picture: imageSrc,

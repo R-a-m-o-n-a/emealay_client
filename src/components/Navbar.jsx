@@ -45,9 +45,9 @@ const Navbar = (props) => {
       <AppBar position="sticky" style={{ maxWidth: '100%' }}>
         <Toolbar className={classes.topNav} variant="dense">
           {leftSideComponent ||
-          <img src={palette.type === 'dark' ? '/Emealay_logo_dark.webp' : '/Emealay_logo_white.webp'}
+          <img src={palette.type === 'dark' ? '/Emilia_logo_black.webp' : '/Emilia_logo_white.webp'}
                className={classes.logo}
-               alt="Emealay Logo"
+               alt="Emealia Logo"
                height="32"
                width="28"
                onClick={() => {navigate('/');}} />

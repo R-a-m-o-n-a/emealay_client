@@ -11,6 +11,7 @@ import { any, array, arrayOf, bool, func, shape, string } from "prop-types";
 import DoneButton from "../Buttons/DoneButton";
 import { addPlan } from "./plans.util";
 import SavingButton from "../Buttons/SavingButton";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -44,6 +45,8 @@ const AddPlanItem = (props) => {
   const [planItem, setPlanItem] = useState(presetPlanItem || emptyPlanItem);
   const [isSaving, setIsSaving] = useState(false);
 
+  const { Track, trackEvent } = useTracking({ page: 'add-plan' });
+
   const updatePlanItem = (key, value) => {
     setPlanItem(prevState => ({
       ...prevState,
@@ -68,6 +71,7 @@ const AddPlanItem = (props) => {
       setIsSaving(true);
       addPlan(newPlan, (addedPlan) => {
         setIsSaving(false);
+        trackEvent({ event: 'added-new-plan', planId: addedPlan._id });
         if (onDoneAdding) {
           onDoneAdding();
         } else {
@@ -80,7 +84,7 @@ const AddPlanItem = (props) => {
   const autoFocusTitle = !(presetPlanItem && presetPlanItem.title);
 
   return (
-    <>
+    <Track>
       <Navbar pageTitle={t('New Plan')}
               leftSideComponent={<BackButton onClick={backFunction ? backFunction : () => {navigate(-1)}} />}
               rightSideComponent={planItem.title ? <DoneButton label={t('Done')} onClick={addNewPlan} /> : null} />
@@ -88,7 +92,7 @@ const AddPlanItem = (props) => {
         <EditPlanItemCore updatePlanItem={updatePlanItem} planItem={planItem} autoFocusFirstInput={autoFocusTitle} />
         <SavingButton isSaving={isSaving} type="submit" disabled={!planItem.title} className={classes.submitButton} variant='contained' size="large" color='primary'>{t('Add Plan')}</SavingButton>
       </form>
-    </>
+    </Track>
   );
 }
 

@@ -58,7 +58,7 @@ export const languageShorthandForAuth0 = { // for Auth0, see comment above.
 export const languagesISO3 = { // for franc translation package https://www.npmjs.com/package/franc-min?activeTab=readme
   de: 'deu',
   it: 'ita',
-  ja: 'jap',
+  ja: 'jpn',
   fr_FR: 'fra',
   en_GB: 'eng',
   en_US: 'eng',

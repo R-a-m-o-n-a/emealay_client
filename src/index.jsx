@@ -1,7 +1,7 @@
 import React, { lazy } from 'react';
 import ReactDOM from 'react-dom';
 import { createBrowserRouter, RouterProvider, } from "react-router-dom";
-import App from "./App";
+import TrackedApp from "./TrackedApp";
 import ServiceWorkerUpdateService from "./components/ServiceWorkerUpdateService";
 import { Auth0ProviderWithRedirectCallback } from "./components/util";
 import Home from  "./components/Home";
@@ -116,7 +116,7 @@ const router = createBrowserRouter([
 function Root() {
   return <Auth0ProviderWithRedirectCallback domain={domain} clientId={clientId} redirectUri={window.location.origin}>
     <ServiceWorkerUpdateService />
-    <App />
+    <TrackedApp />
   </Auth0ProviderWithRedirectCallback>
 }
 

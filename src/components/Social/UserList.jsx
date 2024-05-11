@@ -10,6 +10,7 @@ import { useTheme } from "@material-ui/core/styles";
 import { faClipboardList, faUtensils } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
+import { useTracking } from "react-tracking";
 
 // Flag is a huge component (10MB unzipped, 1,24 after bundling and packing) so it must be lazy-loaded
 const Flag = lazy(() => import('react-world-flags'));
@@ -44,12 +45,14 @@ const UserList = (props) => {
   const classes = useStyles();
   const theme = useTheme();
   const navigate = useNavigate();
+  const { trackEvent } = useTracking();
 
   const { userList, numberOfMealsByUser, numberOfPlansByUser, contacts, afterUpdateContacts, variant } = props;
 
   const [isUpdatingContactList, setIsUpdatingContactList] = useState(false);
 
   const openContact = (userId) => {
+    trackEvent({ event: 'open-contact-content', contactId: userId });
     navigate(`contact/${userId}/${CONTACT_START_PAGE}`);
   }
 

@@ -13,12 +13,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { LoadingBody } from "../Loading";
 import { faHourglass, faHourglassEnd, faHourglassStart } from "@fortawesome/free-solid-svg-icons";
 import TriStateIconSwitch from "../util/TriStateIconSwitch";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles(theme => ({
   infoText: {
     textAlign: "center",
     margin: "3rem 2rem",
-    fontFamily: "Cookie",
+    fontFamily: "Neucha",
     fontSize: "1.3rem",
     lineHeight: "1.4rem",
   },
@@ -71,6 +72,7 @@ const Meals = (props) => {
 
   const { t } = useTranslation();
   let navigate = useNavigate();
+  const { Track, trackEvent } = useTracking({ page: own ? 'own-meals' : 'foreign-meals' });
 
   const { pathname, state } = useLocation();
 
@@ -174,7 +176,7 @@ const Meals = (props) => {
       isFilterOpen,
     };
     // set the active meal filter in the state of the current location before navigating away, because it will be restored when navigating back from the detail view with navigate(-1)
-    navigate(window.location, { replace: true, state: { activeMealFilter } });
+    navigate(pathname, { replace: true, state: { activeMealFilter } });
     if (own) {
       navigate('detail/' + meal._id, { state: { meal } });
     } else {
@@ -183,11 +185,13 @@ const Meals = (props) => {
   };
 
   const updateFilterTags = (newTags) => {
+    trackEvent({ event: 'use-filters', appliedTags: newTags });
     setFilterTags(newTags);
   }
 
   const toggleAllCategories = () => {
     let allClosed = Object.values(isCategoryOpen).every(isOpen => !isOpen);
+    trackEvent({ module: 'toggle-all-categories', event: allClosed ? 'expand' : 'collapse' });
     Object.keys(isCategoryOpen).forEach(category => {
       updateIsCategoryOpen(category, allClosed);
     });
@@ -195,6 +199,7 @@ const Meals = (props) => {
 
   const toggleFilter = () => {
     setIsFilterOpen(prevState => {
+      trackEvent({ module: 'meal-filter', event: prevState === false ? 'open' : 'close' });
       return !prevState;
     });
   }
@@ -249,7 +254,7 @@ const Meals = (props) => {
     );
   } else {
     return (
-      <>
+      <Track>
         <Box className={classes.controlBox} style={{ display: 'flex', justifyContent: own ? 'space-between' : 'end' }}>
           <Button variant="text" className={classes.optionRowButton} color="secondary" onClick={toggleFilter} endIcon={isFilterOpen ? <ExpandLess /> : <ExpandMore />}>
             {t('Filter')}
@@ -296,7 +301,7 @@ const Meals = (props) => {
           <List component="nav" className={classes.root} aria-label="meal list" disablePadding>
             {getListItems()}
           </List>}
-      </>
+      </Track>
     );
   }
 }

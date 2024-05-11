@@ -1,6 +1,6 @@
 {
-  "name": "Emealay",
-  "short_name": "Emealay",
+  "name": "Emealia",
+  "short_name": "Emealia",
   "start_url": "./meals",
   "icons": [
     {
@@ -20,7 +20,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#98f56e",
-  "background_color": "#98f56e",
+  "theme_color": "#28793c",
+  "background_color": "#28793c",
   "display": "standalone"
 }

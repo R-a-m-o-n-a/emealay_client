@@ -22,11 +22,11 @@ const useStyles = makeStyles(theme => ({
     margin: '3px calc(0.5rem + 1px)', // align placement with Logo
   },
   cookieHeading: {
-    fontFamily: 'Cookie',
+    fontFamily: 'Neucha',
     fontSize: '120%',
   },
   cookieSubheading: {
-    fontFamily: 'Cookie',
+    fontFamily: 'Neucha',
     fontSize: '1.5rem',
     lineHeight: '1.6rem',
     marginTop: '1rem',
@@ -62,7 +62,7 @@ const Home = () => {
         <Navbar pageTitle="Home" />
         <Box className={classes.centeredContent}>
 
-          <Typography variant="h4"><Trans>Welcome to <span className={classes.cookieHeading}>Emilia</span>!</Trans></Typography>
+          <Typography variant="h4"><Trans>Welcome to <span className={classes.cookieHeading}>Emealia</span>!</Trans></Typography>
           <Typography variant="h5" className={classes.cookieSubheading}><Trans>APP_SUBTITLE</Trans></Typography>
           <br />
           <br />

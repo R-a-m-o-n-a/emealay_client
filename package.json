@@ -1,5 +1,5 @@
 {
-  "name": "emealay-client",
+  "name": "emealia-client",
   "version": "0.1.0",
   "private": true,
   "author": {
@@ -38,6 +38,7 @@
     "react-select-country-list": "^2.2.3",
     "react-swipeable-views": "^0.14.0",
     "react-switch-selector": "^2.2.1",
+    "react-tracking": "^9.3.2",
     "react-world-flags": "^1.5.1",
     "source-map-explorer": "^2.5.3",
     "web-vitals": "^0.2.4"

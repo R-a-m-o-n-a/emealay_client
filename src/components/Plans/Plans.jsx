@@ -11,6 +11,7 @@ import MissingIngredients from "./MissingIngredients";
 import { getPlansOfUser, getSinglePlan } from "./plans.util";
 import MealAvatar from "../Meals/MealAvatar";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles((theme) => ({
   plansTable: {
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   infoText: {
     textAlign: "center",
     margin: "3rem 2rem",
-    fontFamily: "Cookie",
+    fontFamily: "Neucha",
     fontSize: "1.3rem",
     lineHeight: "1.4rem",
   },
@@ -59,6 +60,7 @@ const Plans = (props) => {
 
   const { own, userId } = props;
 
+  const { Track, trackEvent } = useTracking({ page: own ? 'own-plans' : 'foreign-plans' });
   const [missingIngredientsDialogOpen, setMissingIngredientsDialogOpen] = useState(false);
   const [plans, setPlans] = useState([]);
   const [itemBeingEdited, setItemBeingEdited] = useState(null);
@@ -113,6 +115,7 @@ const Plans = (props) => {
     if (own && planItem.missingIngredients.length > 0) {
       setItemBeingEdited(planItem);
       setMissingIngredientsDialogOpen(true);
+      trackEvent({ event: 'open-missing-ingredients-popup', planId: planItem._id });
     }
   }
 
@@ -185,32 +188,34 @@ const Plans = (props) => {
   }
 
   return (
-    <>
-      {plans.length === 0 ? <Typography className={classes.infoText}>{emptyListFound ? t("Currently nothing planned") : t('Loading') + '...'} </Typography> :
-        <TableContainer className={classes.plansTable}>
-          <Table aria-label="table of all plans" stickyHeader>
-            <TableHead>
-              <TableRow key='planListHeader'>
-                <TableCell className={classes.thCell}>{t('Title')}</TableCell>
-                <TableCell align="center" className={classes.narrowCell + ' ' + classes.thCell}>{t('Due Date')}</TableCell>
-                <TableCell align="center" className={classes.thCell} onClick={openShoppingList}>
+    <Track>
+      <>
+        {plans.length === 0 ? <Typography className={classes.infoText}>{emptyListFound ? t("Currently nothing planned") : t('Loading') + '...'} </Typography> :
+          <TableContainer className={classes.plansTable}>
+            <Table aria-label="table of all plans" stickyHeader>
+              <TableHead>
+                <TableRow key='planListHeader'>
+                  <TableCell className={classes.thCell}>{t('Title')}</TableCell>
+                  <TableCell align="center" className={classes.narrowCell + ' ' + classes.thCell}>{t('Due Date')}</TableCell>
+                  <TableCell align="center" className={classes.thCell} onClick={openShoppingList}>
                           <span className="fa-layers fa-fw">
                             <FontAwesomeIcon icon={faShoppingBasket} transform="grow-6" />
                             <FontAwesomeIcon icon={faCheck} className={classes.green} transform="down-2" />
                           </span>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            {getPlanRows()}
-          </Table>
-        </TableContainer>
-      }
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              {getPlanRows()}
+            </Table>
+          </TableContainer>
+        }
 
-      <MissingIngredients planItem={itemBeingEdited} closeDialog={() => {
-        setItemBeingEdited(null);
-        setMissingIngredientsDialogOpen(false);
-      }} onDoneEditing={fetchAndUpdatePlans} open={missingIngredientsDialogOpen} />
-    </>
+        <MissingIngredients planItem={itemBeingEdited} closeDialog={() => {
+          setItemBeingEdited(null);
+          setMissingIngredientsDialogOpen(false);
+        }} onDoneEditing={fetchAndUpdatePlans} open={missingIngredientsDialogOpen} />
+      </>
+    </Track>
   );
 }
 

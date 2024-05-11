@@ -12,6 +12,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { withLoginRequired } from "../util";
 import DoneButton from "../Buttons/DoneButton";
 import SavingButton from "../Buttons/SavingButton";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -45,7 +46,7 @@ const AddMeal = () => {
   let navigate = useNavigate();
   const { t } = useTranslation();
   const { user } = useAuth0();
-
+  const { Track, trackEvent } = useTracking({ page: 'add-meal' });
 
   const emptyMeal = {
     _id: uuidv4(),
@@ -84,6 +85,7 @@ const AddMeal = () => {
 
   const onDoneAdding = (addedMeal) => {
     setIsSaving(false);
+    trackEvent({ event: 'added-new-meal', mealId: addedMeal._id });
     goToMeals();
   };
 
@@ -101,7 +103,7 @@ const AddMeal = () => {
   }
 
   return (
-    <>
+    <Track>
       <Navbar pageTitle={t('New Meal')} leftSideComponent={<BackButton onClick={goBackAndDeleteImagesFromMeal} />} rightSideComponent={meal.title && !isLoading ? <DoneButton onClick={addNewMeal} /> : null} />
 
       <form noValidate onSubmit={addNewMeal} className={classes.form}>
@@ -115,7 +117,7 @@ const AddMeal = () => {
         <SavingButton isSaving={isSaving} type="submit" size="large" disabled={!meal.title || isLoading} className={classes.submitButton} variant='contained' color='primary'>{t('Add')}</SavingButton>
       </form>
 
-    </>
+    </Track>
   );
 }
 

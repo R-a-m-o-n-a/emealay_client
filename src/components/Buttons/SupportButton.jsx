@@ -3,6 +3,7 @@ import { Button } from '@material-ui/core';
 import { Mail } from '@material-ui/icons';
 import { makeStyles } from '@material-ui/styles';
 import { useTranslation } from "react-i18next";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles(theme => ({
   supportButton: {
@@ -15,8 +16,10 @@ const useStyles = makeStyles(theme => ({
 const SupportButton = () => {
   const classes = useStyles();
   const { t } = useTranslation();
+  const { trackEvent } = useTracking();
 
   const handleSupport = () => {
+    trackEvent({ event: 'support-clicked' });
     window.location.href = 'mailto:emealay+help@gmail.com';
   }
 

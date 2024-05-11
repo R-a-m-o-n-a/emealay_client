@@ -3,6 +3,7 @@ import { alpha, Button } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { useAuth0 } from "@auth0/auth0-react";
 import { useTranslation } from "react-i18next";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles(theme => ({
   logoutButton: {
@@ -26,8 +27,10 @@ const LogoutButton = () => {
   const classes = useStyles();
   const { logout } = useAuth0();
   const { t } = useTranslation();
+  const { trackEvent } = useTracking();
 
   const handleLogout = () => {
+    trackEvent({ event: 'logout' });
     logout({ returnTo: logoutRedirect });
   }
 

@@ -8,10 +8,11 @@ import { dateStringOptions } from "../util";
 import { Navigate, useLocation, useNavigate, useParams } from "react-router-dom";
 import Navbar from "../Navbar";
 import AddButton from "../Buttons/AddButton";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles((theme) => ({
   listHeading: {
-    fontFamily: "Cookie",
+    fontFamily: "Neucha",
     fontSize: "1.4rem",
     lineHeight: "1.5rem",
     textDecoration: "underline",
@@ -19,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   infoText: {
     textAlign: "center",
     margin: "3rem 2rem",
-    fontFamily: "Cookie",
+    fontFamily: "Neucha",
     fontSize: "1.3rem",
     lineHeight: "1.4rem",
   },
@@ -61,6 +62,7 @@ const ShoppingList = () => {
   const navigate = useNavigate();
   const params = useParams();
   const { userId } = params;
+  const { trackEvent } = useTracking({ subpage: 'shoppingList' }, { dispatchOnMount: true });
 
   const [plans, setPlans] = useState([]);
 
@@ -96,6 +98,7 @@ const ShoppingList = () => {
 
   const checkOrUncheck = (ingredient, planId) => {
     ingredient.checked = !ingredient.checked;
+    trackEvent({ event: (ingredient.checked ? 'checking' : 'unchecking') + '-ingredient', ingredient: ingredient.name, planId });
     checkOrUncheckIngredient(planId, ingredient, fetchAndUpdatePlans);
   }
 

@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { checkOrUncheckIngredient } from "./plans.util";
 
 import { makeStyles } from '@material-ui/styles';
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles(theme => ({
   dialogHeading: {
@@ -27,6 +28,7 @@ const MissingIngredients = (props) => {
   const { t } = useTranslation();
   const [isIngredientLoading, setIsIngredientLoading] = useState({});
   const { planItem, closeDialog, onDoneEditing, open } = props;
+  const { trackEvent } = useTracking({ page: 'missing-ingredients-popup', planId: planItem?._id });
 
   function updateIsIngredientLoading(ingredient, value) {
     setIsIngredientLoading(prevState => ({ ...prevState, [ingredient.name]: value }));
@@ -34,6 +36,7 @@ const MissingIngredients = (props) => {
 
   const checkIngredient = (ingredient) => {
     updateIsIngredientLoading(ingredient, true);
+    trackEvent({ event: (ingredient.checked ? 'unchecking' : 'checking') + '-ingredient', ingredient: ingredient.name });
     checkOrUncheckIngredient(planItem._id, ingredient, () => {
       updateIsIngredientLoading(ingredient, false);
       onDoneEditing();

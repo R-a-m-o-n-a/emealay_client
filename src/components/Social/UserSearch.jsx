@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import SimpleCloseX from "../Buttons/SimpleCloseX";
 import { arrayOf, bool, func, instanceOf, shape } from "prop-types";
 import UserList from "./UserList";
+import { useTracking } from "react-tracking";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles(theme => ({
@@ -23,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   infoText: {
     textAlign: "center",
     margin: "3rem 2rem",
-    fontFamily: "Cookie",
+    fontFamily: "Neucha",
     fontSize: "1.3rem",
     lineHeight: "1.4rem",
   },
@@ -69,6 +70,7 @@ const UserSearch = (props) => {
   const classes = useStyles();
   const { user } = useAuth0();
   const { t } = useTranslation();
+  const { Track } = useTracking({ subpage: 'user-search' }, { dispatchOnMount: true });
   let navigate = useNavigate();
   const { state, pathname } = useLocation();
 
@@ -110,7 +112,7 @@ const UserSearch = (props) => {
   }, [query]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <>
+    <Track>
       <Box className={classes.userSearchBox}>
         <AppBar position="sticky" style={{ maxWidth: '100%' }}>
           <Toolbar className={classes.topNav} variant="dense">
@@ -142,7 +144,7 @@ const UserSearch = (props) => {
             )}
         </Collapse>
       </Box>
-    </>
+    </Track>
   );
 }
 

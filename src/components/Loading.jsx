@@ -8,7 +8,7 @@ const useStyles = makeStyles({
   infoText: {
     textAlign: "center",
     margin: "3rem 2rem",
-    fontFamily: "Cookie",
+    fontFamily: "Neucha",
     fontSize: "1.3rem",
     lineHeight: "1.4rem",
   },
@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 const Loading = () => {
   return (
     <>
-      <Navbar pageTitle="Emealay" />
+      <Navbar pageTitle="Emealia" />
       <LoadingBody />
     </>
   )

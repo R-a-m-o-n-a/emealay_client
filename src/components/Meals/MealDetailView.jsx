@@ -14,6 +14,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PlanMealButton from "../util/PlanMealButton";
 import { getUserById } from "../Settings/settings.util";
 
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -36,13 +37,21 @@ const MealDetailView = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { user, isAuthenticated } = useAuth0();
-  let { state } = useLocation();
+  let { state, pathname } = useLocation();
   let navigate = useNavigate();
   let { mealId } = useParams();
 
   const [own, setOwn] = useState(undefined);
   const [meal, setMeal] = useState();
   const [nameOfOtherUser, setNameOfOtherUser] = useState(null);
+  const { Track } = useTracking({
+    page: (own ?? user?.sub === meal?.userId) ? 'view-own-meal' : 'view-meal',
+    mealId,
+    ...(own === false && { mealOwnerId: meal?.userId }) // add conditional property userId of meal owner if not own meal
+  }, { dispatchOnMount: !(state?.haveSentPageEventTracker === true) });
+  useEffect(() => { // when page is first opened, set the state to make sure page-open event is only tracked once (and not again when coming back from edit for example
+    if (!(state?.haveSentPageEventTracker === true)) navigate(pathname, { replace: true, state: { ...state, haveSentPageEventTracker: true } })
+  }, []); // eslint-disable-line
 
   useEffect(() => {
     if (user && meal) {
@@ -85,7 +94,8 @@ const MealDetailView = () => {
   }
 
   return (
-      meal ?
+    <Track>
+      {meal ?
         <>
           <Navbar secondary={!own}
                   pageTitle={own || !nameOfOtherUser ? t('Meal') : t('Meal of {{name}}', { name: nameOfOtherUser })}
@@ -107,7 +117,8 @@ const MealDetailView = () => {
 
           {(own && !(state?.mealContext === 'plans')) && <PlanMealButton meal={meal} />}
         </>
-        : ''
+        : ''}
+    </Track>
   );
 }
 

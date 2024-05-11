@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 import { useTranslation } from "react-i18next";
 import { deleteUser } from "../Settings/settings.util";
 import { useAuth0 } from "@auth0/auth0-react";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles(theme => ({
   logoutButton: {
@@ -33,22 +34,27 @@ const DeleteAccountButton = () => {
   const classes = useStyles();
   const { t } = useTranslation();
   const { user, logout } = useAuth0();
+  const { trackEvent } = useTracking({ module: 'delete-account' });
 
   const [confirmDeletionDialogOpen, setConfirmDeletionDialogOpen] = useState(false);
   const [confirmationDialogOpen, setConfirmationDialogOpen] = useState(false);
   const [deletionInProgress, setDeletionInProgress] = useState(false);
 
   const openConfirmDeletionDialog = () => {
+    trackEvent({ event: 'open-delete-account-dialog' });
     setConfirmDeletionDialogOpen(true);
   }
   const closeConfirmDeletionDialog = () => {
+    trackEvent({ event: 'close-delete-account-dialog' });
     setConfirmDeletionDialogOpen(false);
   }
 
   const openConfirmationDialog = () => {
+    trackEvent({ event: 'open-account-deleted-dialog' });
     setConfirmationDialogOpen(true);
   }
   const closeConfirmationDialog = () => {
+    trackEvent({ event: 'close-account-deleted-dialog' });
     setConfirmationDialogOpen(false);
   }
 
@@ -56,6 +62,7 @@ const DeleteAccountButton = () => {
     if (user) {
       setDeletionInProgress(true);
       closeConfirmDeletionDialog();
+      trackEvent({ event: 'delete-account' });
       deleteUser(user.sub, () => {
         openConfirmationDialog();
         setDeletionInProgress(false);
@@ -82,7 +89,7 @@ const DeleteAccountButton = () => {
         {t('Delete Account')}
       </Button>
       <Dialog open={confirmDeletionDialogOpen} onClose={closeConfirmDeletionDialog}>
-        <DialogTitle>{t('Are you sure you want to delete your Emealay Account?')}</DialogTitle>
+        <DialogTitle>{t('Are you sure you want to delete your Emealia Account?')}</DialogTitle>
         <DialogContent><DialogContentText>{t('This cannot be undone.')}</DialogContentText></DialogContent>
         <DialogActions style={{ justifyContent: 'space-between' }}>
           <Button variant="outlined" onClick={closeConfirmDeletionDialog}>{t('No, cancel.')}</Button>

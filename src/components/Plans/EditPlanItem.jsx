@@ -13,6 +13,7 @@ import DoneButton from "../Buttons/DoneButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getSinglePlan } from "./plans.util";
 import SavingButton from "../Buttons/SavingButton";
+import { useTracking } from "react-tracking";
 
 /** Dialog page that allows user to edit plan */
 const useStyles = makeStyles((theme) => ({
@@ -47,7 +48,7 @@ const EditPlanItem = () => {
   const navigate = useNavigate();
   let { planItemId } = useParams();
   const { user } = useAuth0();
-
+  const { Track, trackEvent } = useTracking({ page: 'edit-plan', planId: planItemId });
 
   const [isSaving, setIsSaving] = useState(false);
   const [planItem, setPlanItem] = useState((state && state.planItem) ? state.planItem : null);
@@ -62,6 +63,7 @@ const EditPlanItem = () => {
   }, [planItemId, state]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const deletePlan = () => {
+    trackEvent({ event: 'delete-plan' });
     axios.post(serverURL + '/plans/delete/' + planItem._id).then((result) => {
       //onDelete(planItem);
       console.log('delete request sent', result.data, planItem);
@@ -78,6 +80,7 @@ const EditPlanItem = () => {
 
   const editAndClose = (event) => {
     event.preventDefault();
+    trackEvent({ event: 'edit-plan-save' });
 
     if (planItem.title && user) {
       const newPlan = {
@@ -100,6 +103,7 @@ const EditPlanItem = () => {
   }
 
   const goBackToPlans = () => {
+    trackEvent({ event: 'cancel' });
     navigate(-1);
   }
 
@@ -112,7 +116,7 @@ const EditPlanItem = () => {
 
   return (
     planItem ?
-      <>
+      <Track>
         <Navbar pageTitle={t('Edit Plan')}
                 leftSideComponent={<BackButton onClick={goBackToPlans} />}
                 rightSideComponent={planItem.title ? <DoneButton onClick={editAndClose} /> : null}
@@ -132,7 +136,7 @@ const EditPlanItem = () => {
             </Grid>
           </Grid>
         </form>
-      </> : ''
+      </Track> : ''
   );
 }
 

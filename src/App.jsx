@@ -7,6 +7,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { getSettingsOfUser, updateUserSettingsForCategory } from "./components/Settings/settings.util";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import i18n, { allLanguages } from "./i18n";
+import { useTracking } from "react-tracking";
 
 /**
  * This is the main App component. It sets the MUI theme as well as the dark mode (if desired). It also deals with Frontend-Routing with the help of React Router.
@@ -19,6 +20,8 @@ const App = () => {
   const { state, pathname } = useLocation();
 
   const { user } = useAuth0();
+
+  const { Track } = useTracking({ userId: user?.sub, datetime: new Date() });
 
   const prefersDarkModeInitially = useMediaQuery('(prefers-color-scheme: dark)');
   const [prefersDarkMode, setPrefersDarkMode] = useState(prefersDarkModeInitially);
@@ -73,14 +76,14 @@ const App = () => {
       palette: {
         type: prefersDarkMode ? 'dark' : 'light',
         primary: {
-          main: prefersDarkMode ? '#9fd105' : '#658404',
-          dark: prefersDarkMode ? '#6b7a12' : '#4a5700',
+          main: prefersDarkMode ? '#50c56d' : '#28793c',
+          dark: prefersDarkMode ? '#3cb45a' : '#1e5a2d',
         },
         secondary: {
-          main: prefersDarkMode ? '#83b6d8' : '#1a274f',
+          main: prefersDarkMode ? '#83c1ff' : '#003366',
         },
         error: {
-          main: prefersDarkMode ? '#f56b6f' : '#ac0013',
+          main: prefersDarkMode ? '#ff678b' : '#bc002d',
         },
         background: {
           default: prefersDarkMode ? '#202020' : '#ffffff',
@@ -104,7 +107,9 @@ const App = () => {
     <>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <ContentWrapper setDarkMode={setPrefersDarkMode} />
+          <Track>
+            <ContentWrapper />
+          </Track>
       </ThemeProvider>
     </>
   );

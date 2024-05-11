@@ -6,6 +6,7 @@ import { PersonAdd, PersonAddDisabled } from "@material-ui/icons";
 import { makeStyles } from "@material-ui/styles";
 import { array, bool, func, object } from "prop-types";
 import { updateUserContacts } from "./social.util";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles(theme => ({
   iconButtonInCircle: {
@@ -32,6 +33,7 @@ const FriendOrUnfriendButton = (props) => {
   const classes = useStyles();
   const { otherUser, afterUpdateContacts, contacts: givenContacts, isSaving: isSavingSomething, setIsSaving: setIsSavingInParentComponent } = props;
   const { user } = useAuth0();
+  const { trackEvent } = useTracking({ module: 'friend-button', otherUserId: otherUser?.user_id });
 
   const [isSavingThisOne, setIsSavingThisOne] = useState(false);
 
@@ -60,12 +62,14 @@ const FriendOrUnfriendButton = (props) => {
   }, [user, givenContacts, otherUser]);
 
   const addFriend = () => {
+    trackEvent({ event: 'add-friend' });
     const newFriends = Array.from(givenContacts);
     newFriends.push(otherUser);
     updateContacts(newFriends);
   }
 
   const removeFriend = () => {
+    trackEvent({ event: 'remove-friend' });
     const newFriends = givenContacts.filter(u => u.user_id !== otherUser.user_id);
     updateContacts(newFriends);
   }

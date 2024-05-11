@@ -11,7 +11,7 @@ import EditMealCategories from "./EditMealCategories";
 import { useLocation, useNavigate } from "react-router-dom";
 import DeleteAccountButton from "../Buttons/DeleteAccountButton";
 import BackButton from "../Buttons/BackButton";
-import SwitchSelector from "react-switch-selector";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles(theme => ({
   settings: {
@@ -64,6 +64,7 @@ const AdvancedSettings = (props) => {
   const { palette } = theme;
   let navigate = useNavigate();
   const { pathname } = useLocation();
+  const { trackEvent } = useTracking({ page: 'advanced-settings', event: 'opened-advanced-settings' }, { dispatchOnMount: true }); // eslint-disable-line
 
   const ownStartPageOptions = [
     {
@@ -150,7 +151,7 @@ const AdvancedSettings = (props) => {
                             inputProps={{ 'aria-label': 'use dark mode checkbox' }} />
                 </TableCell>
               </TableRow>
-              <TableRow>
+              {/*<TableRow>
                 <TableCell className={classes.tableCell}><Typography className={classes.label}>{t('Own start view')}</Typography></TableCell>
                 <TableCell className={classes.tableCell}>
                   <Box className={classes.switchSelector}>
@@ -175,7 +176,7 @@ const AdvancedSettings = (props) => {
                                     fontSize={theme.typography.body1.fontSize} />
                   </Box>
                 </TableCell>
-              </TableRow>
+              </TableRow>*/}
             </TableBody>
           </Table>
           : ''}

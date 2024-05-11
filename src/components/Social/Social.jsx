@@ -12,13 +12,14 @@ import UserList from "./UserList";
 import { getNumberOfMealsOfUsers } from "../Meals/meals.util";
 import { getNumberOfPlansOfUsers } from "../Plans/plans.util";
 import { useMap } from "../util/useMap";
+import { useTracking } from "react-tracking";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const useStyles = makeStyles({
   infoText: {
     textAlign: "center",
     margin: "3rem 2rem",
-    fontFamily: "Cookie",
+    fontFamily: "Neucha",
     fontSize: "1.3rem",
     lineHeight: "1.4rem",
   },
@@ -32,6 +33,7 @@ const Social = () => {
   const classes = useStyles();
   const { user } = useAuth0();
   const { t } = useTranslation();
+  const { Track } = useTracking({ page: 'social' });
   let navigate = useNavigate();
   const { state, pathname } = useLocation();
 
@@ -85,7 +87,7 @@ const Social = () => {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <>
+    <Track>
       {searchOpen ? <UserSearch open={searchOpen}
                                 closeSearch={closeSearch}
                                 contacts={contacts}
@@ -109,7 +111,7 @@ const Social = () => {
                     afterUpdateContacts={fetchContacts} />
         </List>
       }
-    </>
+    </Track>
   );
 }
 

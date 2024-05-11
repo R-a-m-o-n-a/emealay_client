@@ -9,6 +9,7 @@ import { deleteAllImagesFromMeal } from "../Meals/meals.util";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { addPlan } from "../Plans/plans.util";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles((theme) => ({
   snackbarOffset: {
@@ -33,6 +34,7 @@ const Snackbars = (props) => {
   const { t } = useTranslation();
   let navigate = useNavigate();
   const { state, pathname } = useLocation();
+  const { trackEvent } = useTracking({ module: 'snackbar' });
 
   const [deleteMessageVisible, setDeleteMessageVisible] = useState(false);
   const [readdedMessageVisible, setReaddedMessageVisible] = useState(false);
@@ -58,6 +60,7 @@ const Snackbars = (props) => {
   }
 
   const undoDeletion = () => {
+    trackEvent({ event: 'undo-deletion', category, deletedItemId: deletedItem._id });
     if (category === 'Meal') {
       clearTimeout(deleteImagesTimeout);
       setDeleteImagesTimeout(0);

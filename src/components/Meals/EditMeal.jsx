@@ -15,6 +15,7 @@ import DoneButton from "../Buttons/DoneButton";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import SavingButton from "../Buttons/SavingButton";
 import { deleteSingleImage } from "../Images/images.util";
+import { useTracking } from "react-tracking";
 
 const useStyles = makeStyles((theme) => ({
   form: {
@@ -58,7 +59,7 @@ const EditMeal = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   let { mealId } = useParams();
-  
+  const { Track, trackEvent } = useTracking({ page: 'edit-meal', mealId });
 
   const [meal, setMeal] = useState();
   const [originalMealImages, setOriginalMealImages] = useState([]);
@@ -93,6 +94,7 @@ const EditMeal = () => {
   }
 
   const deleteMeal = () => {
+    trackEvent({ event: 'delete-meal' });
     axios.post(serverURL + '/meals/delete/' + meal._id).then((result) => {
       const deletedMeal = result.data.meal;
       // console.log('delete request sent for meal ', deletedMeal._id);
@@ -110,6 +112,7 @@ const EditMeal = () => {
   const editAndClose = (event) => {
     event.preventDefault();
     setIsSaving(true);
+    trackEvent({ event: 'edit-meal-save' });
     if (meal.title && user.sub === meal.userId) {
       axios.post(serverURL + '/meals/edit/' + meal._id, meal).then((result) => {
         // console.log('edit request sent', result.data);
@@ -120,6 +123,7 @@ const EditMeal = () => {
   }
 
   const cancelCloseEdit = () => {
+    trackEvent({ event: 'cancel' });
 
     // delete images that should not be saved
     const imagesToDelete = meal.images.filter(i => !originalMealImages.includes(i));
@@ -135,7 +139,7 @@ const EditMeal = () => {
   }
 
   return (
-    <>
+    <Track>
       <Navbar pageTitle={t('Edit Meal')}
               leftSideComponent={<BackButton onClick={cancelCloseEdit} />}
               rightSideComponent={meal && meal.title && !imagesLoading ? <DoneButton onClick={editAndClose} /> : null}
@@ -168,7 +172,7 @@ const EditMeal = () => {
                           variant="outlined">{t('Save without new images')}</SavingButton>}
         </form>
         : ''}
-    </>
+    </Track>
   );
 }
 /*

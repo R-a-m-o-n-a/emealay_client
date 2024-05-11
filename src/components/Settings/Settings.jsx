@@ -13,6 +13,7 @@ import EditButton from "../Buttons/EditButton";
 import ProfilePlaceholder from "./ProfilePlaceholder";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ArrowForwardIos } from "@material-ui/icons";
+import { useTracking } from "react-tracking";
 import SupportButton from "../Buttons/SupportButton";
 import importedCountryList from 'react-select-country-list';
 
@@ -52,9 +53,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     fontSize: '0.9rem',
   },
-  switchSelector: {
-    height: '2rem',
-  },
   flag: {
     flex: 1,
     paddingRight: '10px',
@@ -80,6 +78,7 @@ const Settings = () => {
   const { user } = useAuth0();
   const { state, pathname } = useLocation();
   let navigate = useNavigate();
+  const { Track, trackEvent } = useTracking({ page: 'settings' });
 
   const [userData, setUserData] = useState(null);
   const [/*settings*/, setSettings] = useState(null); // settings is not currently used because settings are fetched from other place but might be necessary in the future
@@ -127,12 +126,15 @@ const Settings = () => {
 
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng).then(() => {console.log('changed language to ', lng)});
+    trackEvent({ event: 'change-language', newLanguage: lng })
     updateLanguageInSettings(lng);
   }
 
   const changeCountry = (newCountryCode) => {
     const newCountryName = countryList.find(c => c.value === newCountryCode)?.label;
     if (user) {
+      trackEvent({ event: 'change-country', oldCountry: country, newCountry: newCountryCode });
+
       const newMetadata = {
         ...userData.user_metadata ?? {},
         country: newCountryName,
@@ -159,7 +161,7 @@ const Settings = () => {
   const goToAdvancedSettings = () => {navigate('advanced');};
 
   return (
-    <>
+    <Track>
       <Navbar pageTitle={t('Settings')} rightSideComponent={<EditButton onClick={goToEditProfile} />} />
       <Box className={classes.settings}>
         {userData ? <Profile userData={userData} /> : <ProfilePlaceholder />}
@@ -194,7 +196,7 @@ const Settings = () => {
         <SupportButton />
         <LogoutButton />
       </Box>
-    </>
+    </Track>
   );
 }
 
