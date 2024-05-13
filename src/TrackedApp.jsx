@@ -1,8 +1,8 @@
 import { track } from 'react-tracking';
 import App from "./App";
-import axios from "axios";
+// import axios from "axios";
 
-const serverURL = process.env.REACT_APP_SERVER_URL;
+// const serverURL = process.env.REACT_APP_SERVER_URL;
 
 const TrackedApp = track(
   // app-level tracking data
@@ -10,11 +10,12 @@ const TrackedApp = track(
   // top-level options
   {
     // custom dispatch to console.log
+    dispatch: () => {
+      /* disable tracking until found netlify alternative (risk of being billed)
+       * also don't want to use bandwidth of free hosting. Maybe thing about adding other tracking back (like Hotjar or Smartlook)
     dispatch: data => {
       // console.log('Tracking-Object', data);
       // send to DB
-      /* comment and do not track until found netlify alternative (risk of being billed)
-      also don't want to use bandwidth of free hosting. Maybe thing about adding other tracking back (like Hotjar or Smartlook)
       axios.post(serverURL + '/tracking/', data)
 
            .then(res => {
