@@ -13,10 +13,13 @@ const TrackedApp = track(
     dispatch: data => {
       // console.log('Tracking-Object', data);
       // send to DB
+      /* comment and do not track until found netlify alternative (risk of being billed)
+      also don't want to use bandwidth of free hosting. Maybe thing about adding other tracking back (like Hotjar or Smartlook)
       axios.post(serverURL + '/tracking/', data)
+
            .then(res => {
              // console.log('result of adding tracking data to DB', res);
-           }).catch(err => {console.log(err)});
+           }).catch(err => {console.log(err)}); */
     }
   }
 )(App);
