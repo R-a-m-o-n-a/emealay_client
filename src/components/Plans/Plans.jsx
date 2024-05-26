@@ -12,6 +12,7 @@ import { getPlansOfUser, getSinglePlan } from "./plans.util";
 import MealAvatar from "../Meals/MealAvatar";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useTracking } from "react-tracking";
+import { LoadingBody } from "../Loading";
 
 const useStyles = makeStyles((theme) => ({
   plansTable: {
@@ -190,7 +191,7 @@ const Plans = (props) => {
   return (
     <Track>
       <>
-        {plans.length === 0 ? <Typography className={classes.infoText}>{emptyListFound ? t("Currently nothing planned") : t('Loading') + '...'} </Typography> :
+        {plans.length === 0 ? (emptyListFound ? <Typography className={classes.infoText}>{t("Currently nothing planned")}</Typography> : <LoadingBody /> ) :
           <TableContainer className={classes.plansTable}>
             <Table aria-label="table of all plans" stickyHeader>
               <TableHead>
