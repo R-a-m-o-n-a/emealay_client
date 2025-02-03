@@ -24,7 +24,8 @@ const OutlinedTextField = (props) => {
 
   return (
     <TextField className={classes.textField}
-               InputProps={{ margin: 'dense', autoCapitalize: autocapitalize }}
+               inputProps={{autoCapitalize: autocapitalize}}
+               InputProps={{ margin: 'dense' }}
                InputLabelProps={{ className: classes.correctFloatingLabel }}
                color={isSecondary ? "secondary" : "primary"}
                variant="outlined"
