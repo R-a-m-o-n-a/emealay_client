@@ -83,6 +83,7 @@ const EditMealCore = (props) => {
                              onChange={e => updateMeal('title', e.target.value)}
                              isSecondary={isSecondary}
                              autoFocus={autoFocusFirstInput}
+                             autocapitalize="words"
                              required />
         </Grid>
         <Grid item style={{ width: "58px" }}>

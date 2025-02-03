@@ -20,11 +20,11 @@ const useStyles = makeStyles((theme) => ({
 const OutlinedTextField = (props) => {
   const classes = useStyles();
 
-  const { isSecondary, ...otherProps } = props;
+  const { isSecondary, autocapitalize, ...otherProps } = props;
 
   return (
     <TextField className={classes.textField}
-               InputProps={{ margin: 'dense' }}
+               InputProps={{ margin: 'dense', autoCapitalize: autocapitalize }}
                InputLabelProps={{ className: classes.correctFloatingLabel }}
                color={isSecondary ? "secondary" : "primary"}
                variant="outlined"
