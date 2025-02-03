@@ -108,10 +108,19 @@ const EditPlanItem = () => {
   }
 
   const updatePlanItem = (key, value) => {
-    setPlanItem(prevState => ({
-      ...prevState,
-      [key]: value,
-    }));
+    setPlanItem(prevState => {
+      const newState = {
+        ...prevState,
+        [key]: value,
+      };
+
+      // set Date to today when checkbox is checked
+      if (key === 'hasDate' && value === true && !prevState.date) {
+        newState.date = new Date();
+      }
+
+      return newState;
+    });
   }
 
   return (
@@ -132,7 +141,9 @@ const EditPlanItem = () => {
               <DeleteButton onClick={deletePlan} />
             </Grid>
             <Grid item className={classes.saveButton}>
-              <SavingButton isSaving={isSaving} type="submit" size="large" disabled={!planItem.title} color={inverseColors ? "secondary" : "primary"} variant="contained">{t('Save')}</SavingButton>
+              <SavingButton isSaving={isSaving} type="submit" size="large" disabled={!planItem.title} color={inverseColors ? "secondary" : "primary"} variant="contained">
+                {t('Save')}
+              </SavingButton>
             </Grid>
           </Grid>
         </form>
